@@ -1,0 +1,4 @@
+devops
+bin/
+.env
+.tmp/
