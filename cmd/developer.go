@@ -10,32 +10,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// developerCmd represents the developer command
-var developerCmd = &cobra.Command{
-	Use:   "developer",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+var envDir string
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+var developerCmd = &cobra.Command{
+	Use:   "developer [envDir]",
+	Short: "Run developer command with optional env dir",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("developer called")
-		application.NewDeveloperUseCase().Execute()
+		if len(args) > 0 {
+			envDir = args[0]
+		}
+
+		fmt.Println("developer called with envDir =", envDir)
+
+		application.NewDeveloperUseCase().Execute(&application.DeveloperOptions{
+			EnvDir: envDir,
+		})
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(developerCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// developerCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// developerCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// flaga nadal działa
+	developerCmd.Flags().StringVar(&envDir, "envDir", "", "Path to config file")
 }

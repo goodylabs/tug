@@ -6,28 +6,63 @@ import (
 
 	"github.com/goodylabs/docker-swarm-cli/internal/adapters"
 	"github.com/goodylabs/docker-swarm-cli/internal/config"
+	"github.com/goodylabs/docker-swarm-cli/internal/dto"
 	"github.com/goodylabs/docker-swarm-cli/internal/ports"
 )
 
 type DeveloperUseCase struct {
-	prompt_adapter ports.PromptPort
+	promptAdapter ports.PromptPort
+	dockerAdapter ports.DockerPort
 }
 
-func (d *DeveloperUseCase) Execute() {
+type DeveloperOptions struct {
+	EnvDir string
+}
+
+func (d *DeveloperUseCase) Execute(developerOptions *DeveloperOptions) {
+
+	if developerOptions.EnvDir == "" {
+		developerOptions.EnvDir = d.getEnvDir()
+	}
+
+	targetIp := d.getTargetIp(developerOptions.EnvDir)
+
+	d.dockerAdapter.ConfigureDocker(targetIp)
+	containers := d.dockerAdapter.ListContainers()
+
+	chosenContainer := d.choseContainer(containers)
+	fmt.Println(chosenContainer)
+}
+
+func (d *DeveloperUseCase) getEnvDir() string {
 	dirs, _ := adapters.ListDirectories(config.DEVOPS_DIR)
-	fmt.Println(dirs)
+	envDir, _ := d.promptAdapter.ChooseFromList(dirs, "Chose environment")
+	return envDir
+}
 
-	environment, _ := d.prompt_adapter.ChooseFromList(dirs, "Chose environment")
-	fmt.Println(environment)
+func (d *DeveloperUseCase) getTargetIp(envDir string) string {
+	scriptPath := filepath.Join(config.DEVOPS_DIR, envDir, "deploy.sh")
+	targetIp, _ := adapters.GetValueFromShFile(scriptPath)
+	return targetIp
+}
 
-	scriptPath := filepath.Join(config.DEVOPS_DIR, environment, "deploy.sh")
-	selectedIp, _ := adapters.GetValueFromShFile(scriptPath)
-
-	fmt.Println(selectedIp)
+func (d *DeveloperUseCase) choseContainer(containers []dto.ContainerDTO) dto.ContainerDTO {
+	containerNames := []string{}
+	for _, container := range containers {
+		containerNames = append(containerNames, container.Name)
+	}
+	chosenContainer, _ := d.promptAdapter.ChooseFromList(containerNames, "Chose container")
+	for _, container := range containers {
+		if container.Name == chosenContainer {
+			return container
+		}
+	}
+	panic("Something really went wrong during container chosing process...")
 }
 
 func NewDeveloperUseCase() *DeveloperUseCase {
 	return &DeveloperUseCase{
-		prompt_adapter: adapters.NewPromptAdapter(),
+		promptAdapter: adapters.NewPromptAdapter(),
+		dockerAdapter: adapters.NewDockerAdapter(),
 	}
 }

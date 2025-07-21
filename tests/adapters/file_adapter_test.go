@@ -1,11 +1,11 @@
-package file_adapters_test
+package testadapters
 
 import (
 	"log"
 	"path/filepath"
 	"testing"
 
-	adapters "github.com/goodylabs/docker-swarm-cli/internal/adapters"
+	"github.com/goodylabs/docker-swarm-cli/internal/adapters"
 	"github.com/goodylabs/docker-swarm-cli/internal/config"
 
 	"github.com/stretchr/testify/assert"

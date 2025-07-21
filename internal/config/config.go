@@ -12,6 +12,11 @@ var (
 	TESTING    bool
 )
 
+const (
+	DOCKER_API_VERSION = "1.41"
+	LOCAL_DOCKER_HOST  = "unix:///var/run/docker.sock"
+)
+
 func init() {
 	BASE_DIR = findProjectRoot()
 	DEVOPS_DIR = getEnvOrDefault("DEVOPS_DIR", ".example-dir")
