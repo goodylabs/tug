@@ -1,6 +1,7 @@
 package application
 
 import (
+	"log"
 	"path/filepath"
 	"strings"
 
@@ -67,8 +68,19 @@ func (d *DeveloperUseCase) getServices(stackName string) []dto.ServiceDTO {
 // }
 
 func (d *DeveloperUseCase) getTargetIp(envDir string) string {
+
 	scriptPath := filepath.Join(config.DEVOPS_DIR, envDir, "deploy.sh")
-	targetIp, _ := adapters.GetValueFromShFile(scriptPath, constants.TARGET_IP)
+
+	legacyTargetIp, _ := adapters.GetValueFromShFile(scriptPath, constants.LEGACY_TARGET_IP_KEY)
+	if legacyTargetIp != "" {
+		return legacyTargetIp
+	}
+
+	targetIp, err := adapters.GetValueFromShFile(scriptPath, constants.TARGET_IP_KEY)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return targetIp
 }
 

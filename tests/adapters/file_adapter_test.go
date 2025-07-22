@@ -32,7 +32,7 @@ func TestGetValueFromShFile(t *testing.T) {
 
 	for _, tt := range tests {
 		shFile := filepath.Join(config.BASE_DIR, config.DEVOPS_DIR, tt.envDir, "deploy.sh")
-		ipValue, err := adapters.GetValueFromShFile(shFile, constants.TARGET_IP)
+		ipValue, err := adapters.GetValueFromShFile(shFile, constants.TARGET_IP_KEY)
 		assert.NoError(t, err)
 		assert.Equal(t, tt.resultValue, ipValue)
 	}
