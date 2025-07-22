@@ -1,7 +1,6 @@
 package application
 
 import (
-	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/goodylabs/docker-swarm-cli/internal/constants"
 	"github.com/goodylabs/docker-swarm-cli/internal/dto"
 	"github.com/goodylabs/docker-swarm-cli/internal/ports"
+	"github.com/goodylabs/docker-swarm-cli/internal/services"
 )
 
 type DeveloperUseCase struct {
@@ -25,16 +25,28 @@ func (d *DeveloperUseCase) Execute(developerOptions *DeveloperOptions) {
 	envDir := developerOptions.EnvDir
 
 	targetIp := d.getTargetIp(envDir)
-	stackName := d.getStackName(envDir)
 
 	d.dockerAdapter.ConfigureDocker(targetIp)
 
-	services := d.getServices(stackName)
-	fmt.Println(services)
-	// containers := d.dockerAdapter.ListServices()
+	containers := d.dockerAdapter.ListContainers()
 
-	// chosenContainer := d.choseContainer(containers)
-	// fmt.Println(chosenContainer)
+	chosenContainer := d.choseContainer(containers)
+
+	services.SelectCommandsService(d.promptAdapter, chosenContainer)
+}
+
+func (d *DeveloperUseCase) choseContainer(containers []dto.ContainerDTO) dto.ContainerDTO {
+	var names []string
+	for _, container := range containers {
+		names = append(names, container.Name)
+	}
+	selectedName := d.promptAdapter.ChooseFromList(names, "Chose container")
+	for _, container := range containers {
+		if selectedName == container.Name {
+			return container
+		}
+	}
+	panic(constants.PANIC)
 }
 
 func (d *DeveloperUseCase) getServices(stackName string) []dto.ServiceDTO {
@@ -48,11 +60,11 @@ func (d *DeveloperUseCase) getServices(stackName string) []dto.ServiceDTO {
 	return filtered
 }
 
-func (d *DeveloperUseCase) getEnvDir() string {
-	dirs, _ := adapters.ListDirectories(config.DEVOPS_DIR)
-	envDir, _ := d.promptAdapter.ChooseFromList(dirs, "Chose environment")
-	return envDir
-}
+// func (d *DeveloperUseCase) getEnvDir() string {
+// 	dirs, _ := adapters.ListDirectories(config.DEVOPS_DIR)
+// 	envDir, _ := d.promptAdapter.ChooseFromList(dirs, "Chose environment")
+// 	return envDir
+// }
 
 func (d *DeveloperUseCase) getTargetIp(envDir string) string {
 	scriptPath := filepath.Join(config.DEVOPS_DIR, envDir, "deploy.sh")
@@ -64,20 +76,6 @@ func (d *DeveloperUseCase) getStackName(envDir string) string {
 	scriptPath := filepath.Join(config.DEVOPS_DIR, envDir, "deploy.sh")
 	targetIp, _ := adapters.GetValueFromShFile(scriptPath, constants.STACK_NAME)
 	return targetIp
-}
-
-func (d *DeveloperUseCase) choseContainer(containers []dto.ServiceDTO) dto.ServiceDTO {
-	containerNames := []string{}
-	for _, container := range containers {
-		containerNames = append(containerNames, container.Name)
-	}
-	chosenContainer, _ := d.promptAdapter.ChooseFromList(containerNames, "Chose container")
-	for _, container := range containers {
-		if container.Name == chosenContainer {
-			return container
-		}
-	}
-	panic("Something really went wrong during container chosing process...")
 }
 
 func NewDeveloperUseCase() *DeveloperUseCase {

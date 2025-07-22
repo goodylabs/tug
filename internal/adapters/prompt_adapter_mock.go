@@ -1,14 +1,23 @@
 package adapters
 
-import "errors"
+import (
+	"log"
+
+	"github.com/goodylabs/docker-swarm-cli/internal/constants"
+)
 
 type MockPromptAdapter struct{}
 
-func (p *MockPromptAdapter) ChooseFromList(options []string, label string) (string, error) {
+func (p *MockPromptAdapter) ChooseFromList(options []string, label string) string {
 	for _, option := range options {
 		if option == "localhost" {
-			return option, nil
+			return option
 		}
 	}
-	return "", errors.New("You f*cked something up with the test environment setup")
+	log.Fatal("You f*cked something up with the test environment setup")
+	panic(constants.PANIC)
+}
+
+func (p *MockPromptAdapter) ChooseByName(list any, label string) any {
+	return map[string]any{}
 }

@@ -17,7 +17,7 @@ type ContainerDTO struct {
 	Labels       string `json:"Labels"`
 	LocalVolumes string `json:"LocalVolumes"`
 	Mounts       string `json:"Mounts"`
-	Names        string `json:"Names"`
+	Name         string `json:"Names"`
 	Networks     string `json:"Networks"`
 	Ports        string `json:"Ports"`
 	RunningFor   string `json:"RunningFor"`

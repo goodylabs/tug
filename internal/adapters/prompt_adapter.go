@@ -11,12 +11,13 @@ import (
 
 type PromptAdapter struct{}
 
-func (p *PromptAdapter) ChooseFromList(options []string, label string) (string, error) {
+func (p *PromptAdapter) ChooseFromList(options []string, label string) string {
 	fmt.Print("\033[H\033[2J")
 
 	promptUI := promptui.Select{
 		Label: label,
 		Items: options,
+		Size:  10,
 	}
 
 	_, result, err := promptUI.Run()
@@ -24,7 +25,7 @@ func (p *PromptAdapter) ChooseFromList(options []string, label string) (string, 
 		log.Fatal("Error:", err)
 	}
 
-	return result, nil
+	return result
 }
 
 func NewPromptAdapter() ports.PromptPort {

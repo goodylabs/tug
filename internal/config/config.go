@@ -12,6 +12,8 @@ var (
 	TESTING    bool
 )
 
+var DOCKER_HOST_ENV string
+
 func init() {
 	BASE_DIR = findProjectRoot()
 	DEVOPS_DIR = getEnvOrDefault("DEVOPS_DIR", ".example-dir")
