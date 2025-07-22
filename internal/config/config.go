@@ -8,16 +8,16 @@ import (
 
 var (
 	BASE_DIR   string
+	USE_MOCKS  bool
 	DEVOPS_DIR string
-	TESTING    bool
 )
 
 var DOCKER_HOST_ENV string
 
 func init() {
 	BASE_DIR = findProjectRoot()
-	DEVOPS_DIR = getEnvOrDefault("DEVOPS_DIR", ".example-dir")
-	TESTING = bool(getEnvOrDefault("TESTING", "") == "true")
+	USE_MOCKS = bool(getEnvOrDefault("USE_MOCKS", "") == "true")
+	DEVOPS_DIR = getEnvOrDefault("DEVOPS_DIR", "devops")
 }
 
 func getEnvOrDefault(envName string, defaultValue string) string {

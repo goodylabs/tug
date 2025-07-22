@@ -29,7 +29,7 @@ func (p *PromptAdapter) ChooseFromList(options []string, label string) string {
 }
 
 func NewPromptAdapter() ports.PromptPort {
-	if config.TESTING {
+	if config.USE_MOCKS {
 		return &MockPromptAdapter{}
 	}
 	return &PromptAdapter{}

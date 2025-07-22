@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export BASE_DIR=$(pwd)
-export TESTING=true
+export USE_MOCKS=true
+export DEVOPS_DIR=".example-dir"
 
 gotestsum $@ ./tests/...
