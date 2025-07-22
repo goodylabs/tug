@@ -2,4 +2,4 @@
 
 source ./build.sh
 
-mv bin/dscli /usr/loca/bin/dscli
+mv bin/dscli /usr/local/bin/dscli
