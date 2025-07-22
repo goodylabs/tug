@@ -1,5 +1,7 @@
 # docker-swarm-cli
 
+![tug](https://raw.githubusercontent.com/goodylabs/docker-swarm-cli/refs/heads/main/assets/images/tug-cli-logo-256x256.png)
+
 CLI tools for Docker Swarm
 
 ```bash
