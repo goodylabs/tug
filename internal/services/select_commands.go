@@ -44,7 +44,7 @@ func SelectCommandsService(prompter ports.PromptPort, container dto.ContainerDTO
 }
 
 func runCommand(fullCmd string) {
-	fmt.Println(fullCmd)
+	// fmt.Println(fullCmd)
 
 	cmd := exec.Command("bash", "-c", fullCmd)
 
