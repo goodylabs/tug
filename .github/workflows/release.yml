@@ -23,14 +23,14 @@ jobs:
 
       - name: Build binary
         run: |
-          GOOS=linux GOARCH=amd64 go build -o bin/linux-amd64
-          GOOS=darwin GOARCH=amd64 go build -o bin/darwin-amd64
+          GOOS=linux GOARCH=amd64 go build -o bin/dscli-linux-amd64
+          GOOS=darwin GOARCH=amd64 go build -o bin/dscli-darwin-amd64
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            bin/linux-amd64
-            bin/darwin-amd64
+            bin/dscli-linux-amd64
+            bin/dscli-darwin-amd64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
