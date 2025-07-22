@@ -1,14 +1,12 @@
 package adapters
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/goodylabs/docker-swarm-cli/internal/config"
 
-	"bufio"
-	"errors"
-	"regexp"
 	"strings"
 )
 
@@ -28,27 +26,20 @@ func ListDirectories(path string) ([]string, error) {
 	return dirs, nil
 }
 
-func GetValueFromShFile(shFilePath string) (string, error) {
-	file, err := os.Open(shFilePath)
+func GetValueFromShFile(shFilePath string, key string) (string, error) {
+	content, err := os.ReadFile(shFilePath)
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
 
-	re := regexp.MustCompile(`^TARGET_IP\s*=\s*["']?([^"']+)["']?$`)
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		matches := re.FindStringSubmatch(line)
-		if len(matches) == 2 {
-			return matches[1], nil
+	for line := range strings.SplitSeq(string(content), "\n") {
+		line = strings.TrimSpace(line)
+		if after, ok := strings.CutPrefix(line, key+"="); ok {
+			value := after
+			value = strings.Trim(value, `"'`)
+			return value, nil
 		}
 	}
 
-	if err := scanner.Err(); err != nil {
-		return "", err
-	}
-	errorText := "TARGET_IP not found in file:" + shFilePath
-	return "", errors.New(errorText)
+	return "", fmt.Errorf("%s not found in file: %s", key, shFilePath)
 }

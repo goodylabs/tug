@@ -3,9 +3,11 @@ package application
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/goodylabs/docker-swarm-cli/internal/adapters"
 	"github.com/goodylabs/docker-swarm-cli/internal/config"
+	"github.com/goodylabs/docker-swarm-cli/internal/constants"
 	"github.com/goodylabs/docker-swarm-cli/internal/dto"
 	"github.com/goodylabs/docker-swarm-cli/internal/ports"
 )
@@ -20,18 +22,30 @@ type DeveloperOptions struct {
 }
 
 func (d *DeveloperUseCase) Execute(developerOptions *DeveloperOptions) {
+	envDir := developerOptions.EnvDir
 
-	if developerOptions.EnvDir == "" {
-		developerOptions.EnvDir = d.getEnvDir()
-	}
-
-	targetIp := d.getTargetIp(developerOptions.EnvDir)
+	targetIp := d.getTargetIp(envDir)
+	stackName := d.getStackName(envDir)
 
 	d.dockerAdapter.ConfigureDocker(targetIp)
-	containers := d.dockerAdapter.ListContainers()
 
-	chosenContainer := d.choseContainer(containers)
-	fmt.Println(chosenContainer)
+	services := d.getServices(stackName)
+	fmt.Println(services)
+	// containers := d.dockerAdapter.ListServices()
+
+	// chosenContainer := d.choseContainer(containers)
+	// fmt.Println(chosenContainer)
+}
+
+func (d *DeveloperUseCase) getServices(stackName string) []dto.ServiceDTO {
+	services := d.dockerAdapter.ListServices()
+	var filtered []dto.ServiceDTO
+	for _, service := range services {
+		if strings.HasPrefix(service.Name, stackName) {
+			filtered = append(filtered, service)
+		}
+	}
+	return filtered
 }
 
 func (d *DeveloperUseCase) getEnvDir() string {
@@ -42,11 +56,17 @@ func (d *DeveloperUseCase) getEnvDir() string {
 
 func (d *DeveloperUseCase) getTargetIp(envDir string) string {
 	scriptPath := filepath.Join(config.DEVOPS_DIR, envDir, "deploy.sh")
-	targetIp, _ := adapters.GetValueFromShFile(scriptPath)
+	targetIp, _ := adapters.GetValueFromShFile(scriptPath, constants.TARGET_IP)
 	return targetIp
 }
 
-func (d *DeveloperUseCase) choseContainer(containers []dto.ContainerDTO) dto.ContainerDTO {
+func (d *DeveloperUseCase) getStackName(envDir string) string {
+	scriptPath := filepath.Join(config.DEVOPS_DIR, envDir, "deploy.sh")
+	targetIp, _ := adapters.GetValueFromShFile(scriptPath, constants.STACK_NAME)
+	return targetIp
+}
+
+func (d *DeveloperUseCase) choseContainer(containers []dto.ServiceDTO) dto.ServiceDTO {
 	containerNames := []string{}
 	for _, container := range containers {
 		containerNames = append(containerNames, container.Name)

@@ -4,9 +4,8 @@ import (
 	"testing"
 
 	"github.com/goodylabs/docker-swarm-cli/internal/adapters"
-	"github.com/goodylabs/docker-swarm-cli/internal/config"
+	"github.com/goodylabs/docker-swarm-cli/internal/constants"
 	testutils "github.com/goodylabs/docker-swarm-cli/tests/utils"
-
 	"github.com/testcontainers/testcontainers-go"
 )
 
@@ -16,7 +15,7 @@ func TestWithRedis(t *testing.T) {
 	})
 
 	dockerAdapter := adapters.NewDockerAdapter()
-	dockerAdapter.ConfigureDocker(config.LOCAL_DOCKER_HOST)
+	dockerAdapter.ConfigureDocker(constants.LOCAL_DOCKER_HOST)
 
 	dockerAdapter.ListContainers()
 }

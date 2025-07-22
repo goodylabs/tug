@@ -7,6 +7,7 @@ type PromptPort interface {
 }
 
 type DockerPort interface {
-	ListContainers() []dto.ContainerDTO
 	ConfigureDocker(string)
+	ListServices() []dto.ServiceDTO
+	ListContainers() []dto.ContainerDTO
 }

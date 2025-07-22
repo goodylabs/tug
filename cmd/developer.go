@@ -4,8 +4,6 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/goodylabs/docker-swarm-cli/internal/application"
 	"github.com/spf13/cobra"
 )
@@ -20,8 +18,6 @@ var developerCmd = &cobra.Command{
 			envDir = args[0]
 		}
 
-		fmt.Println("developer called with envDir =", envDir)
-
 		application.NewDeveloperUseCase().Execute(&application.DeveloperOptions{
 			EnvDir: envDir,
 		})
@@ -32,5 +28,5 @@ func init() {
 	rootCmd.AddCommand(developerCmd)
 
 	// flaga nadal działa
-	developerCmd.Flags().StringVar(&envDir, "envDir", "", "Path to config file")
+	// developerCmd.Flags().StringVar(&envDir, "envDir", "", "Path to config file")
 }

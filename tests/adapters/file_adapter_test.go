@@ -7,6 +7,7 @@ import (
 
 	"github.com/goodylabs/docker-swarm-cli/internal/adapters"
 	"github.com/goodylabs/docker-swarm-cli/internal/config"
+	"github.com/goodylabs/docker-swarm-cli/internal/constants"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -31,7 +32,7 @@ func TestGetValueFromShFile(t *testing.T) {
 
 	for _, tt := range tests {
 		shFile := filepath.Join(config.BASE_DIR, config.DEVOPS_DIR, tt.envDir, "deploy.sh")
-		ipValue, err := adapters.GetValueFromShFile(shFile)
+		ipValue, err := adapters.GetValueFromShFile(shFile, constants.TARGET_IP)
 		assert.NoError(t, err)
 		assert.Equal(t, tt.resultValue, ipValue)
 	}
