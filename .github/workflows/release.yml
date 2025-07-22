@@ -3,6 +3,11 @@ name: Build and Release
 on:
   release:
     types: [created]
+  push:
+    branches:
+      - main
+      - 'v*'
+
 
 jobs:
   build:
@@ -25,7 +30,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            linux-amd64
-            darwin-amd64
+            bin/linux-amd64
+            bin/darwin-amd64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
