@@ -4,18 +4,21 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/goodylabs/tug/internal/adapters"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "docker-swarm-cli",
+	Use:   "tug",
 	Short: "CLI tool to manage Docker Swarm",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Witaj w docker-swarm-cli! Użyj --help, aby zobaczyć dostępne komendy.")
+		fmt.Println("Witaj w tug! Użyj --help, aby zobaczyć dostępne komendy.")
 	},
 }
 
 func Execute() {
+	adapters.InitializeDependencies()
+
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)

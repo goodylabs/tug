@@ -1,11 +1,9 @@
 package main
 
 import (
-	"github.com/goodylabs/docker-swarm-cli/cmd"
-	"github.com/joho/godotenv"
+	"github.com/goodylabs/tug/cmd"
 )
 
 func main() {
-	godotenv.Load(".env")
 	cmd.Execute()
 }

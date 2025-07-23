@@ -1,4 +1,4 @@
-module github.com/goodylabs/docker-swarm-cli
+module github.com/goodylabs/tug
 
 go 1.24.5
 

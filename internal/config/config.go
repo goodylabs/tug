@@ -4,19 +4,18 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/joho/godotenv"
 )
 
 var (
 	BASE_DIR   string
-	USE_MOCKS  bool
 	DEVOPS_DIR string
 )
 
-var DOCKER_HOST_ENV string
-
 func init() {
+	godotenv.Load(".env")
 	BASE_DIR = findProjectRoot()
-	USE_MOCKS = bool(getEnvOrDefault("USE_MOCKS", "") == "true")
 	DEVOPS_DIR = getEnvOrDefault("DEVOPS_DIR", "devops")
 }
 

@@ -1,7 +1,7 @@
 mkdir -p ~/.tug/bin
 
 TUG_BIN_PATH="$HOME/.tug/bin"
-TUG_BIN_URL="https://raw.githubusercontent.com/tug/tug/master/bin/tug"
+TUG_BIN_URL="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/example?token=GHSAT0AAAAAADHX3RHSUGAQT3V2PRY65T7C2EAZXEA"
 
 if [[ ":$PATH:" != *":$TUG_BIN_PATH:"* ]]; then
 
@@ -21,4 +21,12 @@ if [[ ":$PATH:" != *":$TUG_BIN_PATH:"* ]]; then
 
     echo "export PATH=\"\$PATH:\$TUG_BIN_PATH\"" >> "$shel_rc_file"
     echo "Added to $shel_rc_file"
+fi
+
+curl $TUG_BIN_URL > /usr/local/bin/tug
+
+chmod +x /usr/local/bin/tug
+
+if [[ "$(uname)" == "Darwin" ]]; then
+    xattr -d com.apple.quarantine /usr/local/bin/tug || echo "No need to remove quarantine attribute"
 fi

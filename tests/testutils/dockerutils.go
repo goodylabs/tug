@@ -9,19 +9,21 @@ import (
 )
 
 func StartContainer(t *testing.T, req testcontainers.ContainerRequest) testcontainers.Container {
-	t.Helper()
-
 	ctx := context.Background()
 
 	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
 		Started:          true,
 	})
-	require.NoError(t, err)
 
-	t.Cleanup(func() {
-		_ = container.Terminate(ctx)
-	})
+	if t != nil {
+		require.NoError(t, err)
+		t.Cleanup(func() {
+			_ = container.Terminate(ctx)
+		})
+	} else if err != nil {
+		panic(err)
+	}
 
 	return container
 }

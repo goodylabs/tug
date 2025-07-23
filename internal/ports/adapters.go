@@ -1,13 +1,17 @@
 package ports
 
-import "github.com/goodylabs/docker-swarm-cli/internal/dto"
+import "github.com/goodylabs/tug/internal/dto"
 
-type PromptPort interface {
-	ChooseFromList(options []string, label string) string
+type Prompter interface {
+	ChooseFromList([]string, string) string
 }
 
-type DockerPort interface {
-	ConfigureDocker(string)
+type DockerApi interface {
+	ConfigureDocker(targetIP string)
 	ListServices() []dto.ServiceDTO
 	ListContainers() []dto.ContainerDTO
+	ExecLogsLive(containerId string)
+	ExecShell(containerId string)
+	ExecDjangoShell(containerId string)
+	ExecLogs(containerId string)
 }

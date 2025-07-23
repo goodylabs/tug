@@ -1,4 +1,6 @@
-# tug aka docker-swarm-cli <img align="right" width="150" src="https://raw.githubusercontent.com/goodylabs/docker-swarm-cli/main/assets/images/tug-cli-logo-256x256.png">
+# tug
+
+![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/assets/images/tug-cli-logo-256x256.png)
 
 CLI tools for Docker Swarm
 
