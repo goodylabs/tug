@@ -1,4 +1,4 @@
-package unittests
+package dockercli_test
 
 import (
 	"testing"

@@ -15,3 +15,7 @@ type DockerApi interface {
 	ExecDjangoShell(containerId string)
 	ExecLogs(containerId string)
 }
+
+type ShellExecutor interface {
+	Exec(command string) error
+}
