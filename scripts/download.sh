@@ -1,7 +1,7 @@
 mkdir -p ~/.tug/bin
 
 TUG_BIN_PATH="$HOME/.tug/bin"
-TUG_BIN_URL="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/example?token=GHSAT0AAAAAADHX3RHSUGAQT3V2PRY65T7C2EAZXEA"
+TUG_BIN_URL="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/example?token=GHSAT0AAAAAADHX3RHTIOX72H5Z2424ULSQ2ECC73A"
 
 if [[ ":$PATH:" != *":$TUG_BIN_PATH:"* ]]; then
 
