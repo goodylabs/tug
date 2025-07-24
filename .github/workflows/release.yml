@@ -2,6 +2,7 @@ name: Build and Release
 
 on:
   release:
+    types: [created]
 
 jobs:
   build:
@@ -15,19 +16,16 @@ jobs:
         with:
           go-version: '1.24'
 
-      - name: Print release tag
-        run: echo "Release tag is ${{ github.event.release.tag_name }}"
-
       - name: Build binary
         run: |
-          GOOS=linux GOARCH=amd64 go build -o "bin/dscli-linux-amd64-${{ github.event.release.tag_name }}"
-          GOOS=darwin GOARCH=amd64 go build -o "bin/dscli-darwin-amd64-${{ github.event.release.tag_name }}"
+          GOOS=linux GOARCH=amd64 go build -o bin/tug-linux-amd64
+          GOOS=darwin GOARCH=amd64 go build -o bin/tug-darwin-amd64
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            bin/dscli-linux-amd64
-            bin/dscli-darwin-amd64
+            bin/tug-linux-amd64
+            bin/tug-darwin-amd64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

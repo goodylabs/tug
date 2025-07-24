@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/goodylabs/tug/internal/adapters/dockercli"
+	"github.com/goodylabs/tug/internal/adapters/httpconnector"
 	"github.com/goodylabs/tug/internal/adapters/prompter"
 	"github.com/goodylabs/tug/internal/adapters/shellexecutor"
 	"github.com/goodylabs/tug/internal/ports"
@@ -12,6 +13,7 @@ import (
 var DockerApi ports.DockerApi
 var Prompter ports.Prompter
 var ShellExecutor ports.ShellExecutor
+var HttpConnector ports.HttpConnector
 
 func InitializeDependencies(options ...func()) {
 	fmt.Println("Initializing dependencies")
@@ -27,6 +29,10 @@ func InitializeDependencies(options ...func()) {
 	if ShellExecutor == nil {
 		ShellExecutor = shellexecutor.NewShellExecutor()
 		fmt.Println("Initialized prod:ShellExecutor")
+	}
+
+	if HttpConnector == nil {
+		HttpConnector = httpconnector.NewHttpConnector()
 	}
 
 	for _, opt := range options {

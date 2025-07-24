@@ -5,10 +5,10 @@
 CLI tools for Docker Swarm
 
 ```bash
-dscli dev <env> <cmd>
-dscli dev staging logs
-dscli dev staging shell
-dscli dev production django shell
+tug dev <env> <cmd>
+tug dev staging logs
+tug dev staging shell
+tug dev production django shell
 ```
 
 1. wybiera enva - arg

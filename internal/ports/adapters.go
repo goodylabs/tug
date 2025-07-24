@@ -19,3 +19,7 @@ type DockerApi interface {
 type ShellExecutor interface {
 	Exec(command string) error
 }
+
+type HttpConnector interface {
+	HttpGetReq(url string, target any) error
+}

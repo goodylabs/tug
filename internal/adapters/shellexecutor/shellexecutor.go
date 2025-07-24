@@ -14,7 +14,7 @@ func NewShellExecutor() ports.ShellExecutor {
 	return &shellExecutor{}
 }
 
-func (p *shellExecutor) Exec(command string) error {
+func (s *shellExecutor) Exec(command string) error {
 	shell := os.Getenv("SHELL")
 	if shell == "" {
 		log.Fatal("placeholder")
