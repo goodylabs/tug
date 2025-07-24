@@ -6,7 +6,6 @@ import (
 )
 
 // func ListDirectories(absPath string) ([]string, error) {
-// 	// absPath := filepath.Join(config.BASE_DIR, path)
 // 	entries, err := os.ReadDir(absPath)
 // 	if err != nil {
 // 		return nil, err

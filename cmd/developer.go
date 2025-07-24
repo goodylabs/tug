@@ -27,5 +27,5 @@ var developerCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(developerCmd)
 
-	developerCmd.Flags().StringVar(&envDir, "envDir", "", "Path to config file")
+	developerCmd.Flags().StringVar(&envDir, "envDir", "", "Environment directory name (alternative to positional argument)")
 }

@@ -1,32 +1,21 @@
-mkdir -p ~/.tug/bin
+#!/bin/bash
+
+set -euo pipefail
+
+mkdir -p "$HOME/.tug/bin"
 
 TUG_BIN_PATH="$HOME/.tug/bin"
-TUG_BIN_URL="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/example?token=GHSAT0AAAAAADHX3RHTIOX72H5Z2424ULSQ2ECC73A"
 
-if [[ ":$PATH:" != *":$TUG_BIN_PATH:"* ]]; then
-
-    echo "Adding $TUG_BIN_PATH to PATH"
-
-    if [ "$SHELL" == "/bin/bash" ]; then
-        shel_rc_file="$HOME/.bashrc"
-
-    elif [ "$SHELL" == "/bin/zsh" ]; then
-        shel_rc_file="$HOME/.zshrc"
-
-    else
-        echo "Unsupported shell. Please add the following line to your shell configuration file manually:"
-        echo "export PATH=\"\$PATH:\$TUG_BIN_PATH\""
-        exit 1
-    fi
-
-    echo "export PATH=\"\$PATH:\$TUG_BIN_PATH\"" >> "$shel_rc_file"
-    echo "Added to $shel_rc_file"
+if ! echo "$PATH" | grep -q "$TUG_BIN_PATH"; then
+    echo "Please add the following line to your shell configuration file:"
+    echo "export PATH=\"\$PATH:$TUG_BIN_PATH\""
 fi
 
-curl $TUG_BIN_URL > /usr/local/bin/tug
+releaseUrl="https://api.github.com/repos/goodylabs/tug/releases/latest"
 
-chmod +x /usr/local/bin/tug
+os_type=$(uname -s | tr '[:upper:]' '[:lower:]')
+artifact_url=$(curl -s $releaseUrl | jq -r ".assets[] | select(.name | test(\"tug-${os_type}-amd64\"))" | jq ".browser_download_url" -r)
 
-if [[ "$(uname)" == "Darwin" ]]; then
-    xattr -d com.apple.quarantine /usr/local/bin/tug || echo "No need to remove quarantine attribute"
-fi
+curl -Ls "$artifact_url" -o "$TUG_BIN_PATH/tug"
+
+chmod +x "$TUG_BIN_PATH/tug"

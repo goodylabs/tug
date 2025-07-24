@@ -1,14 +1,34 @@
-# tug
+# TUG
 
 ![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/assets/images/tug-cli-logo-256x256.png)
 
-CLI tools for Docker Swarm
+CLI tool for reducing developers' life pain when they need to work with Docker.
+
+## Installation
 
 ```bash
-tug dev <env> <cmd>
-tug dev staging logs
-tug dev staging shell
-tug dev production django shell
+curl https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download.sh | bash -c
 ```
 
-1. wybiera enva - arg
+## Main features
+
+- Interactive container selection and command execution for remote environments
+
+## Commands
+
+### `developer`
+
+```bash
+# Connect to a specific environment
+tug developer <environment>
+# example:
+tug developer staging
+tug developer production
+
+# Using flag syntax
+tug developer --envDir=staging
+
+# Get help
+tug --help
+tug developer --help
+```

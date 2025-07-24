@@ -1,5 +1,7 @@
 #!/bin/bash
 
-source ./scripts/build.sh
+mkdir -p bin
 
-mv bin/tug /usr/local/bin/tug
+go build -o bin/tug main.go
+
+mv bin/tug "$HOME/.tug/bin/tug"
