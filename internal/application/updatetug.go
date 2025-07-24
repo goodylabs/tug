@@ -1,11 +1,8 @@
 package application
 
 import (
-	"fmt"
 	"log"
-	"os"
 
-	"github.com/goodylabs/tug/internal/adapters"
 	"github.com/goodylabs/tug/internal/tughelper"
 )
 
@@ -30,15 +27,6 @@ func UpdateTugUseCase(tugReleasePath string) {
 
 	if tugRelease.LastVersionCheckDate == tughelper.GetToday() {
 		return
-	}
-
-	rawFileUrl := `https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/example?token=GHSAT0AAAAAADHX3RHSOY3O4SHQCBRIMSGO2ECDD3A`
-	downloadCmd := "curl '" + rawFileUrl + "' | " + os.Getenv("SHELL") + " -s"
-
-	fmt.Println(downloadCmd)
-	err = adapters.ShellExecutor.Exec(downloadCmd)
-	if err != nil {
-		log.Fatal("placeholder 2")
 	}
 
 }

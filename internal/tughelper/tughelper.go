@@ -1,11 +1,13 @@
 package tughelper
 
 import (
+	"os"
 	"runtime"
 	"time"
 
 	"log"
 
+	"github.com/goodylabs/tug/internal/adapters"
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/utils"
 )
@@ -60,3 +62,13 @@ func CreateDefaultTugRelease(tugReleaseFilePath string) error {
 // 	utils.WriteJSON(tugReleaseFilePath, &tugRelease)
 // 	return nil
 // }
+
+func DownloadNewVersion() {
+	rawFileUrl := `https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/example?token=GHSAT0AAAAAADHX3RHSOY3O4SHQCBRIMSGO2ECDD3A`
+	downloadCmd := "curl '" + rawFileUrl + "' | " + os.Getenv("SHELL") + " -s"
+
+	err := adapters.ShellExecutor.Exec(downloadCmd)
+	if err != nil {
+		log.Fatal("placeholder 2")
+	}
+}
