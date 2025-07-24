@@ -1,4 +1,4 @@
 devops
 bin/
 .env
-.tmp
+.tmp/
