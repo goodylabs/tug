@@ -1,8 +1,10 @@
 package application
 
 import (
+	"fmt"
 	"log"
 
+	"github.com/goodylabs/tug/internal/adapters"
 	"github.com/goodylabs/tug/internal/tughelper"
 )
 
@@ -29,11 +31,11 @@ func UpdateTugUseCase(tugReleasePath string) {
 		return
 	}
 
-	// rawFileUrl := `https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/other/setup_scripts.sh\?token\=GHSAT0AAAAAADHX3RHTLX4KGR2ZRMBR7SPQ2EA7KRA`
-	// downloadCmd := fmt.Sprintf("curl %s | $ -s", rawFileUrl)
-	// err = adapters.ShellExecutor.Exec(downloadCmd)
-	// if err != nil {
-	// 	log.Fatal("placeholder")
-	// }
+	rawFileUrl := `https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download.sh?token=GHSAT0AAAAAADHX3RHT3VVLZGAJPGUZT4L22ECC64Q`
+	downloadCmd := fmt.Sprintf("curl %s | `which $(echo $SHELL)` -s ", rawFileUrl)
+	err = adapters.ShellExecutor.Exec(downloadCmd)
+	if err != nil {
+		log.Fatal("placeholder")
+	}
 
 }
