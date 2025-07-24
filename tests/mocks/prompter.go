@@ -17,7 +17,7 @@ func NewPrompterMock(choicesInOrder []int) ports.Prompter {
 
 func (p *prompterMock) ChooseFromList(options []string, label string) string {
 	index := p.choicesInOrder[p.currentIndex]
-	p.currentIndex += 1
+	p.currentIndex++
 	return options[index]
 }
 

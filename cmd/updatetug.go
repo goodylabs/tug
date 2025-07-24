@@ -1,12 +1,13 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"path/filepath"
 
+	"github.com/goodylabs/tug/internal/application"
 	"github.com/spf13/cobra"
 )
 
@@ -22,6 +23,9 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("updatetug called")
+
+		releasePath := filepath.Join(".example-dir", "release.json")
+		application.UpdateTugUseCase(releasePath)
 	},
 }
 

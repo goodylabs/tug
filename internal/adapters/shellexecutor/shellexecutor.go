@@ -24,5 +24,4 @@ func (p *shellExecutor) Exec(command string) error {
 	cmd.Stderr = os.Stderr
 
 	return cmd.Run()
-
 }

@@ -11,11 +11,11 @@ import (
 
 func init() {
 	adapters.InitializeDependencies(
-		adapters.WithShellExecutor(mocks.NewShellExecutor()),
+		adapters.WithShellExecutor(mocks.NewShellExecutorMock([]string{"false"})),
 	)
 }
 
-func TestUpdateTugUseCase(t *testing.T) {
+func TestUpdateTugWhen(t *testing.T) {
 
 	path, cleanup := testutils.CreateTestTugReleaseFile()
 	defer cleanup()

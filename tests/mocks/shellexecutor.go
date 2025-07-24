@@ -6,13 +6,14 @@ import (
 	"github.com/goodylabs/tug/internal/ports"
 )
 
-type shellExecutor struct{}
-
-func NewShellExecutor() ports.ShellExecutor {
-	return &shellExecutor{}
+type shellExecutorMock struct {
 }
 
-func (p *shellExecutor) Exec(command string) error {
-	fmt.Println("Runnig command:", command)
+func NewShellExecutorMock(commandsToRun []string) ports.ShellExecutor {
+	return &shellExecutorMock{}
+}
+
+func (p *shellExecutorMock) Exec(command string) error {
+	fmt.Println("Running: ", command)
 	return nil
 }
