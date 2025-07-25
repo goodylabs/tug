@@ -92,6 +92,7 @@ func (d *DockerManager) ChoseContainer(containers []dto.ContainerDTO) dto.Contai
 
 func (d *DockerManager) SelectAndExecuteCommand(container dto.ContainerDTO) {
 	commands := []string{
+		"docker logs -f " + container.Name,
 		"docker exec -it " + container.Name + " bash",
 		"docker logs " + container.Name,
 		"docker stop " + container.Name,
