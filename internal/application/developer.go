@@ -6,6 +6,7 @@ import (
 
 	"github.com/goodylabs/tug/internal/adapters"
 	"github.com/goodylabs/tug/internal/config"
+	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/internal/services"
 )
 
@@ -14,7 +15,7 @@ type DeveloperOptions struct {
 }
 
 func DeveloperUseCase(devOptions *DeveloperOptions) {
-	scriptAbsPath := filepath.Join(config.BASE_DIR, config.DEVOPS_DIR, devOptions.EnvDir, "deploy.sh")
+	scriptAbsPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR, devOptions.EnvDir, "deploy.sh")
 	targetIp, err := services.GetTargetIp(scriptAbsPath)
 
 	log.Printf("Connecting to %s...", targetIp)

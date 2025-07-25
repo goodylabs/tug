@@ -11,7 +11,7 @@ import (
 )
 
 func TestGetEcosystemConfig(t *testing.T) {
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.TESTING_DIR, constants.ECOSYSTEM_CONFIG_FILE)
+	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	pm2ConfigDTO, err := services.GetLoadPm2Config(ecosystemConfigPath)
 	assert.NoError(t, err, "Expected no error when loading ecosystem config")
 	assert.NotNil(t, pm2ConfigDTO, "Expected pm2ConfigDTO to be not nil")

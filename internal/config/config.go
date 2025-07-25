@@ -7,24 +7,30 @@ import (
 )
 
 var (
-	BASE_DIR   string
-	DEVOPS_DIR string
-	TUG_ENV    string
+	BASE_DIR string
 )
 
-func LoadProductionConfig() {
+func init() {
+	switch os.Getenv("TUG_ENV") {
+	case "development":
+		loadDevelopmentConfig()
+	case "testing":
+		loadTestingConfig()
+	default:
+		loadProductionConfig()
+	}
+}
+
+func loadProductionConfig() {
 	BASE_DIR = getEnvOrError("PWD")
-	DEVOPS_DIR = "devops"
 }
 
-func LoadDevelopmentConfig() {
+func loadDevelopmentConfig() {
 	BASE_DIR = filepath.Join(findProjectRoot(), ".development")
-	DEVOPS_DIR = "devops"
 }
 
-func LoadTestingConfig() {
+func loadTestingConfig() {
 	BASE_DIR = filepath.Join(findProjectRoot(), ".testing")
-	DEVOPS_DIR = "devops"
 }
 
 func getEnvOrError(envName string) string {
