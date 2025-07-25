@@ -1,4 +1,4 @@
-package services
+package pm2
 
 import (
 	"fmt"
@@ -6,10 +6,18 @@ import (
 	"os/exec"
 
 	"github.com/goodylabs/tug/internal/dto"
+	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/utils"
 )
 
-func GetLoadPm2Config(ecosystemConfigPath string) (*dto.EconsystemConfigDTO, error) {
+type Pm2Manager struct {
+}
+
+func NewPm2Manager() ports.Pm2Manager {
+	return &Pm2Manager{}
+}
+
+func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2ConfigDTO *dto.EconsystemConfigDTO) error {
 	tmpPath := `/tmp/ecosystem.json`
 
 	script := fmt.Sprintf(`
@@ -27,7 +35,7 @@ func GetLoadPm2Config(ecosystemConfigPath string) (*dto.EconsystemConfigDTO, err
 		}
 
 		fs.writeFileSync("%s", JSON.stringify(config, null, 2));
-`, ecosystemConfigPath, tmpPath)
+	`, ecosystemConfigPath, tmpPath)
 
 	cmd := exec.Command("node", "-e", script)
 	err := cmd.Run()
@@ -36,8 +44,6 @@ func GetLoadPm2Config(ecosystemConfigPath string) (*dto.EconsystemConfigDTO, err
 		log.Fatal(err)
 	}
 
-	var pm2ConfigDTO dto.EconsystemConfigDTO
-
 	err = utils.ReadJSON(tmpPath, &pm2ConfigDTO)
-	return &pm2ConfigDTO, err
+	return err
 }

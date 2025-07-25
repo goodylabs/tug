@@ -17,3 +17,7 @@ func (e *EconsystemConfigDTO) ListEnvironments() []string {
 	}
 	return envs
 }
+
+type Pm2ListItemDTO struct {
+	Name string `json:"name"`
+}

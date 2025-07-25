@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -11,7 +13,10 @@ var (
 )
 
 func init() {
-	switch os.Getenv("TUG_ENV") {
+	godotenv.Load(".env")
+	tugEnv := os.Getenv("TUG_ENV")
+
+	switch tugEnv {
 	case "development":
 		loadDevelopmentConfig()
 	case "testing":
