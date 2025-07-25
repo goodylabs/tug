@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/goodylabs/tug/internal/adapters"
+	"github.com/goodylabs/tug/internal"
 	"github.com/spf13/cobra"
+	"go.uber.org/dig"
 )
+
+var container *dig.Container
 
 var rootCmd = &cobra.Command{
 	Use:   "tug",
@@ -22,7 +25,9 @@ Use 'tug --help' to see available commands and options.`,
 }
 
 func Execute() {
-	adapters.InitializeDependencies()
+	if container == nil {
+		container = internal.InitDependencyContainer()
+	}
 
 	err := rootCmd.Execute()
 	if err != nil {

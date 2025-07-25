@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export BASE_DIR=$(pwd)
-export DEVOPS_DIR=".devops-dev"
+export TUG_ENV="testing"
 
 gotestsum $@ ./...
