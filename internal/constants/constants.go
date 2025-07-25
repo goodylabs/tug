@@ -19,3 +19,8 @@ const (
 	GITHUB_LAST_RELEASE = `https://api.github.com/repos/goodylabs/tug/releases/latest`
 	DOWNLOAD_SCRIPT_URL = `https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download.sh`
 )
+
+const (
+	TESTING_DIR           = ".testing"
+	ECOSYSTEM_CONFIG_FILE = "ecosystem.config.js"
+)
