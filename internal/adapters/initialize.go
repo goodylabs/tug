@@ -5,6 +5,7 @@ import (
 	"github.com/goodylabs/tug/internal/adapters/httpconnector"
 	"github.com/goodylabs/tug/internal/adapters/prompter"
 	"github.com/goodylabs/tug/internal/adapters/shellexecutor"
+	"github.com/goodylabs/tug/internal/adapters/sshconnector"
 	"github.com/goodylabs/tug/internal/ports"
 )
 
@@ -12,21 +13,14 @@ var DockerApi ports.DockerApi
 var Prompter ports.Prompter
 var ShellExecutor ports.ShellExecutor
 var HttpConnector ports.HttpConnector
+var SSHConnector ports.SSHConnector
 
 func InitializeDependencies(options ...func()) {
-	if DockerApi == nil {
-		DockerApi = dockercli.NewDockerApi()
-	}
-	if Prompter == nil {
-		Prompter = prompter.NewPrompter()
-	}
-	if ShellExecutor == nil {
-		ShellExecutor = shellexecutor.NewShellExecutor()
-	}
-
-	if HttpConnector == nil {
-		HttpConnector = httpconnector.NewHttpConnector()
-	}
+	DockerApi = dockercli.NewDockerApi()
+	Prompter = prompter.NewPrompter()
+	ShellExecutor = shellexecutor.NewShellExecutor()
+	HttpConnector = httpconnector.NewHttpConnector()
+	SSHConnector = sshconnector.NewSSHConnector()
 
 	for _, opt := range options {
 		opt()
@@ -48,5 +42,11 @@ func WithPrompter(prompter ports.Prompter) func() {
 func WithShellExecutor(shellExecutor ports.ShellExecutor) func() {
 	return func() {
 		ShellExecutor = shellExecutor
+	}
+}
+
+func WithSSHConnector(sshConnector ports.SSHConnector) func() {
+	return func() {
+		SSHConnector = sshConnector
 	}
 }

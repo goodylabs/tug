@@ -23,3 +23,9 @@ type ShellExecutor interface {
 type HttpConnector interface {
 	HttpGetReq(url string, target any) error
 }
+
+type SSHConnector interface {
+	OpenConnection(user, host string, port int) error
+	CloseConnection() error
+	RunCommand(cmd string) (string, error)
+}
