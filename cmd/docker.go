@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -8,32 +5,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var envDir string
+var dockerLongDesc = `Execute Docker-related setup for a given environment.
+
+<envDir> should be the name of an environment directory located under the 'devops/' folder.
+For example, if you have a folder 'devops/staging', you should run:
+
+   tug docker staging
+
+This will trigger execution using the configuration from 'devops/staging'.
+`
 
 var dockerCmd = &cobra.Command{
-	Use:   "docker",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use:   "docker <envDir>",
+	Short: "Run Docker-related commands for a specific environment",
+	Long:  dockerLongDesc,
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		envDir := args[0]
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if envDir == "" && len(args) > 0 {
-			envDir = args[0]
-		}
-
-		err := container.Invoke(func(dockerUseCase *application.DockerUseCase) {
+		return container.Invoke(func(dockerUseCase *application.DockerUseCase) {
 			dockerUseCase.Execute(envDir)
 		})
-		if err != nil {
-			cmd.PrintErrf("Error executing docker command: %v\n", err)
-		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(dockerCmd)
-	dockerCmd.Flags().StringVar(&envDir, "envDir", "", "Environment directory name (alternative to positional argument)")
 }
