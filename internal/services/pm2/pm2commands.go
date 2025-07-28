@@ -19,7 +19,6 @@ type commandOption struct {
 }
 
 const (
-	// jlistCmd = `pm2 jlist | sed -n '/^\[/,$p'`
 	jlistCmd = `source ~/.nvm/nvm.sh; pm2 jlist | sed -n '/^\[/,$p'`
 	logsCmd  = `source ~/.nvm/nvm.sh; pm2 logs <resource>`
 )

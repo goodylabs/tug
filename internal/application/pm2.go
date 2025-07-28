@@ -49,10 +49,3 @@ func (p *Pm2UseCase) Execute() error {
 
 	return nil
 }
-
-// zaczytanie configa
-// ssh connection -> defer close
-//
-// wybranie resource (jest)
-//
-// wybranie komendy (jest)
