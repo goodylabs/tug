@@ -7,6 +7,7 @@ import (
 	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/internal/ports"
+	"github.com/goodylabs/tug/internal/services/docker"
 )
 
 type DeveloperOptions struct {
@@ -15,32 +16,34 @@ type DeveloperOptions struct {
 
 type DockerUseCase struct {
 	sshconnector  ports.SSHConnector
-	dockerManager ports.DockerManager
+	DockerManager docker.DockerManager
 }
 
-func NewDockerUseCase(sshAdadpter ports.SSHConnector, dockerManager ports.DockerManager) *DockerUseCase {
+func NewDockerUseCase(sshAdadpter ports.SSHConnector, DockerManager *docker.DockerManager) *DockerUseCase {
 	return &DockerUseCase{
 		sshconnector:  sshAdadpter,
-		dockerManager: dockerManager,
+		DockerManager: *DockerManager,
 	}
 }
 
 func (d *DockerUseCase) Execute(envDir string) {
+	var targetIp string
+	var err error
+
 	scriptAbsPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR, envDir, "deploy.sh")
-	targetIp, err := d.dockerManager.GetTargetIp(scriptAbsPath)
-	if err != nil {
+
+	if targetIp, err = d.DockerManager.GetTargetIp(scriptAbsPath); err != nil {
 		log.Fatal("Error getting target IP:", err)
 	}
 
-	err = d.sshconnector.OpenConnection("root", targetIp, 22)
-	if err != nil {
+	if err = d.sshconnector.OpenConnection("root", targetIp, 22); err != nil {
 		log.Fatal("Error opening SSH connection:", err)
 	}
 	defer d.sshconnector.CloseConnection()
 
-	containers := d.dockerManager.ListContainers()
+	containers := d.DockerManager.ListContainers()
 
-	chosenContainer := d.dockerManager.ChoseContainer(containers)
+	selectedContainer := d.DockerManager.SelectContainer(containers)
 
-	d.dockerManager.SelectAndExecuteCommand(chosenContainer)
+	d.DockerManager.SelectAndExecuteCommand(selectedContainer)
 }

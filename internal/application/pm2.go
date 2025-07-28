@@ -13,12 +13,12 @@ import (
 )
 
 type Pm2UseCase struct {
-	pm2Manager   ports.Pm2Manager
+	pm2Manager   *pm2.Pm2Manager
 	sshconnector ports.SSHConnector
 	prompter     ports.Prompter
 }
 
-func NewPm2UseCase(pm2Manager ports.Pm2Manager, sshconnector ports.SSHConnector, prompter ports.Prompter) *Pm2UseCase {
+func NewPm2UseCase(pm2Manager *pm2.Pm2Manager, sshconnector ports.SSHConnector, prompter ports.Prompter) *Pm2UseCase {
 	return &Pm2UseCase{
 		pm2Manager:   pm2Manager,
 		sshconnector: sshconnector,

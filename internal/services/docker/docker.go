@@ -17,7 +17,7 @@ type DockerManager struct {
 	prompter     ports.Prompter
 }
 
-func NewDockerManager(prompter ports.Prompter, sshconnector ports.SSHConnector) ports.DockerManager {
+func NewDockerManager(prompter ports.Prompter, sshconnector ports.SSHConnector) *DockerManager {
 	return &DockerManager{
 		prompter:     prompter,
 		sshconnector: sshconnector,
@@ -76,7 +76,7 @@ func (d *DockerManager) ListContainers() []dto.ContainerDTO {
 	return containers
 }
 
-func (d *DockerManager) ChoseContainer(containers []dto.ContainerDTO) dto.ContainerDTO {
+func (d *DockerManager) SelectContainer(containers []dto.ContainerDTO) dto.ContainerDTO {
 	var names []string
 	for _, container := range containers {
 		names = append(names, container.Name)

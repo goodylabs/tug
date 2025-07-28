@@ -6,14 +6,12 @@ import (
 	"os/exec"
 
 	"github.com/goodylabs/tug/internal/dto"
-	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/utils"
 )
 
-type Pm2Manager struct {
-}
+type Pm2Manager struct{}
 
-func NewPm2Manager() ports.Pm2Manager {
+func NewPm2Manager() *Pm2Manager {
 	return &Pm2Manager{}
 }
 

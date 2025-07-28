@@ -6,16 +6,15 @@ import (
 
 	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/constants"
-	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/services/docker"
 	"github.com/goodylabs/tug/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
-var dockerManager ports.DockerManager
+var DockerManager docker.DockerManager
 
 func init() {
-	dockerManager = docker.NewDockerManager(
+	DockerManager = *docker.NewDockerManager(
 		mocks.NewPrompterMock([]int{}),
 		mocks.NewSSHConnectorMock(),
 	)
@@ -34,7 +33,7 @@ func TestGetTargetIpHappyOk(t *testing.T) {
 
 	for _, tt := range tests {
 		scriptAbsPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR, tt.envDir, "deploy.sh")
-		targetIp, err := dockerManager.GetTargetIp(scriptAbsPath)
+		targetIp, err := DockerManager.GetTargetIp(scriptAbsPath)
 		assert.Equal(t, tt.resultValue, targetIp)
 		assert.NoError(t, err)
 	}
@@ -42,7 +41,7 @@ func TestGetTargetIpHappyOk(t *testing.T) {
 
 func TestGetTargetIpNonExistingPath(t *testing.T) {
 	scriptAbsPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR, "non-existing-path", "deploy.sh")
-	targetIp, err := dockerManager.GetTargetIp(scriptAbsPath)
+	targetIp, err := DockerManager.GetTargetIp(scriptAbsPath)
 	assert.Equal(t, "", targetIp)
 	assert.Error(t, err)
 }
