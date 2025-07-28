@@ -31,7 +31,7 @@ func (p *Pm2UseCase) Execute() error {
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	if err := p.pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2ConfigDTO); err != nil {
-		return fmt.Errorf("Error loading PM2 config:", err)
+		return fmt.Errorf("Error loading PM2 config: %v", err)
 	}
 
 	fmt.Println(pm2ConfigDTO.Deploy["staging"].Host)
