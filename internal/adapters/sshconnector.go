@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/goodylabs/tug/internal/dto"
@@ -101,10 +102,8 @@ func loadSSHKeysFromDir() ([]ssh.AuthMethod, error) {
 	}
 
 	possibleKeys := []string{
-		"id_rsa",
 		"id_ed25519",
-		"id_ecdsa",
-		"id_dsa",
+		"id_rsa",
 	}
 
 	for _, keyFile := range possibleKeys {
@@ -120,5 +119,5 @@ func loadSSHKeysFromDir() ([]ssh.AuthMethod, error) {
 		return []ssh.AuthMethod{ssh.PublicKeys(signer)}, nil
 	}
 
-	return nil, fmt.Errorf("no valid default SSH private key found in ~/.ssh/")
+	return nil, fmt.Errorf("no valid SSH keys found in ~/.ssh directory (trying %s)", strings.Join(possibleKeys, ", "))
 }
