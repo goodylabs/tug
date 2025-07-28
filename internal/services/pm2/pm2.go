@@ -58,6 +58,41 @@ func (p *Pm2Manager) SelectEnvironment(pm2Config *dto.EconsystemConfigDTO) strin
 		log.Fatal("No environments found in PM2 config")
 	}
 
-	// p.prompter.Print("Available environments:")
-	return "staging"
+	var options []string
+	for env := range pm2Config.Deploy {
+		options = append(options, env)
+	}
+
+	return p.prompter.ChooseFromList(options, "Select pm2 environment")
+}
+
+func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfigDTO, selectedEnv string) string {
+	if len(pm2Config.Deploy[selectedEnv].Host) == 0 {
+		log.Fatal("No hosts found for the selected environment in PM2 config")
+	}
+
+	var options []string
+	for _, host := range pm2Config.Deploy[selectedEnv].Host {
+		options = append(options, host)
+	}
+
+	if len(options) == 1 {
+		return options[0]
+	}
+
+	return p.prompter.ChooseFromList(options, "Select host for environment "+selectedEnv)
+}
+
+func (p *Pm2Manager) GetSSHConfig(pm2Config *dto.EconsystemConfigDTO, selectedEnv string) *dto.SSHConfigDTO {
+	if _, exists := pm2Config.Deploy[selectedEnv]; !exists {
+		log.Fatalf("Environment %s not found in PM2 config", selectedEnv)
+	}
+
+	sshConfig := dto.SSHConfigDTO{
+		User: pm2Config.Deploy[selectedEnv].User,
+		Host: p.selectHost(pm2Config, selectedEnv),
+		Port: 22,
+	}
+
+	return &sshConfig
 }

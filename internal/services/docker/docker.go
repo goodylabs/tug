@@ -107,3 +107,11 @@ func (d *DockerManager) SelectAndExecuteCommand(container dto.ContainerDTO) {
 
 	d.sshconnector.RunInteractiveCommand(selectedCommand)
 }
+
+func (d *DockerManager) GetSSHConfig(targetIp string) *dto.SSHConfigDTO {
+	return &dto.SSHConfigDTO{
+		User: "root",
+		Host: targetIp,
+		Port: 22,
+	}
+}

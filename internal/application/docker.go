@@ -35,8 +35,8 @@ func (d *DockerUseCase) Execute(envDir string) error {
 	if targetIp, err = d.DockerManager.GetTargetIp(scriptAbsPath); err != nil {
 		return err
 	}
-
-	if err = d.sshconnector.OpenConnection("root", targetIp, 22); err != nil {
+	sshConfig := d.DockerManager.GetSSHConfig(targetIp)
+	if err = d.sshconnector.OpenConnection(sshConfig); err != nil {
 		log.Fatal("Error opening SSH connection:", err)
 	}
 	defer d.sshconnector.CloseConnection()

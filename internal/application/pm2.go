@@ -34,16 +34,11 @@ func (p *Pm2UseCase) Execute() error {
 		return fmt.Errorf("Error loading PM2 config: %v", err)
 	}
 
-	fmt.Println(pm2Config.Deploy["staging"].Host)
-
-	// TODO wybór enva
 	selectedEnv := p.pm2Manager.SelectEnvironment(&pm2Config)
-	// TODO wybór hosta
-	hostIndex := 0
-	sshUser := pm2Config.Deploy[selectedEnv].User
-	sshHost := pm2Config.Deploy[selectedEnv].Host[hostIndex]
 
-	if err := p.sshconnector.OpenConnection(sshUser, sshHost, 22); err != nil {
+	sshConfig := p.pm2Manager.GetSSHConfig(&pm2Config, selectedEnv)
+
+	if err := p.sshconnector.OpenConnection(sshConfig); err != nil {
 		log.Fatal("Error opening SSH connection:", err)
 	}
 	defer p.sshconnector.CloseConnection()

@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 )
 
@@ -14,7 +15,7 @@ func NewSSHConnectorMock() ports.SSHConnector {
 	return &sshconnectorMock{}
 }
 
-func (m *sshconnectorMock) OpenConnection(user, host string, port int) error {
+func (m *sshconnectorMock) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
 	return nil
 }
 

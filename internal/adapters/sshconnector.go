@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 	"golang.org/x/crypto/ssh"
 )
@@ -19,20 +20,20 @@ func NewSSHConnector() ports.SSHConnector {
 	return &sshconnector{}
 }
 
-func (a *sshconnector) OpenConnection(user, host string, port int) error {
+func (a *sshconnector) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
 	authMethods, err := loadSSHKeysFromDir()
 	if err != nil {
 		return err
 	}
 
 	config := &ssh.ClientConfig{
-		User:            user,
+		User:            sshConfig.User,
 		Auth:            authMethods,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		Timeout:         10 * time.Second,
 	}
 
-	address := net.JoinHostPort(host, fmt.Sprintf("%d", port))
+	address := net.JoinHostPort(sshConfig.Host, fmt.Sprintf("%d", sshConfig.Port))
 	client, err := ssh.Dial("tcp", address, config)
 	if err != nil {
 		return fmt.Errorf("failed to dial SSH: %w", err)
