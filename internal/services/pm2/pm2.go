@@ -6,16 +6,23 @@ import (
 	"os/exec"
 
 	"github.com/goodylabs/tug/internal/dto"
+	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/utils"
 )
 
-type Pm2Manager struct{}
-
-func NewPm2Manager() *Pm2Manager {
-	return &Pm2Manager{}
+type Pm2Manager struct {
+	prompter     ports.Prompter
+	sshConnector ports.SSHConnector
 }
 
-func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2ConfigDTO *dto.EconsystemConfigDTO) error {
+func NewPm2Manager(prompter ports.Prompter, sshconnector ports.SSHConnector) *Pm2Manager {
+	return &Pm2Manager{
+		prompter:     prompter,
+		sshConnector: sshconnector,
+	}
+}
+
+func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.EconsystemConfigDTO) error {
 	tmpPath := `/tmp/ecosystem.json`
 
 	script := fmt.Sprintf(`
@@ -42,6 +49,15 @@ func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2ConfigDTO *dto
 		log.Fatal(err)
 	}
 
-	err = utils.ReadJSON(tmpPath, &pm2ConfigDTO)
+	err = utils.ReadJSON(tmpPath, &pm2Config)
 	return err
+}
+
+func (p *Pm2Manager) SelectEnvironment(pm2Config *dto.EconsystemConfigDTO) string {
+	if len(pm2Config.Deploy) == 0 {
+		log.Fatal("No environments found in PM2 config")
+	}
+
+	// p.prompter.Print("Available environments:")
+	return "staging"
 }

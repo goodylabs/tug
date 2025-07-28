@@ -27,21 +27,21 @@ func NewPm2UseCase(pm2Manager *pm2.Pm2Manager, sshconnector ports.SSHConnector, 
 }
 
 func (p *Pm2UseCase) Execute() error {
-	var pm2ConfigDTO dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfigDTO
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	if err := p.pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2ConfigDTO); err != nil {
+	if err := p.pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config); err != nil {
 		return fmt.Errorf("Error loading PM2 config: %v", err)
 	}
 
-	fmt.Println(pm2ConfigDTO.Deploy["staging"].Host)
+	fmt.Println(pm2Config.Deploy["staging"].Host)
 
 	// TODO wybór enva
-	selectedEnv := "staging"
+	selectedEnv := p.pm2Manager.SelectEnvironment(&pm2Config)
 	// TODO wybór hosta
 	hostIndex := 0
-	sshUser := pm2ConfigDTO.Deploy[selectedEnv].User
-	sshHost := pm2ConfigDTO.Deploy[selectedEnv].Host[hostIndex]
+	sshUser := pm2Config.Deploy[selectedEnv].User
+	sshHost := pm2Config.Deploy[selectedEnv].Host[hostIndex]
 
 	if err := p.sshconnector.OpenConnection(sshUser, sshHost, 22); err != nil {
 		log.Fatal("Error opening SSH connection:", err)
