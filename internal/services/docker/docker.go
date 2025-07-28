@@ -17,7 +17,7 @@ type DockerManager struct {
 	prompter     ports.Prompter
 }
 
-func NewDockerManager(prompter ports.Prompter, sshconnector ports.SSHConnector) DockerManager {
+func NewDockerManager(prompter ports.Prompter, sshconnector ports.SSHConnector) *DockerManager {
 	return &DockerManager{
 		prompter:     prompter,
 		sshconnector: sshconnector,
