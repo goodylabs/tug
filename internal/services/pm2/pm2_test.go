@@ -12,18 +12,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var pm2Manager *pm2.Pm2Manager
-
-func init() {
-	pm2Manager = pm2.NewPm2Manager(
-		mocks.NewPrompterMock([]int{}),
-		mocks.NewSSHConnectorMock("", nil),
+func setupManager(prompts []int, sshOutput string, sshErr error) *pm2.Pm2Manager {
+	return pm2.NewPm2Manager(
+		mocks.NewPrompterMock(prompts),
+		mocks.NewSSHConnectorMock(sshOutput, sshErr),
 	)
 }
 
 func TestLoadPm2ConfigOk(t *testing.T) {
-	var pm2Config dto.EconsystemConfigDTO
+	pm2Manager := setupManager([]int{}, "", nil)
 
+	var pm2Config dto.EconsystemConfigDTO
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
@@ -43,6 +42,8 @@ func TestLoadPm2ConfigOk(t *testing.T) {
 }
 
 func TestLoadPm2ConfigInvalidFile(t *testing.T) {
+	pm2Manager := setupManager([]int{}, "", nil)
+
 	var pm2Config dto.EconsystemConfigDTO
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.invalid.js")
@@ -51,9 +52,8 @@ func TestLoadPm2ConfigInvalidFile(t *testing.T) {
 	assert.ErrorContains(t, err, "cannot read json file", "Expected error when loading invalid ecosystem config")
 }
 
-// `"[{"name": "app-stg-1"}, {"name": "app-stg-2"}]`,
 func TestSelectEnvFromConfigBadArg(t *testing.T) {
-	prompterMock := mocks.NewPrompterMock([]int{0})
+	prompterMock := mocks.NewPrompterMock([]int{})
 	sshConnectorMock := mocks.NewSSHConnectorMock("", nil)
 	pm2ManagerLocal := pm2.NewPm2Manager(
 		prompterMock, sshConnectorMock,
@@ -69,33 +69,25 @@ func TestSelectEnvFromConfigBadArg(t *testing.T) {
 }
 
 func TestSelectEnvFromConfigEmptyArg(t *testing.T) {
-	prompterMock := mocks.NewPrompterMock([]int{0})
-	sshConnectorMock := mocks.NewSSHConnectorMock("", nil)
-	pm2ManagerLocal := pm2.NewPm2Manager(
-		prompterMock, sshConnectorMock,
-	)
+	pm2Manager := setupManager([]int{0}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	pm2ManagerLocal.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
-	env, err := pm2ManagerLocal.SelectEnvFromConfig(&pm2Config, "")
+	env, err := pm2Manager.SelectEnvFromConfig(&pm2Config, "")
 	assert.NoError(t, err, "Expected no error when selecting environment from config")
 	assert.Equal(t, "production_1", env, "Expected environment to be 'production_1' when no argument is provided")
 }
 
 func TestSelectEnvFromConfigOkArg(t *testing.T) {
-	prompterMock := mocks.NewPrompterMock([]int{0})
-	sshConnectorMock := mocks.NewSSHConnectorMock("", nil)
-	pm2ManagerLocal := pm2.NewPm2Manager(
-		prompterMock, sshConnectorMock,
-	)
+	pm2Manager := setupManager([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	pm2ManagerLocal.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
-	env, err := pm2ManagerLocal.SelectEnvFromConfig(&pm2Config, "staging_RO")
+	env, err := pm2Manager.SelectEnvFromConfig(&pm2Config, "staging_RO")
 	assert.NoError(t, err, "Expected no error when selecting environment from config")
 	assert.Equal(t, "staging_RO", env, "Expected environment to be 'staging_RO' when valid argument is provided")
 }
