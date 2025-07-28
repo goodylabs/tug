@@ -46,7 +46,7 @@ func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.Ec
 	}
 
 	if err := utils.ReadJSON(tmpPath, pm2Config); err != nil {
-		return fmt.Errorf("reading pm2 config json: %w", err)
+		return fmt.Errorf("reading %s : %w", tmpPath, err)
 	}
 
 	return nil

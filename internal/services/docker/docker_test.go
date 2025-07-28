@@ -1,4 +1,4 @@
-package services_test
+package docker_test
 
 import (
 	"path/filepath"
@@ -16,7 +16,7 @@ var DockerManager docker.DockerManager
 func init() {
 	DockerManager = *docker.NewDockerManager(
 		mocks.NewPrompterMock([]int{}),
-		mocks.NewSSHConnectorMock(),
+		mocks.NewSSHConnectorMock("", nil),
 	)
 }
 

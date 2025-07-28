@@ -3,10 +3,9 @@ package adapters
 import (
 	"fmt"
 	"log"
-	"sort"
 
-	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/internal/ports"
+	"github.com/goodylabs/tug/internal/utils"
 	"github.com/manifoldco/promptui"
 )
 
@@ -19,7 +18,7 @@ func NewPrompter() ports.Prompter {
 func (p *prompter) ChooseFromList(options []string, label string) string {
 	fmt.Print("\033[H\033[2J")
 
-	p.sortOptions(options)
+	utils.SortOptions(options)
 
 	promptUI := promptui.Select{
 		Label: label,
@@ -33,16 +32,4 @@ func (p *prompter) ChooseFromList(options []string, label string) string {
 	}
 
 	return result
-}
-
-func (p *prompter) sortOptions(options []string) {
-	sort.Slice(options, func(i, j int) bool {
-		if options[i] == constants.ALL_OPTION {
-			return false //
-		}
-		if options[j] == constants.ALL_OPTION {
-			return true
-		}
-		return options[i] < options[j]
-	})
 }
