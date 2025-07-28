@@ -15,13 +15,13 @@ type DeveloperOptions struct {
 }
 
 type DockerUseCase struct {
-	sshconnector  ports.SSHConnector
+	sshConnector  ports.SSHConnector
 	DockerManager docker.DockerManager
 }
 
 func NewDockerUseCase(sshAdadpter ports.SSHConnector, DockerManager *docker.DockerManager) *DockerUseCase {
 	return &DockerUseCase{
-		sshconnector:  sshAdadpter,
+		sshConnector:  sshAdadpter,
 		DockerManager: *DockerManager,
 	}
 }
@@ -36,10 +36,10 @@ func (d *DockerUseCase) Execute(envDir string) error {
 		return err
 	}
 	sshConfig := d.DockerManager.GetSSHConfig(targetIp)
-	if err = d.sshconnector.OpenConnection(sshConfig); err != nil {
+	if err = d.sshConnector.OpenConnection(sshConfig); err != nil {
 		log.Fatal("Error opening SSH connection:", err)
 	}
-	defer d.sshconnector.CloseConnection()
+	defer d.sshConnector.CloseConnection()
 
 	containers := d.DockerManager.ListContainers()
 

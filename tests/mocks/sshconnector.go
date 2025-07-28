@@ -9,21 +9,21 @@ import (
 	"github.com/goodylabs/tug/internal/ports"
 )
 
-type sshconnectorMock struct{}
+type sshConnectorMock struct{}
 
 func NewSSHConnectorMock() ports.SSHConnector {
-	return &sshconnectorMock{}
+	return &sshConnectorMock{}
 }
 
-func (m *sshconnectorMock) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
+func (m *sshConnectorMock) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
 	return nil
 }
 
-func (m *sshconnectorMock) CloseConnection() error {
+func (m *sshConnectorMock) CloseConnection() error {
 	return nil
 }
 
-func (m *sshconnectorMock) RunCommand(cmd string) (string, error) {
+func (m *sshConnectorMock) RunCommand(cmd string) (string, error) {
 	command := exec.Command("sh", "-c", cmd)
 	var out bytes.Buffer
 	command.Stdout = &out
@@ -32,7 +32,7 @@ func (m *sshconnectorMock) RunCommand(cmd string) (string, error) {
 	return out.String(), err
 }
 
-func (m *sshconnectorMock) RunInteractiveCommand(cmd string) error {
+func (m *sshConnectorMock) RunInteractiveCommand(cmd string) error {
 	command := exec.Command("sh", "-c", cmd)
 	command.Stdin = os.Stdin
 	command.Stdout = os.Stdout

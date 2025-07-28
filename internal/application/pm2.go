@@ -14,14 +14,14 @@ import (
 
 type Pm2UseCase struct {
 	pm2Manager   *pm2.Pm2Manager
-	sshconnector ports.SSHConnector
+	sshConnector ports.SSHConnector
 	prompter     ports.Prompter
 }
 
-func NewPm2UseCase(pm2Manager *pm2.Pm2Manager, sshconnector ports.SSHConnector, prompter ports.Prompter) *Pm2UseCase {
+func NewPm2UseCase(pm2Manager *pm2.Pm2Manager, sshConnector ports.SSHConnector, prompter ports.Prompter) *Pm2UseCase {
 	return &Pm2UseCase{
 		pm2Manager:   pm2Manager,
-		sshconnector: sshconnector,
+		sshConnector: sshConnector,
 		prompter:     prompter,
 	}
 }
@@ -38,29 +38,16 @@ func (p *Pm2UseCase) Execute() error {
 
 	sshConfig := p.pm2Manager.GetSSHConfig(&pm2Config, selectedEnv)
 
-	if err := p.sshconnector.OpenConnection(sshConfig); err != nil {
+	if err := p.sshConnector.OpenConnection(sshConfig); err != nil {
 		log.Fatal("Error opening SSH connection:", err)
 	}
-	defer p.sshconnector.CloseConnection()
+	defer p.sshConnector.CloseConnection()
 
-	selectedResource := p.selectResource()
+	selectedResource := p.pm2Manager.SelectResource()
+
 	fmt.Println(selectedResource)
 
 	return nil
-}
-
-func (p *Pm2UseCase) selectResource() string {
-	output, err := p.sshconnector.RunCommand(pm2.JLIST_CMD)
-	if err != nil {
-		log.Fatalf("Error running PM2 command: %v", err)
-	}
-
-	var pm2List []dto.Pm2ListItemDTO
-	err = p.pm2Manager.JsonOutputHandler(output, &pm2List)
-	if err != nil {
-		log.Fatalf("Error parsing PM2 list output: %v", err)
-	}
-	return pm2List[0].Name
 }
 
 // zaczytanie configa

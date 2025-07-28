@@ -13,14 +13,14 @@ import (
 )
 
 type DockerManager struct {
-	sshconnector ports.SSHConnector
+	sshConnector ports.SSHConnector
 	prompter     ports.Prompter
 }
 
-func NewDockerManager(prompter ports.Prompter, sshconnector ports.SSHConnector) *DockerManager {
+func NewDockerManager(prompter ports.Prompter, sshConnector ports.SSHConnector) *DockerManager {
 	return &DockerManager{
 		prompter:     prompter,
-		sshconnector: sshconnector,
+		sshConnector: sshConnector,
 	}
 }
 
@@ -58,7 +58,7 @@ func (d *DockerManager) getVariableValueFromLines(lines []string, key string) st
 
 func (d *DockerManager) ListContainers() []dto.ContainerDTO {
 	var containers []dto.ContainerDTO
-	output, err := d.sshconnector.RunCommand("docker ps --format json")
+	output, err := d.sshConnector.RunCommand("docker ps --format json")
 	if err != nil {
 		fmt.Println("Error running docker ps command:", err)
 	}
@@ -105,7 +105,7 @@ func (d *DockerManager) SelectAndExecuteCommand(container dto.ContainerDTO) {
 		return
 	}
 
-	d.sshconnector.RunInteractiveCommand(selectedCommand)
+	d.sshConnector.RunInteractiveCommand(selectedCommand)
 }
 
 func (d *DockerManager) GetSSHConfig(targetIp string) *dto.SSHConfigDTO {

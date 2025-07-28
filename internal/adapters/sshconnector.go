@@ -12,15 +12,15 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-type sshconnector struct {
+type sshConnector struct {
 	client *ssh.Client
 }
 
 func NewSSHConnector() ports.SSHConnector {
-	return &sshconnector{}
+	return &sshConnector{}
 }
 
-func (a *sshconnector) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
+func (a *sshConnector) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
 	authMethods, err := loadSSHKeysFromDir()
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func (a *sshconnector) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
 	return nil
 }
 
-func (a *sshconnector) CloseConnection() error {
+func (a *sshConnector) CloseConnection() error {
 	if a.client == nil {
 		return nil
 	}
@@ -52,7 +52,7 @@ func (a *sshconnector) CloseConnection() error {
 	return err
 }
 
-func (a *sshconnector) RunCommand(cmd string) (string, error) {
+func (a *sshConnector) RunCommand(cmd string) (string, error) {
 	if a.client == nil {
 		return "", fmt.Errorf("connection not opened")
 	}
@@ -66,7 +66,7 @@ func (a *sshconnector) RunCommand(cmd string) (string, error) {
 	return string(output), err
 }
 
-func (s *sshconnector) RunInteractiveCommand(cmd string) error {
+func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 	if s.client == nil {
 		return fmt.Errorf("connection not opened")
 	}
