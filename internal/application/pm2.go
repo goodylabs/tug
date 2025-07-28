@@ -2,7 +2,6 @@ package application
 
 import (
 	"fmt"
-	"log"
 	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/config"
@@ -31,21 +30,32 @@ func (p *Pm2UseCase) Execute() error {
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	if err := p.pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config); err != nil {
-		return fmt.Errorf("Error loading PM2 config: %v", err)
+		return fmt.Errorf("error loading PM2 config: %w", err)
 	}
 
-	selectedEnv := p.pm2Manager.SelectEnvironment(&pm2Config)
+	selectedEnv, err := p.pm2Manager.SelectEnvironment(&pm2Config)
+	if err != nil {
+		return fmt.Errorf("selecting environment: %w", err)
+	}
 
-	sshConfig := p.pm2Manager.GetSSHConfig(&pm2Config, selectedEnv)
+	sshConfig, err := p.pm2Manager.GetSSHConfig(&pm2Config, selectedEnv)
+	if err != nil {
+		return fmt.Errorf("getting SSH config: %w", err)
+	}
 
 	if err := p.sshConnector.OpenConnection(sshConfig); err != nil {
-		log.Fatal("Error opening SSH connection:", err)
+		return fmt.Errorf("opening SSH connection: %w", err)
 	}
 	defer p.sshConnector.CloseConnection()
 
-	selectedResource := p.pm2Manager.SelectResource()
+	selectedResource, err := p.pm2Manager.SelectResource()
+	if err != nil {
+		return fmt.Errorf("selecting PM2 resource: %w", err)
+	}
 
-	p.pm2Manager.RunCommandOnResource(selectedResource)
+	if err := p.pm2Manager.RunCommandOnResource(selectedResource); err != nil {
+		return fmt.Errorf("running command on resource: %w", err)
+	}
 
 	return nil
 }

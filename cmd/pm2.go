@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -8,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// pm2Cmd represents the pm2 command
 var pm2Cmd = &cobra.Command{
 	Use:   "pm2",
 	Short: "A brief description of your command",
@@ -17,7 +13,7 @@ var pm2Cmd = &cobra.Command{
 			return pm2UseCase.Execute()
 		})
 		if err != nil {
-			cmd.PrintErr(err)
+			cmd.PrintErrf("%v\n", err)
 		}
 	},
 }

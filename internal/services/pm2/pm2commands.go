@@ -2,8 +2,7 @@ package pm2
 
 import (
 	"encoding/json"
-	"log"
-	"strings"
+	"fmt"
 
 	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/internal/dto"
@@ -11,77 +10,72 @@ import (
 
 const (
 	resourcesOption = "<resource>"
+	jlistCmd        = `source ~/.nvm/nvm.sh; pm2 jlist | sed -n '/^\[/,$p'`
+	logsCmdTemplate = `source ~/.nvm/nvm.sh; pm2 logs %s`
 )
 
 type commandOption struct {
-	name    string
-	command string
+	Name    string
+	Command string
 }
 
-const (
-	jlistCmd = `source ~/.nvm/nvm.sh; pm2 jlist | sed -n '/^\[/,$p'`
-	logsCmd  = `source ~/.nvm/nvm.sh; pm2 logs <resource>`
-)
-
-func (p *Pm2Manager) SelectResource() string {
+func (p *Pm2Manager) GetPm2Processes() ([]string, error) {
 	output, err := p.sshConnector.RunCommand(jlistCmd)
 	if err != nil {
-		log.Fatalf("Error running PM2 command '%s' error: %v", jlistCmd, err)
+		return nil, fmt.Errorf("running PM2 jlist command: %w", err)
 	}
 
 	var pm2List []dto.Pm2ListItemDTO
 	if err := json.Unmarshal([]byte(output), &pm2List); err != nil {
-		log.Fatalf("Error parsing PM2 list output: %v after running `%s`", err, jlistCmd)
+		return nil, fmt.Errorf("parsing PM2 list output: %w", err)
 	}
 
-	var pm2Resources []string
-
+	var resources []string
 	for _, item := range pm2List {
-		pm2Resources = append(pm2Resources, item.Name)
+		resources = append(resources, item.Name)
 	}
 
-	pm2Resources = append(pm2Resources, constants.ALL_OPTION)
+	resources = append(resources, constants.ALL_OPTION)
 
-	return p.prompter.ChooseFromList(pm2Resources, "Select PM2 resource")
+	return resources, nil
 }
 
-func (p *Pm2Manager) getCommandOptions(resource string) *[]commandOption {
-	var selectedResource string
+func (p *Pm2Manager) SelectResource() (string, error) {
+	resources, err := p.GetPm2Processes()
+	if err != nil {
+		return "", err
+	}
+	return p.prompter.ChooseFromList(resources, "Select PM2 resource"), nil
+}
 
-	switch resource {
-	case constants.ALL_OPTION:
-		selectedResource = ""
-	default:
+func (p *Pm2Manager) GetCommandOptions(resource string) []commandOption {
+	selectedResource := ""
+	if resource != constants.ALL_OPTION {
 		selectedResource = resource
 	}
 
-	var commandOptions = []commandOption{
+	return []commandOption{
 		{
-			name:    "PM2 logs",
-			command: strings.ReplaceAll(logsCmd, resourcesOption, selectedResource),
+			Name:    "PM2 logs",
+			Command: fmt.Sprintf(logsCmdTemplate, selectedResource),
 		},
 	}
-
-	return &commandOptions
 }
 
-func (p *Pm2Manager) RunCommandOnResource(resource string) {
-	options := p.getCommandOptions(resource)
+func (p *Pm2Manager) RunCommandOnResource(resource string) error {
+	options := p.GetCommandOptions(resource)
 
-	commandNames := make([]string, len(*options))
-	for i, option := range *options {
-		commandNames[i] = option.name
+	var commandNames []string
+	for _, opt := range options {
+		commandNames = append(commandNames, opt.Name)
 	}
-	selectedCommandName := p.prompter.ChooseFromList(commandNames, "Select command:")
-	var selectedCommand string
-	for _, option := range *options {
-		if option.name == selectedCommandName {
-			selectedCommand = option.command
-			break
+
+	selectedCmdName := p.prompter.ChooseFromList(commandNames, "Select command:")
+	for _, opt := range options {
+		if opt.Name == selectedCmdName {
+			return p.sshConnector.RunInteractiveCommand(opt.Command)
 		}
 	}
 
-	if err := p.sshConnector.RunInteractiveCommand(selectedCommand); err != nil {
-		log.Fatalf("Error running command on PM2 resource: %v", err)
-	}
+	return fmt.Errorf("selected command not found: %s", selectedCmdName)
 }
