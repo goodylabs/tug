@@ -52,9 +52,16 @@ func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.Ec
 	return nil
 }
 
-func (p *Pm2Manager) SelectEnvironment(pm2Config *dto.EconsystemConfigDTO) (string, error) {
+func (p *Pm2Manager) SelectEnvFromConfig(pm2Config *dto.EconsystemConfigDTO, envArg string) (string, error) {
 	if len(pm2Config.Deploy) == 0 {
 		return "", fmt.Errorf("no environments found in PM2 config")
+	}
+
+	if envArg != "" {
+		if _, exists := pm2Config.Deploy[envArg]; !exists {
+			return "", fmt.Errorf("'%s' not found in PM2 config as environment", envArg)
+		}
+		return envArg, nil
 	}
 
 	var options []string

@@ -9,8 +9,15 @@ var pm2Cmd = &cobra.Command{
 	Use:   "pm2",
 	Short: "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
+
+		var envArg string
+
+		if len(args) >= 1 {
+			envArg = args[0]
+		}
+
 		err := container.Invoke(func(pm2UseCase *application.Pm2UseCase) error {
-			return pm2UseCase.Execute()
+			return pm2UseCase.Execute(envArg)
 		})
 		if err != nil {
 			cmd.PrintErrf("%v\n", err)

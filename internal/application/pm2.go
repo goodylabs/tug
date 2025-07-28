@@ -25,7 +25,7 @@ func NewPm2UseCase(pm2Manager *pm2.Pm2Manager, sshConnector ports.SSHConnector, 
 	}
 }
 
-func (p *Pm2UseCase) Execute() error {
+func (p *Pm2UseCase) Execute(envArg string) error {
 	var pm2Config dto.EconsystemConfigDTO
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
@@ -33,9 +33,9 @@ func (p *Pm2UseCase) Execute() error {
 		return fmt.Errorf("error loading PM2 config: %w", err)
 	}
 
-	selectedEnv, err := p.pm2Manager.SelectEnvironment(&pm2Config)
+	selectedEnv, err := p.pm2Manager.SelectEnvFromConfig(&pm2Config, envArg)
 	if err != nil {
-		return fmt.Errorf("selecting environment: %w", err)
+		return fmt.Errorf("error while selecting environment: %w", err)
 	}
 
 	sshConfig, err := p.pm2Manager.GetSSHConfig(&pm2Config, selectedEnv)
