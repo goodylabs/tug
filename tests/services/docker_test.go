@@ -33,15 +33,15 @@ func TestGetTargetIpHappyOk(t *testing.T) {
 
 	for _, tt := range tests {
 		scriptAbsPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR, tt.envDir, "deploy.sh")
-		targetIp, err := DockerManager.GetTargetIp(scriptAbsPath)
+		targetIp, err := DockerManager.GetTargetIP(scriptAbsPath)
 		assert.Equal(t, tt.resultValue, targetIp)
-		assert.NoError(t, err)
+		assert.NoError(t, err, "Expected no error for envDir: %s", tt.envDir)
 	}
 }
 
 func TestGetTargetIpNonExistingPath(t *testing.T) {
 	scriptAbsPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR, "non-existing-path", "deploy.sh")
-	targetIp, err := DockerManager.GetTargetIp(scriptAbsPath)
+	targetIp, err := DockerManager.GetTargetIP(scriptAbsPath)
 	assert.Equal(t, "", targetIp)
 	assert.Error(t, err)
 }

@@ -1,7 +1,7 @@
 package application
 
 import (
-	"log"
+	"fmt"
 	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/config"
@@ -10,42 +10,46 @@ import (
 	"github.com/goodylabs/tug/internal/services/docker"
 )
 
-type DeveloperOptions struct {
-	EnvDir string
-}
-
 type DockerUseCase struct {
 	sshConnector  ports.SSHConnector
-	DockerManager docker.DockerManager
+	dockerManager *docker.DockerManager
 }
 
-func NewDockerUseCase(sshAdadpter ports.SSHConnector, DockerManager *docker.DockerManager) *DockerUseCase {
+func NewDockerUseCase(sshConnector ports.SSHConnector, dockerManager *docker.DockerManager) *DockerUseCase {
 	return &DockerUseCase{
-		sshConnector:  sshAdadpter,
-		DockerManager: *DockerManager,
+		sshConnector:  sshConnector,
+		dockerManager: dockerManager,
 	}
 }
 
 func (d *DockerUseCase) Execute(envDir string) error {
-	var targetIp string
-	var err error
+	scriptPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR, envDir, "deploy.sh")
 
-	scriptAbsPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR, envDir, "deploy.sh")
-
-	if targetIp, err = d.DockerManager.GetTargetIp(scriptAbsPath); err != nil {
-		return err
+	targetIP, err := d.dockerManager.GetTargetIP(scriptPath)
+	if err != nil {
+		return fmt.Errorf("getting target IP: %w", err)
 	}
-	sshConfig := d.DockerManager.GetSSHConfig(targetIp)
-	if err = d.sshConnector.OpenConnection(sshConfig); err != nil {
-		log.Fatal("Error opening SSH connection:", err)
+
+	sshConfig := d.dockerManager.GetSSHConfig(targetIP)
+
+	if err := d.sshConnector.OpenConnection(sshConfig); err != nil {
+		return fmt.Errorf("opening SSH connection: %w", err)
 	}
 	defer d.sshConnector.CloseConnection()
 
-	containers := d.DockerManager.ListContainers()
+	containers, err := d.dockerManager.ListContainers()
+	if err != nil {
+		return fmt.Errorf("listing containers: %w", err)
+	}
 
-	selectedContainer := d.DockerManager.SelectContainer(containers)
+	container, err := d.dockerManager.SelectContainer(containers)
+	if err != nil {
+		return fmt.Errorf("selecting container: %w", err)
+	}
 
-	d.DockerManager.SelectAndExecuteCommand(selectedContainer)
+	if err := d.dockerManager.RunCommandOnContainer(container); err != nil {
+		return fmt.Errorf("running command on container: %w", err)
+	}
 
 	return nil
 }

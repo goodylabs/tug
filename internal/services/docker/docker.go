@@ -24,73 +24,78 @@ func NewDockerManager(prompter ports.Prompter, sshConnector ports.SSHConnector) 
 	}
 }
 
-func (d *DockerManager) GetTargetIp(scriptAbsPath string) (string, error) {
-	fields := []string{
-		constants.TARGET_IP_FIELD_LEGACY,
-		constants.TARGET_IP_FIELD,
-	}
-
-	for _, field := range fields {
-		lines, err := utils.GetFileLines(scriptAbsPath)
+func (d *DockerManager) GetTargetIP(scriptPath string) (string, error) {
+	for _, field := range []string{constants.TARGET_IP_FIELD_LEGACY, constants.TARGET_IP_FIELD} {
+		lines, err := utils.GetFileLines(scriptPath)
 		if err != nil {
-			return "", fmt.Errorf("Error reading file %s: %w", scriptAbsPath, err)
+			return "", fmt.Errorf("reading deploy.sh: %w", err)
 		}
 
-		targetIp := d.getVariableValueFromLines(lines, field)
-		if targetIp != "" {
-			return targetIp, nil
+		if ip := extractVariable(lines, field); ip != "" {
+			return ip, nil
 		}
 	}
-	return "", errors.New("Unable to find server configuration in your repo. Please ensure proper format of devops/<env>/deploy.sh file.")
+	return "", errors.New("could not find TARGET_IP in deploy.sh")
 }
 
-func (d *DockerManager) getVariableValueFromLines(lines []string, key string) string {
+func extractVariable(lines []string, key string) string {
 	prefix := key + "="
 	for _, line := range lines {
-		if after, ok := strings.CutPrefix(line, prefix); ok {
-			value := after
-			value = strings.Trim(value, `"`)
-			return value
+		if value, ok := strings.CutPrefix(line, prefix); ok {
+			return strings.Trim(value, `"`)
 		}
 	}
 	return ""
 }
 
-func (d *DockerManager) ListContainers() []dto.ContainerDTO {
+func (d *DockerManager) GetSSHConfig(ip string) *dto.SSHConfigDTO {
+	return &dto.SSHConfigDTO{
+		User: "root",
+		Host: ip,
+		Port: 22,
+	}
+}
+
+func (d *DockerManager) ListContainers() ([]dto.ContainerDTO, error) {
 	var containers []dto.ContainerDTO
+
 	output, err := d.sshConnector.RunCommand("docker ps --format json")
 	if err != nil {
-		fmt.Println("Error running docker ps command:", err)
+		return nil, fmt.Errorf("docker ps failed: %w", err)
 	}
 
-	lines := strings.SplitSeq(strings.TrimSpace(output), "\n")
-	for line := range lines {
+	lines := strings.Split(strings.TrimSpace(output), "\n")
+	for _, line := range lines {
 		var container dto.ContainerDTO
 		if err := json.Unmarshal([]byte(line), &container); err != nil {
-			fmt.Println("Error unmarshalling line:", err)
 			continue
 		}
 		containers = append(containers, container)
 	}
 
-	return containers
+	return containers, nil
 }
 
-func (d *DockerManager) SelectContainer(containers []dto.ContainerDTO) dto.ContainerDTO {
-	var names []string
-	for _, container := range containers {
-		names = append(names, container.Name)
+func (d *DockerManager) SelectContainer(containers []dto.ContainerDTO) (dto.ContainerDTO, error) {
+	if len(containers) == 0 {
+		return dto.ContainerDTO{}, errors.New("no containers available")
 	}
-	selectedName := d.prompter.ChooseFromList(names, "Chose container")
-	for _, container := range containers {
-		if selectedName == container.Name {
-			return container
+
+	var names []string
+	for _, c := range containers {
+		names = append(names, c.Name)
+	}
+
+	selected := d.prompter.ChooseFromList(names, "Choose container")
+	for _, c := range containers {
+		if c.Name == selected {
+			return c, nil
 		}
 	}
-	panic(constants.PANIC)
+	return dto.ContainerDTO{}, fmt.Errorf("container %s not found", selected)
 }
 
-func (d *DockerManager) SelectAndExecuteCommand(container dto.ContainerDTO) {
+func (d *DockerManager) RunCommandOnContainer(container dto.ContainerDTO) error {
 	commands := []string{
 		"docker logs -f " + container.Name,
 		"docker exec -it " + container.Name + " bash",
@@ -99,19 +104,14 @@ func (d *DockerManager) SelectAndExecuteCommand(container dto.ContainerDTO) {
 		"docker start " + container.Name,
 	}
 
-	selectedCommand := d.prompter.ChooseFromList(commands, "Select command to execute")
-	if selectedCommand == "" {
-		fmt.Println("No command selected, exiting.")
-		return
+	selected := d.prompter.ChooseFromList(commands, "Select command to execute")
+	if selected == "" {
+		return errors.New("no command selected")
 	}
 
-	d.sshConnector.RunInteractiveCommand(selectedCommand)
-}
-
-func (d *DockerManager) GetSSHConfig(targetIp string) *dto.SSHConfigDTO {
-	return &dto.SSHConfigDTO{
-		User: "root",
-		Host: targetIp,
-		Port: 22,
+	if err := d.sshConnector.RunInteractiveCommand(selected); err != nil {
+		return fmt.Errorf("executing command failed: %w", err)
 	}
+
+	return nil
 }
