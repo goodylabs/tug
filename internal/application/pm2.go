@@ -26,13 +26,12 @@ func NewPm2UseCase(pm2Manager *pm2.Pm2Manager, sshconnector ports.SSHConnector, 
 	}
 }
 
-func (p *Pm2UseCase) Execute() {
+func (p *Pm2UseCase) Execute() error {
 	var pm2ConfigDTO dto.EconsystemConfigDTO
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	err := p.pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2ConfigDTO)
-	if err != nil {
-		log.Fatal("Error loading PM2 config:", err)
+	if err := p.pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2ConfigDTO); err != nil {
+		return fmt.Errorf("Error loading PM2 config:", err)
 	}
 
 	fmt.Println(pm2ConfigDTO.Deploy["staging"].Host)
@@ -44,14 +43,15 @@ func (p *Pm2UseCase) Execute() {
 	sshUser := pm2ConfigDTO.Deploy[selectedEnv].User
 	sshHost := pm2ConfigDTO.Deploy[selectedEnv].Host[hostIndex]
 
-	err = p.sshconnector.OpenConnection(sshUser, sshHost, 22)
-	if err != nil {
+	if err := p.sshconnector.OpenConnection(sshUser, sshHost, 22); err != nil {
 		log.Fatal("Error opening SSH connection:", err)
 	}
 	defer p.sshconnector.CloseConnection()
 
 	selectedResource := p.selectResource()
 	fmt.Println(selectedResource)
+
+	return nil
 }
 
 func (p *Pm2UseCase) selectResource() string {

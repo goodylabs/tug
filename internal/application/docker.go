@@ -26,14 +26,14 @@ func NewDockerUseCase(sshAdadpter ports.SSHConnector, DockerManager *docker.Dock
 	}
 }
 
-func (d *DockerUseCase) Execute(envDir string) {
+func (d *DockerUseCase) Execute(envDir string) error {
 	var targetIp string
 	var err error
 
 	scriptAbsPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR, envDir, "deploy.sh")
 
 	if targetIp, err = d.DockerManager.GetTargetIp(scriptAbsPath); err != nil {
-		log.Fatal("Error getting target IP:", err)
+		return err
 	}
 
 	if err = d.sshconnector.OpenConnection("root", targetIp, 22); err != nil {
@@ -46,4 +46,6 @@ func (d *DockerUseCase) Execute(envDir string) {
 	selectedContainer := d.DockerManager.SelectContainer(containers)
 
 	d.DockerManager.SelectAndExecuteCommand(selectedContainer)
+
+	return nil
 }

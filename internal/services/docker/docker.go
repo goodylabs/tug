@@ -33,7 +33,7 @@ func (d *DockerManager) GetTargetIp(scriptAbsPath string) (string, error) {
 	for _, field := range fields {
 		lines, err := utils.GetFileLines(scriptAbsPath)
 		if err != nil {
-			return "", fmt.Errorf("placeholder Error reading file: %s", scriptAbsPath)
+			return "", fmt.Errorf("Error reading file %s: %w", scriptAbsPath, err)
 		}
 
 		targetIp := d.getVariableValueFromLines(lines, field)
@@ -41,7 +41,7 @@ func (d *DockerManager) GetTargetIp(scriptAbsPath string) (string, error) {
 			return targetIp, nil
 		}
 	}
-	return "", errors.New("placeholder")
+	return "", errors.New("Unable to find server configuration in your repo. Please ensure proper format of devops/<env>/deploy.sh file.")
 }
 
 func (d *DockerManager) getVariableValueFromLines(lines []string, key string) string {
