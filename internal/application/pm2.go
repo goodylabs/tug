@@ -45,7 +45,7 @@ func (p *Pm2UseCase) Execute() error {
 
 	selectedResource := p.pm2Manager.SelectResource()
 
-	fmt.Println(selectedResource)
+	p.pm2Manager.RunCommandOnResource(selectedResource)
 
 	return nil
 }

@@ -19,3 +19,7 @@ const (
 	ECOSYSTEM_CONFIG_FILE = "ecosystem.config.js"
 	DEVOPS_DIR            = "devops"
 )
+
+const (
+	ALL_OPTION = "_all"
+)
