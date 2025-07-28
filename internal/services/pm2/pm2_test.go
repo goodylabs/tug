@@ -21,7 +21,7 @@ func init() {
 	)
 }
 
-func TestLoadPm2Config(t *testing.T) {
+func TestLoadPm2ConfigOk(t *testing.T) {
 	var pm2Config dto.EconsystemConfigDTO
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
@@ -40,6 +40,15 @@ func TestLoadPm2Config(t *testing.T) {
 	for _, env := range envs {
 		assert.Contains(t, requiredEnvs, env, "Expected environment to be either 'staging' or 'production'")
 	}
+}
+
+func TestLoadPm2ConfigInvalidFile(t *testing.T) {
+	var pm2Config dto.EconsystemConfigDTO
+
+	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.invalid.js")
+	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+
+	assert.ErrorContains(t, err, "cannot read json file", "Expected error when loading invalid ecosystem config")
 }
 
 // `"[{"name": "app-stg-1"}, {"name": "app-stg-2"}]`,
