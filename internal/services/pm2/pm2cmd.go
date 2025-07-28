@@ -9,9 +9,11 @@ import (
 )
 
 const (
-	resourcesOption = "<resource>"
-	jlistCmd        = `source ~/.nvm/nvm.sh; pm2 jlist | sed -n '/^\[/,$p'`
-	logsCmdTemplate = `source ~/.nvm/nvm.sh; pm2 logs %s`
+	resourcesOption    = "<resource>"
+	jlistCmd           = `source ~/.nvm/nvm.sh; pm2 jlist | sed -n '/^\[/,$p'`
+	logsCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 logs %s`
+	showCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 show %s`
+	restartCmdTemplate = `source ~/.nvm/nvm.sh; pm2 restart %s`
 )
 
 type commandOption struct {
@@ -56,8 +58,16 @@ func (p *Pm2Manager) GetCommandOptions(resource string) []commandOption {
 
 	return []commandOption{
 		{
-			Name:    "PM2 logs",
+			Name:    "pm2 logs",
 			Command: fmt.Sprintf(logsCmdTemplate, selectedResource),
+		},
+		{
+			Name:    "pm2 show status",
+			Command: fmt.Sprintf(showCmdTemplate, selectedResource),
+		},
+		{
+			Name:    "pm2 restart",
+			Command: fmt.Sprintf(restartCmdTemplate, selectedResource),
 		},
 	}
 }
