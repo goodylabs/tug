@@ -13,10 +13,6 @@ const (
 
 func (p *Pm2Manager) SelectResource() string {
 	output, err := p.sshConnector.RunCommand(JLIST_CMD)
-
-	log.Println("Raw PM2 output:")
-	log.Println(output)
-
 	if err != nil {
 		log.Fatalf("Error running PM2 command: %v", err)
 	}
