@@ -8,13 +8,21 @@ import (
 	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/services/pm2"
+	"github.com/goodylabs/tug/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
+var pm2Manager *pm2.Pm2Manager
+
+func init() {
+	pm2Manager = pm2.NewPm2Manager(
+		mocks.NewPrompterMock([]int{}),
+		mocks.NewSSHConnectorMock(),
+	)
+}
+
 func TestGetEcosystemConfig(t *testing.T) {
 	var pm2Config dto.EconsystemConfigDTO
-
-	pm2Manager := pm2.NewPm2Manager()
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
