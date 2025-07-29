@@ -21,7 +21,7 @@ type commandOption struct {
 	Command string
 }
 
-func (p *Pm2Manager) GetPm2Processes() ([]string, error) {
+func (p *Pm2Manager) getPm2Processes() ([]string, error) {
 	output, err := p.sshConnector.RunCommand(jlistCmd)
 	if err != nil {
 		return nil, fmt.Errorf("running PM2 jlist command: %w", err)
@@ -43,7 +43,7 @@ func (p *Pm2Manager) GetPm2Processes() ([]string, error) {
 }
 
 func (p *Pm2Manager) SelectResource() (string, error) {
-	resources, err := p.GetPm2Processes()
+	resources, err := p.getPm2Processes()
 	if err != nil {
 		return "", err
 	}
