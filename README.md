@@ -7,7 +7,7 @@ CLI tool for reducing developers' life pain when they need to work with Docker.
 ## Installation
 
 ```bash
-curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download_script_.sh | bash -s
+curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download_script.sh | bash -s
 ```
 
 ## Main features
