@@ -20,7 +20,9 @@ jobs:
         run: |
           TAG=${GITHUB_REF##*/}
           GOOS=linux GOARCH=amd64 go build -ldflags "-X github.com/goodylabs/tug/cmd.version=$TAG" -o bin/tug-linux-amd64
+          GOOS=linux GOARCH=arm64 go build -ldflags "-X github.com/goodylabs/tug/cmd.version=$TAG" -o bin/tug-linux-arm64
           GOOS=darwin GOARCH=amd64 go build -ldflags "-X github.com/goodylabs/tug/cmd.version=$TAG" -o bin/tug-darwin-amd64
+          GOOS=darwin GOARCH=arm64 go build -ldflags "-X github.com/goodylabs/tug/cmd.version=$TAG" -o bin/tug-darwin-arm64
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1

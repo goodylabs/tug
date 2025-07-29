@@ -15,7 +15,27 @@ fi
 releaseUrl="https://api.github.com/repos/goodylabs/tug/releases/latest"
 
 os_type=$(uname -s | tr '[:upper:]' '[:lower:]')
-artifact_url=$(curl -s $releaseUrl | jq -r ".assets[] | select(.name | test(\"tug-${os_type}-amd64\"))" | jq ".browser_download_url" -r)
+arch=$(uname -m)
+
+case "$arch" in
+    x86_64)
+        arch="amd64"
+        ;;
+    aarch64 | arm64)
+        arch="arm64"
+        ;;
+    *)
+        echo "Unsupported architecture: $arch"
+        exit 1
+        ;;
+esac
+
+artifact_url=$(curl -s "$releaseUrl" | jq -r ".assets[] | select(.name | test(\"tug-${os_type}-${arch}\")) | .browser_download_url")
+
+if [[ -z "$artifact_url" ]]; then
+    echo "No compatible binary found for ${os_type}-${arch}"
+    exit 1
+fi
 
 wget -q --show-progress --progress=bar:force:noscroll \
   --compression=auto --tries=3 --timeout=10 \
