@@ -52,6 +52,16 @@ func TestLoadPm2ConfigInvalidFile(t *testing.T) {
 	assert.ErrorContains(t, err, "cannot read json file", "Expected error when loading invalid ecosystem config")
 }
 
+func TestLoadPm2ConfigNodeScriptFails(t *testing.T) {
+	pm2Manager := setupManager([]int{}, "", nil)
+
+	var pm2Config dto.EconsystemConfigDTO
+
+	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.nonexisting.js")
+	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+	assert.ErrorContains(t, err, "running node script to load pm2 config")
+}
+
 func TestSelectEnvFromConfigBadArg(t *testing.T) {
 	prompterMock := mocks.NewPrompterMock([]int{})
 	sshConnectorMock := mocks.NewSSHConnectorMock("", nil)
