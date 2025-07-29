@@ -29,6 +29,8 @@ jobs:
         with:
           files: |
             bin/tug-linux-amd64
+            bin/tug-linux-arm64
             bin/tug-darwin-amd64
+            bin/tug-darwin-arm64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
