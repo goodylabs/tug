@@ -19,7 +19,7 @@ module.exports = {
         },
         production_2: {
             user: "ubuntu",
-            host: ["aaa.aaa.aaa.aaa"],
+            host: ["aaa.aaa.aaa.aaa", "ooo.ooo.ooo.ooo"],
         },
         production_RO_1: {
             user: "root",
@@ -27,7 +27,7 @@ module.exports = {
         },
         production_RO_2: {
             user: "root",
-            host: ["ccc.ccc.ccc.ccc"],
+            host: ["ccc.ccc.ccc.ccc", "ddd.ddd.ddd.ddd", "eee.eee.eee.eee"],
         },
     },
 };

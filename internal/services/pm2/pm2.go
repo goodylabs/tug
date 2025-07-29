@@ -40,6 +40,7 @@ func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.Ec
 		fs.writeFileSync("%s", JSON.stringify(config, null, 2));
 	`, ecosystemConfigPath, tmpPath)
 
+	// missing tests
 	cmd := exec.Command("node", "-e", script)
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("running node script to load pm2 config: %w", err)
@@ -88,7 +89,7 @@ func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfigDTO, selectedEnv 
 func (p *Pm2Manager) GetSSHConfig(pm2Config *dto.EconsystemConfigDTO, selectedEnv string) (*dto.SSHConfigDTO, error) {
 	envConfig, exists := pm2Config.Deploy[selectedEnv]
 	if !exists {
-		return nil, fmt.Errorf("environment %s not found in PM2 config", selectedEnv)
+		return nil, fmt.Errorf("environment '%s' not found in loaded PM2 config", selectedEnv)
 	}
 
 	host, err := p.selectHost(pm2Config, selectedEnv)

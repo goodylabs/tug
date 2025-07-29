@@ -91,3 +91,45 @@ func TestSelectEnvFromConfigOkArg(t *testing.T) {
 	assert.NoError(t, err, "Expected no error when selecting environment from config")
 	assert.Equal(t, "staging_RO", env, "Expected environment to be 'staging_RO' when valid argument is provided")
 }
+
+func TestGetSSHConfigAutoSelectHost(t *testing.T) {
+	pm2Manager := setupManager([]int{}, "", nil)
+
+	var pm2Config dto.EconsystemConfigDTO
+	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
+	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+
+	sshConfig, err := pm2Manager.GetSSHConfig(&pm2Config, "staging_RO")
+
+	assert.NoError(t, err, "Expected no error when getting SSH config")
+	assert.Equal(t, sshConfig.User, "staging-user")
+	assert.Equal(t, sshConfig.Host, "yyy.yyy.yyy.yyy")
+	assert.Equal(t, sshConfig.Port, 22)
+}
+
+func TestGetSSHConfigSelectSecondHost(t *testing.T) {
+	pm2Manager := setupManager([]int{1}, "", nil)
+
+	var pm2Config dto.EconsystemConfigDTO
+	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
+	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+	sshConfig, err := pm2Manager.GetSSHConfig(&pm2Config, "production_RO_2")
+
+	assert.NoError(t, err, "Expected no error when getting SSH config")
+	assert.Equal(t, sshConfig.User, "root")
+	assert.Equal(t, sshConfig.Host, "ddd.ddd.ddd.ddd")
+	assert.Equal(t, sshConfig.Port, 22)
+}
+
+func TestGetSSHConfigDummyEnv(t *testing.T) {
+	pm2Manager := setupManager([]int{1}, "", nil)
+
+	var pm2Config dto.EconsystemConfigDTO
+	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
+	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+
+	sshConfig, err := pm2Manager.GetSSHConfig(&pm2Config, "dummy_env")
+
+	assert.ErrorContains(t, err, "environment 'dummy_env' not found in loaded PM2 config")
+	assert.Nil(t, sshConfig)
+}
