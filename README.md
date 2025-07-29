@@ -20,7 +20,7 @@ tug --version
 tug --help
 ```
 
-# PM2
+## PM2
 
 Allows to interact with pm2 environments on remote servers, using configuration from `./ecosystem.config.js`.
 
@@ -34,7 +34,7 @@ tug pm2 staging_RO
 tug pm2 staging_RO
 ```
 
-# Docker
+## Docker
 
 Allows to interact with Docker environments on remote servers, using configuration from `./devops/<env>/deploy.sh`.
 
