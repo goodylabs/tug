@@ -7,7 +7,6 @@ import (
 	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/internal/dto"
-	"github.com/goodylabs/tug/internal/services/pm2"
 	"github.com/goodylabs/tug/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )
@@ -56,19 +55,25 @@ func TestLoadPm2ConfigNodeScriptFails(t *testing.T) {
 }
 
 func TestSelectEnvFromConfigBadArg(t *testing.T) {
-	prompterMock := mocks.NewPrompterMock([]int{})
-	sshConnectorMock := mocks.NewSSHConnectorMock("", nil)
-	pm2ManagerLocal := pm2.NewPm2Manager(
-		prompterMock, sshConnectorMock,
-	)
+	pm2Manager := mocks.SetupMockPm2Manager([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	pm2ManagerLocal.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.emptyhosts.js")
+	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
-	env, err := pm2ManagerLocal.SelectEnvFromConfig(&pm2Config, "non-existing-env")
-	assert.ErrorContains(t, err, "'non-existing-env' not found in PM2 config as environment")
-	assert.Equal(t, "", env, "Expected environment to be empty when non-existing environment is selected")
+	env, err := pm2Manager.SelectEnvFromConfig(&pm2Config, "")
+	assert.ErrorContains(t, err, "no environments found in PM2 config")
+	assert.Equal(t, "", env)
+}
+
+func TestSelectEnvFromConfigEmptyHosts(t *testing.T) {
+	pm2Manager := mocks.SetupMockPm2Manager([]int{}, "", nil)
+
+	var pm2Config dto.EconsystemConfigDTO
+
+	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.nonexisting.js")
+	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+	assert.ErrorContains(t, err, "running node script to load pm2 config")
 }
 
 func TestSelectEnvFromConfigEmptyArg(t *testing.T) {
