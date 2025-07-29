@@ -1,22 +1,28 @@
 package mocks
 
 import (
-	"os"
-	"os/exec"
+	"errors"
 
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 )
 
 type sshConnectorMock struct {
-	runCmdOutput string
-	runCmdErr    error
+	runCmdOutput           string
+	runCmdErr              error
+	expectedInteractiveCmd string
 }
 
 func NewSSHConnectorMock(runCmdOutput string, runCmdErr error) ports.SSHConnector {
 	return &sshConnectorMock{
 		runCmdOutput: runCmdOutput,
 		runCmdErr:    runCmdErr,
+	}
+}
+
+func NewSSHConnectorInteractiveCommandMock(expectedInteractiveCmd string) ports.SSHConnector {
+	return &sshConnectorMock{
+		expectedInteractiveCmd: expectedInteractiveCmd,
 	}
 }
 
@@ -33,9 +39,8 @@ func (m *sshConnectorMock) RunCommand(cmd string) (string, error) {
 }
 
 func (m *sshConnectorMock) RunInteractiveCommand(cmd string) error {
-	command := exec.Command("sh", "-c", cmd)
-	command.Stdin = os.Stdin
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-	return command.Run()
+	if cmd != m.expectedInteractiveCmd {
+		return errors.New("unexpected interactive command: " + cmd)
+	}
+	return nil
 }

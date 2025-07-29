@@ -50,7 +50,7 @@ func (p *Pm2Manager) SelectResource() (string, error) {
 	return p.prompter.ChooseFromList(resources, "Select PM2 resource"), nil
 }
 
-func (p *Pm2Manager) GetCommandOptions(resource string) []commandOption {
+func (p *Pm2Manager) getCommandOptions(resource string) []commandOption {
 	selectedResource := ""
 	if resource != constants.ALL_OPTION {
 		selectedResource = resource
@@ -73,7 +73,7 @@ func (p *Pm2Manager) GetCommandOptions(resource string) []commandOption {
 }
 
 func (p *Pm2Manager) RunCommandOnResource(resource string) error {
-	options := p.GetCommandOptions(resource)
+	options := p.getCommandOptions(resource)
 
 	var commandNames []string
 	for _, opt := range options {

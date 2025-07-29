@@ -18,3 +18,10 @@ func SetupMockDockerManager(prompts []int, sshOutput string, sshErr error) *dock
 		NewSSHConnectorMock(sshOutput, sshErr),
 	)
 }
+
+func SetupMockPm2ManagerWithInteractiveCmd(prompts []int, interactiveCommand string) *pm2.Pm2Manager {
+	return pm2.NewPm2Manager(
+		NewPrompterMock(prompts),
+		NewSSHConnectorInteractiveCommandMock(interactiveCommand),
+	)
+}
