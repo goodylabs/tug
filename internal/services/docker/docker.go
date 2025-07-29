@@ -98,7 +98,7 @@ func (d *DockerManager) SelectContainer(containers []dto.ContainerDTO) (dto.Cont
 func (d *DockerManager) RunCommandOnContainer(container dto.ContainerDTO) error {
 	commands := []string{
 		"docker logs -f " + container.Name,
-		"docker exec -it " + container.Name + " bash",
+		"docker exec -it " + container.Name + " sh",
 		"docker logs " + container.Name,
 		"docker stop " + container.Name,
 		"docker start " + container.Name,
