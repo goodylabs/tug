@@ -1,12 +1,9 @@
 package pm2_test
 
 import (
-	"path/filepath"
 	"testing"
 
 	"github.com/goodylabs/tug/internal/config"
-	"github.com/goodylabs/tug/internal/constants"
-	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,12 +17,10 @@ Local PM2 version: 6.0.8
 
 [{ "name": "pm2-logrotate", "pid": 3105},{  "name": "staging_ro", "pid": 4043331},{ "name": "api-staging", "pid": 4041884}]`
 
-func TestLoadPm2ConfigOk(t *testing.T) {
+func TestRetrievePm2Config(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfig
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+	pm2Config, err := pm2Manager.RetrievePm2Config(config.PM2_CONFIG_PATH)
 
 	assert.NoError(t, err, "Expected no error when loading ecosystem config")
 	assert.NotNil(t, pm2Config, "Expected pm2Config to be not nil")
@@ -42,35 +37,24 @@ func TestLoadPm2ConfigOk(t *testing.T) {
 	}
 }
 
-func TestLoadPm2ConfigInvalidFile(t *testing.T) {
+func TestRetrievePm2ConfigInvalidFile(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfig
-
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.invalid.js")
-	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
-
+	_, err := pm2Manager.RetrievePm2Config(config.PM2_CONFIG_PATH)
 	assert.ErrorContains(t, err, "cannot read json file", "Expected error when loading invalid ecosystem config")
 }
 
-func TestLoadPm2ConfigNodeScriptFails(t *testing.T) {
+func TestRetrievePm2ConfigNodeScriptFails(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfig
-
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.nonexisting.js")
-	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
+	_, err := pm2Manager.RetrievePm2Config(config.PM2_CONFIG_PATH)
 	assert.ErrorContains(t, err, "Can not load config from file(probably doesn't")
 }
 
 func TestGetAvailableEnvsBadArg(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfig
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.emptyhosts.js")
-	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
-
-	envs, err := pm2Manager.GetAvailableEnvs(&pm2Config, "")
+	envs, err := pm2Manager.GetAvailableEnvs()
 	assert.ErrorContains(t, err, "no environments found in PM2 config")
 	assert.True(t, len(envs) == 0)
 }
@@ -78,11 +62,7 @@ func TestGetAvailableEnvsBadArg(t *testing.T) {
 func TestGetAvailableEnvsEmptyArg(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{0}, "", nil)
 
-	var pm2Config dto.EconsystemConfig
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
-
-	env, err := pm2Manager.GetAvailableEnvs(&pm2Config, "")
+	env, err := pm2Manager.GetAvailableEnvs()
 	assert.NoError(t, err, "Expected no error when selecting environment from config")
 	assert.Equal(t, "production_1", env, "Expected environment to be 'production_1' when no argument is provided")
 }
@@ -90,11 +70,7 @@ func TestGetAvailableEnvsEmptyArg(t *testing.T) {
 func TestGetAvailableEnvsOkArg(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfig
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
-
-	env, err := pm2Manager.GetAvailableEnvs(&pm2Config, "staging_RO")
+	env, err := pm2Manager.GetAvailableEnvs()
 	assert.NoError(t, err, "Expected no error when selecting environment from config")
 	assert.Equal(t, "staging_RO", env, "Expected environment to be 'staging_RO' when valid argument is provided")
 }
@@ -102,11 +78,7 @@ func TestGetAvailableEnvsOkArg(t *testing.T) {
 func TestGetSSHConfigAutoSelectHost(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfig
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
-
-	sshConfig, err := pm2Manager.GetSSHConfig(&pm2Config, "staging_RO")
+	sshConfig, err := pm2Manager.GetSSHConfig("staging_RO")
 
 	assert.NoError(t, err, "Expected no error when getting SSH config")
 	assert.Equal(t, sshConfig.User, "staging-user")
@@ -117,10 +89,7 @@ func TestGetSSHConfigAutoSelectHost(t *testing.T) {
 func TestGetSSHConfigSelectSecondHost(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{1}, "", nil)
 
-	var pm2Config dto.EconsystemConfig
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
-	sshConfig, err := pm2Manager.GetSSHConfig(&pm2Config, "production_RO_2")
+	sshConfig, err := pm2Manager.GetSSHConfig("production_RO_2")
 
 	assert.NoError(t, err, "Expected no error when getting SSH config")
 	assert.Equal(t, sshConfig.User, "root")
@@ -131,11 +100,7 @@ func TestGetSSHConfigSelectSecondHost(t *testing.T) {
 func TestGetSSHConfigDummyEnv(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{1}, "", nil)
 
-	var pm2Config dto.EconsystemConfig
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
-
-	sshConfig, err := pm2Manager.GetSSHConfig(&pm2Config, "dummy_env")
+	sshConfig, err := pm2Manager.GetSSHConfig("dummy_env")
 
 	assert.ErrorContains(t, err, "environment 'dummy_env' not found in loaded PM2 config")
 	assert.Nil(t, sshConfig)

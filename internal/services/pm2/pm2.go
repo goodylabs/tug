@@ -7,35 +7,33 @@ import (
 	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/config"
-	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/utils"
 )
 
-var pm2ConfigCached *dto.EconsystemConfig
+var pm2Config *dto.EconsystemConfig
 
 type Pm2Manager struct {
 	prompter     ports.Prompter
 	sshConnector ports.SSHConnector
 }
 
-func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) ports.TechnologyHandler {
+func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) ports.Pm2Manager {
 	return &Pm2Manager{
 		prompter:     prompter,
 		sshConnector: sshConnector,
 	}
 }
 
-func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.EconsystemConfig) error {
+func (p *Pm2Manager) RetrievePm2Config(ecosystemConfigPath string) (*dto.EconsystemConfig, error) {
 
-	if pm2ConfigCached != nil {
-		pm2Config = pm2ConfigCached
-		return nil
+	if pm2Config != nil {
+		return pm2Config, nil
 	}
 
 	if _, err := os.Stat(ecosystemConfigPath); os.IsNotExist(err) {
-		return fmt.Errorf("Can not load config from file(probably doesn't exist): %s", ecosystemConfigPath)
+		return nil, fmt.Errorf("Can not load config from file(probably doesn't exist): %s", ecosystemConfigPath)
 	}
 
 	tmpJsonPath := filepath.Join(os.TempDir(), "ecosystem.json")
@@ -59,23 +57,19 @@ func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.Ec
 	// missing tests
 	cmd := exec.Command("node", "-e", script)
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("running node script to load pm2 config: %w", err)
+		return nil, fmt.Errorf("running node script to load pm2 config: %w", err)
 	}
 
 	if err := utils.ReadJSON(tmpJsonPath, pm2Config); err != nil {
-		return fmt.Errorf("cannot read json file %s error: %w", tmpJsonPath, err)
+		return nil, fmt.Errorf("cannot read json file %s error: %w", tmpJsonPath, err)
 	}
 
-	pm2ConfigCached = pm2Config
-
-	return nil
+	return pm2Config, nil
 }
 
 func (p *Pm2Manager) GetAvailableEnvs() ([]string, error) {
-	var pm2Config dto.EconsystemConfig
-
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	if err := p.LoadPm2Config(ecosystemConfigPath, &pm2Config); err != nil {
+	pm2Config, err := p.RetrievePm2Config(config.PM2_CONFIG_PATH)
+	if err != nil {
 		return []string{}, fmt.Errorf("error loading PM2 config: %w", err)
 	}
 
@@ -104,10 +98,8 @@ func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfig, selectedEnv str
 }
 
 func (p *Pm2Manager) GetSSHConfig(selectedEnv string) (*dto.SSHConfig, error) {
-
-	var pm2Config dto.EconsystemConfig
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	if err := p.LoadPm2Config(ecosystemConfigPath, &pm2Config); err != nil {
+	pm2Config, err := p.RetrievePm2Config(config.PM2_CONFIG_PATH)
+	if err != nil {
 		return nil, fmt.Errorf("error loading PM2 config: %w", err)
 	}
 
@@ -116,7 +108,7 @@ func (p *Pm2Manager) GetSSHConfig(selectedEnv string) (*dto.SSHConfig, error) {
 		return nil, fmt.Errorf("environment '%s' not found in loaded PM2 config", selectedEnv)
 	}
 
-	host, err := p.selectHost(&pm2Config, selectedEnv)
+	host, err := p.selectHost(pm2Config, selectedEnv)
 	if err != nil {
 		return nil, err
 	}

@@ -12,6 +12,7 @@ var (
 	BASE_DIR        string
 	HOME_DIR        string
 	TUG_CONFIG_PATH string
+	PM2_CONFIG_PATH string
 )
 
 func init() {
@@ -26,6 +27,12 @@ func init() {
 	default:
 		loadProductionConfig()
 	}
+
+	loadBaseConfig()
+}
+
+func loadBaseConfig() {
+	PM2_CONFIG_PATH = filepath.Join(BASE_DIR, "ecosystem.config.js")
 }
 
 func loadProductionConfig() {
@@ -38,6 +45,7 @@ func loadDevelopmentConfig() {
 	BASE_DIR = filepath.Join(findProjectRoot(), ".development")
 	HOME_DIR = getEnvOrError("HOME")
 	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
+
 }
 
 func loadTestingConfig() {

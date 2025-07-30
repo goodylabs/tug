@@ -7,3 +7,8 @@ type TechnologyHandler interface {
 	GetSSHConfig(env string) (*dto.SSHConfig, error)
 	GetAvailableResources(*dto.SSHConfig) ([]string, error)
 }
+
+type Pm2Manager interface {
+	TechnologyHandler
+	RetrievePm2Config(ecosystemConfigPath string) (*dto.EconsystemConfig, error)
+}
