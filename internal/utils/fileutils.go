@@ -20,3 +20,19 @@ func GetFileLines(scriptAbsPath string) ([]string, error) {
 
 	return lines, scanner.Err()
 }
+
+func ListFilesInDir(dirPath string) ([]string, error) {
+	files, err := os.ReadDir(dirPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var fileNames []string
+	for _, file := range files {
+		if !file.IsDir() {
+			fileNames = append(fileNames, file.Name())
+		}
+	}
+
+	return fileNames, nil
+}

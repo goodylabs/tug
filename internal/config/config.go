@@ -10,6 +10,7 @@ import (
 
 var (
 	BASE_DIR string
+	HOME_DIR = getEnvOrError("HOME")
 )
 
 func init() {

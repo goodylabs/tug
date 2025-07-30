@@ -5,6 +5,7 @@ import (
 	"github.com/goodylabs/tug/internal/application"
 	"github.com/goodylabs/tug/internal/services/docker"
 	"github.com/goodylabs/tug/internal/services/pm2"
+	"github.com/goodylabs/tug/internal/services/tughelper"
 	"go.uber.org/dig"
 )
 
@@ -16,9 +17,11 @@ func InitDependencyContainer() *dig.Container {
 
 	container.Provide(docker.NewDockerManager)
 	container.Provide(pm2.NewPm2Manager)
+	container.Provide(tughelper.NewTugHelper)
 
 	container.Provide(application.NewPm2UseCase)
 	container.Provide(application.NewDockerUseCase)
+	container.Provide(application.NewInitializeUseCase)
 
 	return container
 }

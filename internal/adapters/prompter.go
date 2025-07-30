@@ -33,3 +33,18 @@ func (p *prompter) ChooseFromList(options []string, label string) string {
 
 	return result
 }
+
+// func AskForInput(label string) string {
+// 	fmt.Print("\033[H\033[2J")
+
+// 	promptUI := promptui.Prompt{
+// 		Label: label,
+// 	}
+
+// 	result, err := promptUI.Run()
+// 	if err != nil {
+// 		log.Fatal("Error:", err)
+// 	}
+
+// 	return result
+// }

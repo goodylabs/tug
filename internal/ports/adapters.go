@@ -4,6 +4,7 @@ import "github.com/goodylabs/tug/internal/dto"
 
 type Prompter interface {
 	ChooseFromList([]string, string) string
+	// AskForInput(string) string
 }
 
 type SSHConnector interface {
