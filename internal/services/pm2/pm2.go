@@ -31,7 +31,7 @@ func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.Ec
 		return fmt.Errorf("Can not load config from file(probably doesn't exist): %s", ecosystemConfigPath)
 	}
 
-	tmpPath := "/tmp/ecosystem.json"
+	tmpPath := filepath.Join("tmp", "ecosystem.json")
 
 	script := fmt.Sprintf(`
 		const fs = require("fs");

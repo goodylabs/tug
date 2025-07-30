@@ -24,11 +24,6 @@ var CommandTemplates = map[string]string{
 	"pm2 monit <resource>":    monitCmdTemplate,
 }
 
-type commandOption struct {
-	Name            string
-	CommandTemplate string
-}
-
 func (p *Pm2Manager) GetAvailableResources(sshConfig *dto.SSHConfig) ([]string, error) {
 	output, err := p.sshConnector.RunCommand(jlistCmd)
 	if err != nil {
