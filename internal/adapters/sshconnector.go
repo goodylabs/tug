@@ -31,13 +31,14 @@ func (a *sshConnector) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
 		User:            sshConfig.User,
 		Auth:            authMethods,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Timeout:         10 * time.Second,
+		Timeout:         5 * time.Second,
 	}
 
 	address := net.JoinHostPort(sshConfig.Host, fmt.Sprintf("%d", sshConfig.Port))
 	client, err := ssh.Dial("tcp", address, config)
 	if err != nil {
-		return fmt.Errorf("failed to dial SSH: %w", err)
+		basicError := fmt.Sprintf("failed to dial SSH: user: %s, host: %s, port: %d, err: %w", sshConfig.User, sshConfig.Host, sshConfig.Port, err)
+		return fmt.Errorf(basicError)
 	}
 
 	a.client = client
