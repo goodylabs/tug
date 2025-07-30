@@ -51,7 +51,7 @@ func TestLoadPm2ConfigNodeScriptFails(t *testing.T) {
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.nonexisting.js")
 	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
-	assert.ErrorContains(t, err, "running node script to load pm2 config")
+	assert.ErrorContains(t, err, "Can not load config from file(probably doesn't")
 }
 
 func TestSelectEnvFromConfigBadArg(t *testing.T) {
@@ -64,16 +64,6 @@ func TestSelectEnvFromConfigBadArg(t *testing.T) {
 	env, err := pm2Manager.SelectEnvFromConfig(&pm2Config, "")
 	assert.ErrorContains(t, err, "no environments found in PM2 config")
 	assert.Equal(t, "", env)
-}
-
-func TestSelectEnvFromConfigEmptyHosts(t *testing.T) {
-	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
-
-	var pm2Config dto.EconsystemConfig
-
-	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.nonexisting.js")
-	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
-	assert.ErrorContains(t, err, "running node script to load pm2 config")
 }
 
 func TestSelectEnvFromConfigEmptyArg(t *testing.T) {

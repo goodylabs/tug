@@ -25,7 +25,7 @@ func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) *Pm
 func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.EconsystemConfig) error {
 
 	if _, err := os.Stat(ecosystemConfigPath); os.IsNotExist(err) {
-		return fmt.Errorf("ecosystem.config.js file %s does not exist", ecosystemConfigPath)
+		return fmt.Errorf("Can not load config from file(probably doesn't exist): %s", ecosystemConfigPath)
 	}
 
 	tmpPath := "/tmp/ecosystem.json"
