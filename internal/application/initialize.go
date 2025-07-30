@@ -8,34 +8,31 @@ import (
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/tughelper"
-	"github.com/goodylabs/tug/internal/utils"
 )
 
 type InitializeUseCase struct {
-	prompter  ports.Prompter
-	tugHelper *tughelper.TugHelper
+	prompter ports.Prompter
 }
 
-func NewInitializeUseCase(prompter ports.Prompter, tughelper *tughelper.TugHelper) *InitializeUseCase {
+func NewInitializeUseCase(prompter ports.Prompter) *InitializeUseCase {
 	return &InitializeUseCase{
-		prompter:  prompter,
-		tugHelper: tughelper,
+		prompter: prompter,
 	}
 }
 
 func (i *InitializeUseCase) Execute() error {
 	sshDirPath := filepath.Join(config.HOME_DIR, ".ssh")
 
-	sshKeyPath, err := i.tugHelper.GetAvailableSSHFiles(sshDirPath)
+	sshFiles, err := tughelper.GetAvailableSSHFiles(sshDirPath)
 	if err != nil {
 		return fmt.Errorf("getting SSH directory path: %w", err)
 	}
+
+	sshKeyPath := i.prompter.ChooseFromList(sshFiles, "Which SSH key do you want to use?")
 
 	tugConfig := dto.TugConfig{
 		SSHKeyPath: sshKeyPath,
 	}
 
-	utils.WriteJSON(config.TUG_CONFIG_PATH, &tugConfig)
-
-	return nil
+	return tughelper.SetTugConfig(&tugConfig)
 }
