@@ -38,7 +38,7 @@ func (s *sshConnector) ConfigureSSHConnection(sshConfig *dto.SSHConfig) error {
 	address := net.JoinHostPort(sshConfig.Host, fmt.Sprintf("%d", sshConfig.Port))
 	client, err := ssh.Dial("tcp", address, config)
 	if err != nil {
-		return fmt.Errorf("failed to dial SSH: user: %s, host: %s, port: %d, err: %w", sshConfig.User, sshConfig.Host, sshConfig.Port, err)
+		return err
 	}
 
 	s.client = client
@@ -56,11 +56,11 @@ func (s *sshConnector) CloseConnection() error {
 
 func (s *sshConnector) RunCommand(cmd string) (string, error) {
 	if s.client == nil {
-		return "", fmt.Errorf("connection not opened")
+		return "", nil
 	}
 	session, err := s.client.NewSession()
 	if err != nil {
-		return "", fmt.Errorf("failed to create session: %w", err)
+		return "", err
 	}
 	defer session.Close()
 
@@ -70,12 +70,12 @@ func (s *sshConnector) RunCommand(cmd string) (string, error) {
 
 func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 	if s.client == nil {
-		return fmt.Errorf("connection not opened")
+		return nil
 	}
 
 	session, err := s.client.NewSession()
 	if err != nil {
-		return fmt.Errorf("failed to create session: %w", err)
+		return err
 	}
 	defer session.Close()
 
@@ -86,7 +86,7 @@ func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 	}
 
 	if err := session.RequestPty("xterm", 40, 80, modes); err != nil {
-		return fmt.Errorf("request for pseudo terminal failed: %w", err)
+		return err
 	}
 
 	session.Stdin = os.Stdin
@@ -96,7 +96,7 @@ func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 	fd := int(os.Stdin.Fd())
 	oldState, err := term.MakeRaw(fd)
 	if err != nil {
-		return fmt.Errorf("failed to set terminal raw mode: %w", err)
+		return err
 	}
 	defer term.Restore(fd, oldState)
 

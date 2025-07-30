@@ -1,7 +1,6 @@
 package application
 
 import (
-	"fmt"
 	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/config"
@@ -27,28 +26,28 @@ func (d *DockerUseCase) Execute(envDir string) error {
 
 	targetIP, err := d.dockerManager.GetTargetIP(scriptPath)
 	if err != nil {
-		return fmt.Errorf("getting target IP: %w", err)
+		return err
 	}
 
 	sshConfig := d.dockerManager.GetSSHConfig(targetIP)
 
 	if err := d.sshConnector.ConfigureSSHConnection(sshConfig); err != nil {
-		return fmt.Errorf("opening SSH connection: %w", err)
+		return err
 	}
 	defer d.sshConnector.CloseConnection()
 
 	containers, err := d.dockerManager.ListContainers()
 	if err != nil {
-		return fmt.Errorf("listing containers: %w", err)
+		return err
 	}
 
 	container, err := d.dockerManager.SelectContainer(containers)
 	if err != nil {
-		return fmt.Errorf("selecting container: %w", err)
+		return err
 	}
 
 	if err := d.dockerManager.RunCommandOnContainer(container); err != nil {
-		return fmt.Errorf("running command on container: %w", err)
+		return err
 	}
 
 	return nil

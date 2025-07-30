@@ -7,16 +7,16 @@ import (
 	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/config"
+	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/utils"
 )
 
-var pm2Config *dto.EconsystemConfig
-
 type Pm2Manager struct {
 	prompter     ports.Prompter
 	sshConnector ports.SSHConnector
+	pm2Config    *dto.EconsystemConfig
 }
 
 func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) ports.Pm2Manager {
@@ -28,15 +28,15 @@ func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) por
 
 func (p *Pm2Manager) RetrievePm2Config(ecosystemConfigPath string) (*dto.EconsystemConfig, error) {
 
-	if pm2Config != nil {
-		return pm2Config, nil
+	if p.pm2Config != nil {
+		return p.pm2Config, nil
 	}
 
 	if _, err := os.Stat(ecosystemConfigPath); os.IsNotExist(err) {
-		return nil, fmt.Errorf("Can not load config from file(probably doesn't exist): %s", ecosystemConfigPath)
+		return nil, err
 	}
 
-	tmpJsonPath := filepath.Join(os.TempDir(), "ecosystem.json")
+	tmpJsonPath := "/tmp/ecosystem.json"
 
 	script := fmt.Sprintf(`
 		const fs = require("fs");
@@ -57,24 +57,24 @@ func (p *Pm2Manager) RetrievePm2Config(ecosystemConfigPath string) (*dto.Econsys
 	// missing tests
 	cmd := exec.Command("node", "-e", script)
 	if err := cmd.Run(); err != nil {
-		return nil, fmt.Errorf("running node script to load pm2 config: %w", err)
+		return nil, err
 	}
 
-	if err := utils.ReadJSON(tmpJsonPath, pm2Config); err != nil {
-		return nil, fmt.Errorf("cannot read json file %s error: %w", tmpJsonPath, err)
+	if err := utils.ReadJSON(tmpJsonPath, &p.pm2Config); err != nil {
+		return nil, err
 	}
 
-	return pm2Config, nil
+	return p.pm2Config, nil
 }
 
 func (p *Pm2Manager) GetAvailableEnvs() ([]string, error) {
-	pm2Config, err := p.RetrievePm2Config(config.PM2_CONFIG_PATH)
+	pm2Config, err := p.RetrievePm2Config(filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE))
 	if err != nil {
-		return []string{}, fmt.Errorf("error loading PM2 config: %w", err)
+		return []string{}, err
 	}
 
 	if len(pm2Config.Deploy) == 0 {
-		return []string{}, fmt.Errorf("no environments found in PM2 config")
+		return []string{}, err
 	}
 
 	var options []string
@@ -87,7 +87,7 @@ func (p *Pm2Manager) GetAvailableEnvs() ([]string, error) {
 func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfig, selectedEnv string) (string, error) {
 	hosts := pm2Config.Deploy[selectedEnv].Host
 	if len(hosts) == 0 {
-		return "", fmt.Errorf("no hosts found for selected environment %s", selectedEnv)
+		return "", nil
 	}
 
 	if len(hosts) == 1 {
@@ -98,14 +98,14 @@ func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfig, selectedEnv str
 }
 
 func (p *Pm2Manager) GetSSHConfig(selectedEnv string) (*dto.SSHConfig, error) {
-	pm2Config, err := p.RetrievePm2Config(config.PM2_CONFIG_PATH)
+	pm2Config, err := p.RetrievePm2Config(filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE))
 	if err != nil {
-		return nil, fmt.Errorf("error loading PM2 config: %w", err)
+		return nil, err
 	}
 
 	envConfig, exists := pm2Config.Deploy[selectedEnv]
 	if !exists {
-		return nil, fmt.Errorf("environment '%s' not found in loaded PM2 config", selectedEnv)
+		return nil, err
 	}
 
 	host, err := p.selectHost(pm2Config, selectedEnv)

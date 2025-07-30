@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/goodylabs/tug/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -25,6 +26,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
+	config.Load()
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)

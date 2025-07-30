@@ -1,7 +1,6 @@
 package tughelper
 
 import (
-	"fmt"
 	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/config"
@@ -14,7 +13,7 @@ func GetAvailableSSHFiles(sshDirPath string) ([]string, error) {
 	var err error
 
 	if sshFiles, err = utils.ListFilesInDir(sshDirPath); err != nil {
-		return []string{}, fmt.Errorf("Occurred error while listing files in %s directory: %w", sshDirPath, err)
+		return []string{}, err
 	}
 
 	for i, file := range sshFiles {

@@ -25,7 +25,7 @@ func (i *InitializeUseCase) Execute() error {
 
 	sshFiles, err := tughelper.GetAvailableSSHFiles(sshDirPath)
 	if err != nil {
-		return fmt.Errorf("getting SSH directory path: %w", err)
+		return err
 	}
 
 	sshKeyPath, _ := i.prompter.ChooseFromList(sshFiles, "Which SSH key do you want to use?")
@@ -34,7 +34,7 @@ func (i *InitializeUseCase) Execute() error {
 		SSHKeyPath: sshKeyPath,
 	}
 	if err = tughelper.SetTugConfig(&tugConfig); err != nil {
-		return fmt.Errorf("setting Tug config: %w", err)
+		return err
 	}
 
 	fmt.Println("Tug configuration initialized successfully.")

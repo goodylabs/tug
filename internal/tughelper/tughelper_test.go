@@ -1,6 +1,7 @@
 package tughelper_test
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -17,8 +18,13 @@ type tugHelperTestCase struct {
 	value         string
 }
 
+func init() {
+	config.Load()
+}
+
 func TestSetGetTugConfig(t *testing.T) {
 	os.Remove(config.TUG_CONFIG_PATH)
+	fmt.Println(config.TUG_CONFIG_PATH)
 
 	_, err := tughelper.GetTugConfig()
 	assert.Error(t, err)

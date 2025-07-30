@@ -3,7 +3,6 @@ package docker
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/goodylabs/tug/internal/constants"
@@ -28,7 +27,7 @@ func (d *DockerManager) GetTargetIP(scriptPath string) (string, error) {
 	for _, field := range []string{constants.TARGET_IP_FIELD_LEGACY, constants.TARGET_IP_FIELD} {
 		lines, err := utils.GetFileLines(scriptPath)
 		if err != nil {
-			return "", fmt.Errorf("reading deploy.sh: %w", err)
+			return "", err
 		}
 
 		if ip := extractVariable(lines, field); ip != "" {
@@ -61,7 +60,7 @@ func (d *DockerManager) ListContainers() ([]dto.Container, error) {
 
 	output, err := d.sshConnector.RunCommand("docker ps --format json")
 	if err != nil {
-		return nil, fmt.Errorf("docker ps failed: %w", err)
+		return nil, err
 	}
 
 	lines := strings.Split(strings.TrimSpace(output), "\n")
@@ -92,7 +91,7 @@ func (d *DockerManager) SelectContainer(containers []dto.Container) (dto.Contain
 			return c, nil
 		}
 	}
-	return dto.Container{}, fmt.Errorf("container %s not found", selected)
+	return dto.Container{}, nil
 }
 
 func (d *DockerManager) RunCommandOnContainer(container dto.Container) error {
@@ -110,7 +109,7 @@ func (d *DockerManager) RunCommandOnContainer(container dto.Container) error {
 	}
 
 	if err := d.sshConnector.RunInteractiveCommand(selected); err != nil {
-		return fmt.Errorf("executing command failed: %w", err)
+		return err
 	}
 
 	return nil

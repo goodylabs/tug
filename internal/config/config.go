@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -15,42 +16,32 @@ var (
 	PM2_CONFIG_PATH string
 )
 
-func init() {
+func Load() {
 	godotenv.Load(".env")
 	tugEnv := os.Getenv("TUG_ENV")
+	fmt.Println("Using TUG_ENV:", tugEnv)
+	projectRoot := findProjectRoot()
 
 	switch tugEnv {
 	case "development":
-		loadDevelopmentConfig()
+		BASE_DIR = filepath.Join(projectRoot, ".development")
+		HOME_DIR = getEnvOrError("HOME")
 	case "testing":
-		loadTestingConfig()
+		BASE_DIR = filepath.Join(projectRoot, ".testing")
+		HOME_DIR = filepath.Join(projectRoot, ".testing")
 	default:
-		loadProductionConfig()
+		BASE_DIR = getEnvOrError("PWD")
+		HOME_DIR = getEnvOrError("HOME")
 	}
 
-	loadBaseConfig()
-}
-
-func loadBaseConfig() {
+	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
 	PM2_CONFIG_PATH = filepath.Join(BASE_DIR, "ecosystem.config.js")
 }
 
-func loadProductionConfig() {
-	BASE_DIR = getEnvOrError("PWD")
-	HOME_DIR = getEnvOrError("HOME")
-	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
-}
-
-func loadDevelopmentConfig() {
-	BASE_DIR = filepath.Join(findProjectRoot(), ".development")
-	HOME_DIR = getEnvOrError("HOME")
-	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
-
-}
-
 func loadTestingConfig() {
-	BASE_DIR = filepath.Join(findProjectRoot(), ".testing")
-	HOME_DIR = filepath.Join(findProjectRoot(), ".testing")
+	projectRoot := findProjectRoot()
+	BASE_DIR = filepath.Join(projectRoot, ".testing")
+	HOME_DIR = filepath.Join(projectRoot, ".testing")
 	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
 }
 

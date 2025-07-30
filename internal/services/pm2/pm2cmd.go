@@ -2,7 +2,6 @@ package pm2
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/goodylabs/tug/internal/dto"
 )
@@ -27,12 +26,12 @@ var CommandTemplates = map[string]string{
 func (p *Pm2Manager) GetAvailableResources(sshConfig *dto.SSHConfig) ([]string, error) {
 	output, err := p.sshConnector.RunCommand(jlistCmd)
 	if err != nil {
-		return nil, fmt.Errorf("running PM2 jlist command: %w", err)
+		return nil, err
 	}
 
 	var pm2List []dto.Pm2ListItem
 	if err := json.Unmarshal([]byte(output), &pm2List); err != nil {
-		return nil, fmt.Errorf("parsing PM2 list output: %w", err)
+		return nil, err
 	}
 
 	var resources []string
