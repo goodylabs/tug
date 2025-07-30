@@ -10,6 +10,7 @@ require (
 	github.com/testcontainers/testcontainers-go v0.38.0
 	go.uber.org/dig v1.19.0
 	golang.org/x/crypto v0.37.0
+	golang.org/x/term v0.31.0
 )
 
 require (

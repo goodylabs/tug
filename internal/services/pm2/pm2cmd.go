@@ -17,11 +17,11 @@ const (
 )
 
 var commandTemplates = map[string]string{
-	"pm2 logs":        logsCmdTemplate,
-	"pm2 show status": showCmdTemplate,
-	"pm2 restart":     restartCmdTemplate,
-	"pm2 describe":    describeCmdTemplate,
-	"pm2 monit":       monitCmdTemplate,
+	"pm2 logs <resource>":     logsCmdTemplate,
+	"pm2 show <resource>":     showCmdTemplate,
+	"pm2 restart <resource>":  restartCmdTemplate,
+	"pm2 describe <resource>": describeCmdTemplate,
+	"pm2 monit <resource>":    monitCmdTemplate,
 }
 
 type commandOption struct {
@@ -53,7 +53,7 @@ func (p *Pm2Manager) SelectResource() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return p.prompter.ChooseFromList(resources, "Select PM2 resource"), nil
+	return p.prompter.ChooseFromList(resources, "Select PM2 <resource>"), nil
 }
 
 func (p *Pm2Manager) SelectCommandTemplate() (string, error) {
@@ -62,7 +62,7 @@ func (p *Pm2Manager) SelectCommandTemplate() (string, error) {
 		commandNames = append(commandNames, name)
 	}
 
-	selected := p.prompter.ChooseFromList(commandNames, "Select command:")
+	selected := p.prompter.ChooseFromList(commandNames, "Select command")
 
 	cmdTemplate, ok := commandTemplates[selected]
 	if !ok {

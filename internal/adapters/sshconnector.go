@@ -11,6 +11,7 @@ import (
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/term"
 )
 
 type sshConnector struct {
@@ -84,13 +85,20 @@ func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 		ssh.TTY_OP_OSPEED: 14400,
 	}
 
-	if err := session.RequestPty("xterm", 80, 40, modes); err != nil {
+	if err := session.RequestPty("xterm", 40, 80, modes); err != nil {
 		return fmt.Errorf("request for pseudo terminal failed: %w", err)
 	}
 
 	session.Stdin = os.Stdin
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
+
+	fd := int(os.Stdin.Fd())
+	oldState, err := term.MakeRaw(fd)
+	if err != nil {
+		return fmt.Errorf("failed to set terminal raw mode: %w", err)
+	}
+	defer term.Restore(fd, oldState)
 
 	return session.Run(cmd)
 }
