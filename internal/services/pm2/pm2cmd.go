@@ -10,10 +10,10 @@ import (
 const (
 	jlistCmd            = `source ~/.nvm/nvm.sh; pm2 jlist | sed -n '/^\[/,$p'`
 	logsCmdTemplate     = `source ~/.nvm/nvm.sh; pm2 logs %s`
-	showCmdTemplate     = `source ~/.nvm/nvm.sh; pm2 show %s`
+	showCmdTemplate     = `source ~/.nvm/nvm.sh; pm2 show %s && read`
 	restartCmdTemplate  = `source ~/.nvm/nvm.sh; pm2 restart %s`
-	describeCmdTemplate = `source ~/.nvm/nvm.sh; pm2 describe %s`
-	monitCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 monit %s`
+	describeCmdTemplate = `source ~/.nvm/nvm.sh; pm2 describe %s && read`
+	monitCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 monit %s && read`
 )
 
 var CommandTemplates = map[string]string{
@@ -29,13 +29,7 @@ type commandOption struct {
 	CommandTemplate string
 }
 
-var availableResourcesCache []string
-
 func (p *Pm2Manager) GetAvailableResources(sshConfig *dto.SSHConfig) ([]string, error) {
-	if availableResourcesCache != nil {
-		return availableResourcesCache, nil
-	}
-
 	output, err := p.sshConnector.RunCommand(jlistCmd)
 	if err != nil {
 		return nil, fmt.Errorf("running PM2 jlist command: %w", err)
@@ -50,8 +44,6 @@ func (p *Pm2Manager) GetAvailableResources(sshConfig *dto.SSHConfig) ([]string, 
 	for _, item := range pm2List {
 		resources = append(resources, item.Name)
 	}
-
-	availableResourcesCache = resources
 
 	return resources, nil
 }

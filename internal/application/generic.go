@@ -45,6 +45,10 @@ func (g *GenericUseCase) Execute() error {
 		if nextStep {
 			currentStep++
 		} else {
+			if currentStep == 0 {
+				fmt.Println("Exiting PM2 command execution.")
+				return nil
+			}
 			currentStep--
 		}
 
@@ -59,7 +63,7 @@ func (g *GenericUseCase) stepSelectEnv() (bool, error) {
 
 	selectedEnv, err := g.prompter.ChooseFromList(availableEnvs, "Select PM2 <environment>")
 	if err != nil {
-		return false, fmt.Errorf("selecting PM2 environment: %w", err)
+		return false, nil
 	}
 
 	sshConfig, err := g.handler.GetSSHConfig(selectedEnv)
@@ -102,7 +106,6 @@ func (g *GenericUseCase) stepExecuteAction() (bool, error) {
 	remoteCmd := fmt.Sprintf(g.context.action, g.context.resource)
 	if err := g.sshConnector.RunInteractiveCommand(remoteCmd); err != nil {
 		g.context.action = ""
-		return false, nil
 	}
-	return true, nil
+	return false, nil
 }

@@ -37,14 +37,18 @@ func (p *prompter) ChooseFromList(options []string, label string) (string, error
 	return result, err
 }
 
+func (p *prompter) clear() {
+	fmt.Println("\033[H\033[2J")
+}
+
 func (p *prompter) ChooseFromMap(options map[string]string, label string) (string, error) {
+	p.clear()
+
 	if len(options) == 1 {
 		for _, v := range options {
 			return v, nil
 		}
 	}
-
-	fmt.Println("\033[H\033[2J")
 
 	keys := make([]string, 0, len(options))
 	for k := range options {
