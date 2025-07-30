@@ -37,8 +37,7 @@ func (a *sshConnector) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
 	address := net.JoinHostPort(sshConfig.Host, fmt.Sprintf("%d", sshConfig.Port))
 	client, err := ssh.Dial("tcp", address, config)
 	if err != nil {
-		basicError := fmt.Sprintf("failed to dial SSH: user: %s, host: %s, port: %d, err: %w", sshConfig.User, sshConfig.Host, sshConfig.Port, err)
-		return fmt.Errorf(basicError)
+		return fmt.Errorf("failed to dial SSH: user: %s, host: %s, port: %d, err: %w", sshConfig.User, sshConfig.Host, sshConfig.Port, err)
 	}
 
 	a.client = client
