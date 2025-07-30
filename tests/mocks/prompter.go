@@ -16,9 +16,9 @@ func NewPrompterMock(seq []int) ports.Prompter {
 	}
 }
 
-func (p *prompterMock) ChooseFromList(options []string, label string) string {
+func (p *prompterMock) ChooseFromList(options []string, label string) (string, error) {
 	i := p.seq[p.index]
 	p.index++
 	utils.SortOptions(options)
-	return options[i]
+	return options[i], nil
 }

@@ -25,6 +25,8 @@ func NewPm2UseCase(pm2Manager *pm2.Pm2Manager, sshConnector ports.SSHConnector, 
 	}
 }
 
+var chunks = [3]string{}
+
 func (p *Pm2UseCase) Execute(envArg string) error {
 	var pm2Config dto.EconsystemConfig
 
@@ -33,6 +35,7 @@ func (p *Pm2UseCase) Execute(envArg string) error {
 		return fmt.Errorf("error loading PM2 config: %w", err)
 	}
 
+	// chunk 1
 	selectedEnv, err := p.pm2Manager.SelectEnvFromConfig(&pm2Config, envArg)
 	if err != nil {
 		return fmt.Errorf("error while selecting environment: %w", err)
@@ -50,11 +53,13 @@ func (p *Pm2UseCase) Execute(envArg string) error {
 	}
 	defer p.sshConnector.CloseConnection()
 
+	// chank 2
 	resource, err := p.pm2Manager.SelectResource()
 	if err != nil {
 		return fmt.Errorf("selecting PM2 resource: %w", err)
 	}
 
+	// chank 3
 	cmdTemplate, err := p.pm2Manager.SelectCommandTemplate()
 	if err != nil {
 		return fmt.Errorf("Error while selecting command template: %w", err)
@@ -62,5 +67,7 @@ func (p *Pm2UseCase) Execute(envArg string) error {
 
 	remoteCmd := fmt.Sprintf(cmdTemplate, resource)
 
-	return p.sshConnector.RunInteractiveCommand(remoteCmd)
+	err = p.sshConnector.RunInteractiveCommand(remoteCmd)
+
+	return err
 }

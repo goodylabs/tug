@@ -28,7 +28,7 @@ func (i *InitializeUseCase) Execute() error {
 		return fmt.Errorf("getting SSH directory path: %w", err)
 	}
 
-	sshKeyPath := i.prompter.ChooseFromList(sshFiles, "Which SSH key do you want to use?")
+	sshKeyPath, _ := i.prompter.ChooseFromList(sshFiles, "Which SSH key do you want to use?")
 
 	tugConfig := dto.TugConfig{
 		SSHKeyPath: sshKeyPath,

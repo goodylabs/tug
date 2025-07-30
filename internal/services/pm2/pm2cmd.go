@@ -53,7 +53,7 @@ func (p *Pm2Manager) SelectResource() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return p.prompter.ChooseFromList(resources, "Select PM2 <resource>"), nil
+	return p.prompter.ChooseFromList(resources, "Select PM2 <resource>")
 }
 
 func (p *Pm2Manager) SelectCommandTemplate() (string, error) {
@@ -62,7 +62,7 @@ func (p *Pm2Manager) SelectCommandTemplate() (string, error) {
 		commandNames = append(commandNames, name)
 	}
 
-	selected := p.prompter.ChooseFromList(commandNames, "Select command")
+	selected, _ := p.prompter.ChooseFromList(commandNames, "Select command")
 
 	cmdTemplate, ok := commandTemplates[selected]
 	if !ok {

@@ -76,7 +76,7 @@ func (p *Pm2Manager) SelectEnvFromConfig(pm2Config *dto.EconsystemConfig, envArg
 		options = append(options, env)
 	}
 
-	return p.prompter.ChooseFromList(options, "Select pm2 environment"), nil
+	return p.prompter.ChooseFromList(options, "Select pm2 environment")
 }
 
 func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfig, selectedEnv string) (string, error) {
@@ -89,7 +89,7 @@ func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfig, selectedEnv str
 		return hosts[0], nil
 	}
 
-	return p.prompter.ChooseFromList(hosts, "Select host for environment "+selectedEnv), nil
+	return p.prompter.ChooseFromList(hosts, "Select host for environment "+selectedEnv)
 }
 
 func (p *Pm2Manager) GetSSHConfig(pm2Config *dto.EconsystemConfig, selectedEnv string) (*dto.SSHConfig, error) {

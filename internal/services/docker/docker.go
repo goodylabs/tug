@@ -86,7 +86,7 @@ func (d *DockerManager) SelectContainer(containers []dto.Container) (dto.Contain
 		names = append(names, c.Name)
 	}
 
-	selected := d.prompter.ChooseFromList(names, "Choose container")
+	selected, _ := d.prompter.ChooseFromList(names, "Choose container")
 	for _, c := range containers {
 		if c.Name == selected {
 			return c, nil
@@ -104,7 +104,7 @@ func (d *DockerManager) RunCommandOnContainer(container dto.Container) error {
 		"docker start " + container.Name,
 	}
 
-	selected := d.prompter.ChooseFromList(commands, "Select command to execute")
+	selected, _ := d.prompter.ChooseFromList(commands, "Select command to execute")
 	if selected == "" {
 		return errors.New("no command selected")
 	}
