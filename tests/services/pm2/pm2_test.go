@@ -12,7 +12,7 @@ import (
 )
 
 func TestLoadPm2ConfigOk(t *testing.T) {
-	pm2Manager := mocks.SetupMockPm2Manager([]int{}, "", nil)
+	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
@@ -34,7 +34,7 @@ func TestLoadPm2ConfigOk(t *testing.T) {
 }
 
 func TestLoadPm2ConfigInvalidFile(t *testing.T) {
-	pm2Manager := mocks.SetupMockPm2Manager([]int{}, "", nil)
+	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 
@@ -45,7 +45,7 @@ func TestLoadPm2ConfigInvalidFile(t *testing.T) {
 }
 
 func TestLoadPm2ConfigNodeScriptFails(t *testing.T) {
-	pm2Manager := mocks.SetupMockPm2Manager([]int{}, "", nil)
+	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 
@@ -55,7 +55,7 @@ func TestLoadPm2ConfigNodeScriptFails(t *testing.T) {
 }
 
 func TestSelectEnvFromConfigBadArg(t *testing.T) {
-	pm2Manager := mocks.SetupMockPm2Manager([]int{}, "", nil)
+	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.emptyhosts.js")
@@ -67,7 +67,7 @@ func TestSelectEnvFromConfigBadArg(t *testing.T) {
 }
 
 func TestSelectEnvFromConfigEmptyHosts(t *testing.T) {
-	pm2Manager := mocks.SetupMockPm2Manager([]int{}, "", nil)
+	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 
@@ -77,7 +77,7 @@ func TestSelectEnvFromConfigEmptyHosts(t *testing.T) {
 }
 
 func TestSelectEnvFromConfigEmptyArg(t *testing.T) {
-	pm2Manager := mocks.SetupMockPm2Manager([]int{0}, "", nil)
+	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{0}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
@@ -89,7 +89,7 @@ func TestSelectEnvFromConfigEmptyArg(t *testing.T) {
 }
 
 func TestSelectEnvFromConfigOkArg(t *testing.T) {
-	pm2Manager := mocks.SetupMockPm2Manager([]int{}, "", nil)
+	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
@@ -101,7 +101,7 @@ func TestSelectEnvFromConfigOkArg(t *testing.T) {
 }
 
 func TestGetSSHConfigAutoSelectHost(t *testing.T) {
-	pm2Manager := mocks.SetupMockPm2Manager([]int{}, "", nil)
+	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
@@ -116,7 +116,7 @@ func TestGetSSHConfigAutoSelectHost(t *testing.T) {
 }
 
 func TestGetSSHConfigSelectSecondHost(t *testing.T) {
-	pm2Manager := mocks.SetupMockPm2Manager([]int{1}, "", nil)
+	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{1}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
@@ -130,7 +130,7 @@ func TestGetSSHConfigSelectSecondHost(t *testing.T) {
 }
 
 func TestGetSSHConfigDummyEnv(t *testing.T) {
-	pm2Manager := mocks.SetupMockPm2Manager([]int{1}, "", nil)
+	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{1}, "", nil)
 
 	var pm2Config dto.EconsystemConfigDTO
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
