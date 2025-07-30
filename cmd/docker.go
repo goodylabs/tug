@@ -32,6 +32,10 @@ var dockerCmd = &cobra.Command{
 	},
 }
 
+var useDockerCmd = "true"
+
 func init() {
-	rootCmd.AddCommand(dockerCmd)
+	if useDockerCmd == "true" {
+		rootCmd.AddCommand(dockerCmd)
+	}
 }
