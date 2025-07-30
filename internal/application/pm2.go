@@ -38,7 +38,7 @@ func (p *Pm2UseCase) Execute(envArg string) error {
 		return fmt.Errorf("error while selecting environment: %w", err)
 	}
 
-	fmt.Printf("Connecting via SSH to '%s' server...", selectedEnv)
+	fmt.Printf("Connecting via SSH to '%s' server...\n ", selectedEnv)
 
 	sshConfig, err := p.pm2Manager.GetSSHConfig(&pm2Config, selectedEnv)
 	if err != nil {
@@ -46,7 +46,7 @@ func (p *Pm2UseCase) Execute(envArg string) error {
 	}
 
 	if err := p.sshConnector.OpenConnection(sshConfig); err != nil {
-		return fmt.Errorf("opening SSH connection: %w", err)
+		return fmt.Errorf("Error while opening SSH connection: '%w'", err)
 	}
 	defer p.sshConnector.CloseConnection()
 

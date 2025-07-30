@@ -2,6 +2,7 @@ package pm2
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/goodylabs/tug/internal/dto"
@@ -22,6 +23,11 @@ func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) *Pm
 }
 
 func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.EconsystemConfig) error {
+
+	if _, err := os.Stat(ecosystemConfigPath); os.IsNotExist(err) {
+		return fmt.Errorf("ecosystem.config.js file %s does not exist", ecosystemConfigPath)
+	}
+
 	tmpPath := "/tmp/ecosystem.json"
 
 	script := fmt.Sprintf(`
