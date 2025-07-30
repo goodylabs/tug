@@ -1,15 +1,15 @@
 package adapters
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"os"
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
+	"github.com/goodylabs/tug/internal/tughelper"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/term"
 )
@@ -22,8 +22,8 @@ func NewSSHConnector() ports.SSHConnector {
 	return &sshConnector{}
 }
 
-func (a *sshConnector) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
-	authMethods, err := loadSSHKeysFromDir()
+func (s *sshConnector) OpenConnection(sshConfig *dto.SSHConfig) error {
+	authMethods, err := s.loadSSHKeysFromDir()
 	if err != nil {
 		return err
 	}
@@ -41,24 +41,24 @@ func (a *sshConnector) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
 		return fmt.Errorf("failed to dial SSH: user: %s, host: %s, port: %d, err: %w", sshConfig.User, sshConfig.Host, sshConfig.Port, err)
 	}
 
-	a.client = client
+	s.client = client
 	return nil
 }
 
-func (a *sshConnector) CloseConnection() error {
-	if a.client == nil {
+func (s *sshConnector) CloseConnection() error {
+	if s.client == nil {
 		return nil
 	}
-	err := a.client.Close()
-	a.client = nil
+	err := s.client.Close()
+	s.client = nil
 	return err
 }
 
-func (a *sshConnector) RunCommand(cmd string) (string, error) {
-	if a.client == nil {
+func (s *sshConnector) RunCommand(cmd string) (string, error) {
+	if s.client == nil {
 		return "", fmt.Errorf("connection not opened")
 	}
-	session, err := a.client.NewSession()
+	session, err := s.client.NewSession()
 	if err != nil {
 		return "", fmt.Errorf("failed to create session: %w", err)
 	}
@@ -103,29 +103,19 @@ func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 	return session.Run(cmd)
 }
 
-func loadSSHKeysFromDir() ([]ssh.AuthMethod, error) {
-	homeDir, err := os.UserHomeDir()
+func (s *sshConnector) loadSSHKeysFromDir() ([]ssh.AuthMethod, error) {
+	tugConfig, err := tughelper.GetTugConfig()
 	if err != nil {
-		return nil, fmt.Errorf("cannot determine home directory: %w", err)
+		return []ssh.AuthMethod{}, errors.New("Can not read tug config file, run `tug initialize` to configure tug.")
 	}
 
-	possibleKeys := []string{
-		"id_ed25519",
-		"id_rsa",
+	keyData, err := os.ReadFile(tugConfig.SSHKeyPath)
+	if err != nil {
+		return []ssh.AuthMethod{}, err
 	}
-
-	for _, keyFile := range possibleKeys {
-		path := filepath.Join(homeDir, ".ssh", keyFile)
-		keyData, err := os.ReadFile(path)
-		if err != nil {
-			continue
-		}
-		signer, err := ssh.ParsePrivateKey(keyData)
-		if err != nil {
-			continue
-		}
-		return []ssh.AuthMethod{ssh.PublicKeys(signer)}, nil
+	signer, err := ssh.ParsePrivateKey(keyData)
+	if err != nil {
+		return []ssh.AuthMethod{}, err
 	}
-
-	return nil, fmt.Errorf("no valid SSH keys found in ~/.ssh directory (trying %s)", strings.Join(possibleKeys, ", "))
+	return []ssh.AuthMethod{ssh.PublicKeys(signer)}, nil
 }

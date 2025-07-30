@@ -4,10 +4,11 @@ import "github.com/goodylabs/tug/internal/dto"
 
 type Prompter interface {
 	ChooseFromList([]string, string) string
+	// AskForInput(string) string
 }
 
 type SSHConnector interface {
-	OpenConnection(*dto.SSHConfigDTO) error
+	OpenConnection(*dto.SSHConfig) error
 	CloseConnection() error
 	RunCommand(cmd string) (string, error)
 	RunInteractiveCommand(cmd string) error

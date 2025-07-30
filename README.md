@@ -25,11 +25,10 @@ source ~/.bashrc # jeśli używasz bash
 curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download_script.sh | bash -s
 ```
 
-4. Do połączeń ssh TUG korzysta z pliku `~/.ssh/id_ed25519` lub jak nie znajdzie takiego to `~/.ssh/id_rsa` - upewnij się, że klucz z którego korzystasz jest dostępny pod tą lokalizacją.
+4. Skonfiguruj TUG:
 
 ```bash
-ls ~/.ssh/id_ed25519
-ls ~/.ssh/id_rsa
+tug initialize
 ```
 
 ## Aktualizacja

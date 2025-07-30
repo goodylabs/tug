@@ -19,6 +19,7 @@ func InitDependencyContainer() *dig.Container {
 
 	container.Provide(application.NewPm2UseCase)
 	container.Provide(application.NewDockerUseCase)
+	container.Provide(application.NewInitializeUseCase)
 
 	return container
 }

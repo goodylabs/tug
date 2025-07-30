@@ -9,7 +9,9 @@ import (
 )
 
 var (
-	BASE_DIR string
+	BASE_DIR        string
+	HOME_DIR        string
+	TUG_CONFIG_PATH string
 )
 
 func init() {
@@ -24,18 +26,29 @@ func init() {
 	default:
 		loadProductionConfig()
 	}
+
+	loadBaseConfig()
 }
 
 func loadProductionConfig() {
 	BASE_DIR = getEnvOrError("PWD")
+	HOME_DIR = getEnvOrError("HOME")
 }
 
 func loadDevelopmentConfig() {
-	BASE_DIR = filepath.Join(findProjectRoot(), ".development")
+	thatDir := filepath.Join(findProjectRoot(), ".development")
+	BASE_DIR = thatDir
+	HOME_DIR = thatDir
 }
 
 func loadTestingConfig() {
-	BASE_DIR = filepath.Join(findProjectRoot(), ".testing")
+	thatDir := filepath.Join(findProjectRoot(), ".testing")
+	BASE_DIR = thatDir
+	HOME_DIR = thatDir
+}
+
+func loadBaseConfig() {
+	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
 }
 
 func getEnvOrError(envName string) string {

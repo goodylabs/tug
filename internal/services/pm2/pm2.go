@@ -2,6 +2,7 @@ package pm2
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/goodylabs/tug/internal/dto"
@@ -21,7 +22,12 @@ func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) *Pm
 	}
 }
 
-func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.EconsystemConfigDTO) error {
+func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.EconsystemConfig) error {
+
+	if _, err := os.Stat(ecosystemConfigPath); os.IsNotExist(err) {
+		return fmt.Errorf("Can not load config from file(probably doesn't exist): %s", ecosystemConfigPath)
+	}
+
 	tmpPath := "/tmp/ecosystem.json"
 
 	script := fmt.Sprintf(`
@@ -53,7 +59,7 @@ func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.Ec
 	return nil
 }
 
-func (p *Pm2Manager) SelectEnvFromConfig(pm2Config *dto.EconsystemConfigDTO, envArg string) (string, error) {
+func (p *Pm2Manager) SelectEnvFromConfig(pm2Config *dto.EconsystemConfig, envArg string) (string, error) {
 	if len(pm2Config.Deploy) == 0 {
 		return "", fmt.Errorf("no environments found in PM2 config")
 	}
@@ -73,7 +79,7 @@ func (p *Pm2Manager) SelectEnvFromConfig(pm2Config *dto.EconsystemConfigDTO, env
 	return p.prompter.ChooseFromList(options, "Select pm2 environment"), nil
 }
 
-func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfigDTO, selectedEnv string) (string, error) {
+func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfig, selectedEnv string) (string, error) {
 	hosts := pm2Config.Deploy[selectedEnv].Host
 	if len(hosts) == 0 {
 		return "", fmt.Errorf("no hosts found for selected environment %s", selectedEnv)
@@ -86,7 +92,7 @@ func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfigDTO, selectedEnv 
 	return p.prompter.ChooseFromList(hosts, "Select host for environment "+selectedEnv), nil
 }
 
-func (p *Pm2Manager) GetSSHConfig(pm2Config *dto.EconsystemConfigDTO, selectedEnv string) (*dto.SSHConfigDTO, error) {
+func (p *Pm2Manager) GetSSHConfig(pm2Config *dto.EconsystemConfig, selectedEnv string) (*dto.SSHConfig, error) {
 	envConfig, exists := pm2Config.Deploy[selectedEnv]
 	if !exists {
 		return nil, fmt.Errorf("environment '%s' not found in loaded PM2 config", selectedEnv)
@@ -97,7 +103,7 @@ func (p *Pm2Manager) GetSSHConfig(pm2Config *dto.EconsystemConfigDTO, selectedEn
 		return nil, err
 	}
 
-	return &dto.SSHConfigDTO{
+	return &dto.SSHConfig{
 		User: envConfig.User,
 		Host: host,
 		Port: 22,

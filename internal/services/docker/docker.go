@@ -48,16 +48,16 @@ func extractVariable(lines []string, key string) string {
 	return ""
 }
 
-func (d *DockerManager) GetSSHConfig(ip string) *dto.SSHConfigDTO {
-	return &dto.SSHConfigDTO{
+func (d *DockerManager) GetSSHConfig(ip string) *dto.SSHConfig {
+	return &dto.SSHConfig{
 		User: "root",
 		Host: ip,
 		Port: 22,
 	}
 }
 
-func (d *DockerManager) ListContainers() ([]dto.ContainerDTO, error) {
-	var containers []dto.ContainerDTO
+func (d *DockerManager) ListContainers() ([]dto.Container, error) {
+	var containers []dto.Container
 
 	output, err := d.sshConnector.RunCommand("docker ps --format json")
 	if err != nil {
@@ -66,7 +66,7 @@ func (d *DockerManager) ListContainers() ([]dto.ContainerDTO, error) {
 
 	lines := strings.Split(strings.TrimSpace(output), "\n")
 	for _, line := range lines {
-		var container dto.ContainerDTO
+		var container dto.Container
 		if err := json.Unmarshal([]byte(line), &container); err != nil {
 			continue
 		}
@@ -76,9 +76,9 @@ func (d *DockerManager) ListContainers() ([]dto.ContainerDTO, error) {
 	return containers, nil
 }
 
-func (d *DockerManager) SelectContainer(containers []dto.ContainerDTO) (dto.ContainerDTO, error) {
+func (d *DockerManager) SelectContainer(containers []dto.Container) (dto.Container, error) {
 	if len(containers) == 0 {
-		return dto.ContainerDTO{}, errors.New("no containers available")
+		return dto.Container{}, errors.New("no containers available")
 	}
 
 	var names []string
@@ -92,10 +92,10 @@ func (d *DockerManager) SelectContainer(containers []dto.ContainerDTO) (dto.Cont
 			return c, nil
 		}
 	}
-	return dto.ContainerDTO{}, fmt.Errorf("container %s not found", selected)
+	return dto.Container{}, fmt.Errorf("container %s not found", selected)
 }
 
-func (d *DockerManager) RunCommandOnContainer(container dto.ContainerDTO) error {
+func (d *DockerManager) RunCommandOnContainer(container dto.Container) error {
 	commands := []string{
 		"docker logs -f " + container.Name,
 		"docker exec -it " + container.Name + " sh",
