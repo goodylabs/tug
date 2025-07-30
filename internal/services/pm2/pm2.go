@@ -13,6 +13,8 @@ import (
 	"github.com/goodylabs/tug/internal/utils"
 )
 
+var pm2ConfigCached *dto.EconsystemConfig
+
 type Pm2Manager struct {
 	prompter     ports.Prompter
 	sshConnector ports.SSHConnector
@@ -27,11 +29,16 @@ func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) por
 
 func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.EconsystemConfig) error {
 
+	if pm2ConfigCached != nil {
+		pm2Config = pm2ConfigCached
+		return nil
+	}
+
 	if _, err := os.Stat(ecosystemConfigPath); os.IsNotExist(err) {
 		return fmt.Errorf("Can not load config from file(probably doesn't exist): %s", ecosystemConfigPath)
 	}
 
-	tmpPath := filepath.Join("tmp", "ecosystem.json")
+	tmpJsonPath := filepath.Join(os.TempDir(), "ecosystem.json")
 
 	script := fmt.Sprintf(`
 		const fs = require("fs");
@@ -47,7 +54,7 @@ func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.Ec
 		}
 
 		fs.writeFileSync("%s", JSON.stringify(config, null, 2));
-	`, ecosystemConfigPath, tmpPath)
+	`, ecosystemConfigPath, tmpJsonPath)
 
 	// missing tests
 	cmd := exec.Command("node", "-e", script)
@@ -55,9 +62,11 @@ func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.Ec
 		return fmt.Errorf("running node script to load pm2 config: %w", err)
 	}
 
-	if err := utils.ReadJSON(tmpPath, pm2Config); err != nil {
-		return fmt.Errorf("cannot read json file %s error: %w", tmpPath, err)
+	if err := utils.ReadJSON(tmpJsonPath, pm2Config); err != nil {
+		return fmt.Errorf("cannot read json file %s error: %w", tmpJsonPath, err)
 	}
+
+	pm2ConfigCached = pm2Config
 
 	return nil
 }

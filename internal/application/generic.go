@@ -55,10 +55,11 @@ func (g *GenericUseCase) Execute() error {
 	}
 	return nil
 }
+
 func (g *GenericUseCase) stepSelectEnv() (bool, error) {
 	availableEnvs, err := g.handler.GetAvailableEnvs()
 	if err != nil {
-		return false, fmt.Errorf("selecting PM2 environment: %w", err)
+		return false, err
 	}
 
 	selectedEnv, err := g.prompter.ChooseFromList(availableEnvs, "Select PM2 <environment>")
@@ -68,7 +69,7 @@ func (g *GenericUseCase) stepSelectEnv() (bool, error) {
 
 	sshConfig, err := g.handler.GetSSHConfig(selectedEnv)
 	if err != nil {
-		return false, fmt.Errorf("getting SSH config: %w", err)
+		return false, err
 	}
 
 	g.sshConnector.ConfigureSSHConnection(sshConfig)
@@ -80,7 +81,7 @@ func (g *GenericUseCase) stepSelectEnv() (bool, error) {
 func (g *GenericUseCase) stepSelectResource() (bool, error) {
 	resources, err := g.handler.GetAvailableResources(g.context.sshConfig)
 	if err != nil {
-		return false, fmt.Errorf("selecting PM2 resource: %w", err)
+		return false, err
 	}
 
 	resource, err := g.prompter.ChooseFromList(resources, "Select PM2 <resource>")
