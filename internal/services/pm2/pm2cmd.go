@@ -13,6 +13,7 @@ const (
 	showCmdTemplate     = `source ~/.nvm/nvm.sh; pm2 show %s`
 	restartCmdTemplate  = `source ~/.nvm/nvm.sh; pm2 restart %s`
 	describeCmdTemplate = `source ~/.nvm/nvm.sh; pm2 describe %s`
+	monitCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 monit %s`
 )
 
 var commandTemplates = map[string]string{
@@ -20,6 +21,7 @@ var commandTemplates = map[string]string{
 	"pm2 show status": showCmdTemplate,
 	"pm2 restart":     restartCmdTemplate,
 	"pm2 describe":    describeCmdTemplate,
+	"pm2 monit":       monitCmdTemplate,
 }
 
 type commandOption struct {

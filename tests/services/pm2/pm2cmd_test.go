@@ -50,7 +50,7 @@ func TestSelectCommandTemplateOk(t *testing.T) {
 			expected:       "source ~/.nvm/nvm.sh; pm2 logs api-staging",
 		},
 		{
-			prompterChoice: 3,
+			prompterChoice: 4,
 			expected:       "source ~/.nvm/nvm.sh; pm2 show api-staging",
 		},
 		{
