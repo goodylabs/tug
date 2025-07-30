@@ -33,6 +33,10 @@ func (i *InitializeUseCase) Execute() error {
 	tugConfig := dto.TugConfig{
 		SSHKeyPath: sshKeyPath,
 	}
+	if err = tughelper.SetTugConfig(&tugConfig); err != nil {
+		return fmt.Errorf("setting Tug config: %w", err)
+	}
 
-	return tughelper.SetTugConfig(&tugConfig)
+	fmt.Println("Tug configuration initialized successfully.")
+	return nil
 }
