@@ -56,8 +56,8 @@ func (p *prompter) ChooseFromMap(options map[string]string, label string) (strin
 		Ask(label).
 		Choose(
 			keys,
-			choose.WithDefaultIndex(1),
-			choose.WithHelp(true),
+			choose.WithDefaultIndex(0),
+			choose.WithHelp(false),
 		)
 	if err != nil {
 		return "", err

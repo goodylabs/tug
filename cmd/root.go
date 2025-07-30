@@ -4,14 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/goodylabs/tug/internal"
 	"github.com/spf13/cobra"
-	"go.uber.org/dig"
 )
 
 var version = "default"
-
-var container *dig.Container
 
 var rootCmd = &cobra.Command{
 	Use:   "tug",
@@ -29,10 +25,6 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	if container == nil {
-		container = internal.InitDependencyContainer()
-	}
-
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)

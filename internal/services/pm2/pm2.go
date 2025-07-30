@@ -18,7 +18,7 @@ type Pm2Manager struct {
 	sshConnector ports.SSHConnector
 }
 
-func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) *Pm2Manager {
+func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) ports.TechnologyHandler {
 	return &Pm2Manager{
 		prompter:     prompter,
 		sshConnector: sshConnector,

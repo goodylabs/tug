@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/goodylabs/tug/internal"
 	"github.com/goodylabs/tug/internal/application"
 	"github.com/spf13/cobra"
 )
@@ -22,6 +23,8 @@ var dockerCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		envDir := args[0]
+
+		container := internal.InitDependencyContainer("docker")
 
 		err := container.Invoke(func(dockerUseCase *application.DockerUseCase) error {
 			return dockerUseCase.Execute(envDir)

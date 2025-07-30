@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/goodylabs/tug/internal"
 	"github.com/goodylabs/tug/internal/application"
 	"github.com/spf13/cobra"
 )
@@ -10,14 +11,10 @@ var pm2Cmd = &cobra.Command{
 	Short: "Abstraction layer for pm2 operations related to project repo",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		var envArg string
+		container := internal.InitDependencyContainer("pm2")
 
-		if len(args) >= 1 {
-			envArg = args[0]
-		}
-
-		err := container.Invoke(func(pm2UseCase *application.Pm2UseCase) error {
-			return pm2UseCase.Execute(envArg)
+		err := container.Invoke(func(GenericUseCase *application.GenericUseCase) error {
+			return GenericUseCase.Execute()
 		})
 		if err != nil {
 			cmd.PrintErrf("%v\n", err)

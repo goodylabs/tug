@@ -8,18 +8,27 @@ import (
 	"go.uber.org/dig"
 )
 
-func InitDependencyContainer() *dig.Container {
+type managerType string
+
+const (
+	DockerManager managerType = "docker"
+	Pm2Manager    managerType = "pm2"
+)
+
+func InitDependencyContainer(manager managerType) *dig.Container {
 	container := dig.New()
 
 	container.Provide(adapters.NewSSHConnector)
 	container.Provide(adapters.NewPrompter)
 
-	container.Provide(docker.NewDockerManager)
-	container.Provide(pm2.NewPm2Manager)
+	switch manager {
+	case DockerManager:
+		container.Provide(docker.NewDockerManager)
+	case Pm2Manager:
+		container.Provide(pm2.NewPm2Manager)
+	}
 
-	container.Provide(application.NewPm2UseCase)
-	container.Provide(application.NewDockerUseCase)
-	container.Provide(application.NewInitializeUseCase)
+	container.Provide(application.NewGenericUseCase)
 
 	return container
 }
