@@ -2,6 +2,7 @@ package pm2_test
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/goodylabs/tug/internal/services/pm2"
@@ -39,18 +40,30 @@ func TestSelectResourceInvalidOutput(t *testing.T) {
 	assert.Equal(t, "", resource)
 }
 
-func TestRunCommandOnResourceOk(t *testing.T) {
-	var pm2Manager *pm2.Pm2Manager
-	var err error
-	var expected string
+func TestSelectCommandTemplateOk(t *testing.T) {
+	testCases := []struct {
+		prompterChoice int
+		expected       string
+	}{
+		{
+			prompterChoice: 1,
+			expected:       "source ~/.nvm/nvm.sh; pm2 logs api-staging",
+		},
+		{
+			prompterChoice: 3,
+			expected:       "source ~/.nvm/nvm.sh; pm2 show api-staging",
+		},
+		{
+			prompterChoice: 0,
+			expected:       "source ~/.nvm/nvm.sh; pm2 describe api-staging",
+		},
+	}
 
-	expected = "source ~/.nvm/nvm.sh; pm2 logs api-staging"
-	pm2Manager = mocks.SetupMockPm2ManagerWithInteractiveCmd([]int{0}, expected)
-	err = pm2Manager.RunCommandOnResource("api-staging")
-	assert.NoError(t, err)
-
-	expected = "source ~/.nvm/nvm.sh; pm2 restart pm2-logrotate"
-	pm2Manager = mocks.SetupMockPm2ManagerWithInteractiveCmd([]int{1}, expected)
-	err = pm2Manager.RunCommandOnResource("pm2-logrotate")
-	assert.NoError(t, err)
+	for _, testCase := range testCases {
+		pm2Manager := mocks.SetupMockPm2Manager([]int{testCase.prompterChoice}, "", nil)
+		templ, err := pm2Manager.SelectCommandTemplate()
+		fullCmd := fmt.Sprintf(templ, "api-staging")
+		assert.Equal(t, testCase.expected, fullCmd)
+		assert.NoError(t, err)
+	}
 }

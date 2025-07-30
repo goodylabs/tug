@@ -4,21 +4,27 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/internal/dto"
 )
 
 const (
-	resourcesOption    = "<resource>"
-	jlistCmd           = `source ~/.nvm/nvm.sh; pm2 jlist | sed -n '/^\[/,$p'`
-	logsCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 logs %s`
-	showCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 show %s`
-	restartCmdTemplate = `source ~/.nvm/nvm.sh; pm2 restart %s`
+	jlistCmd            = `source ~/.nvm/nvm.sh; pm2 jlist | sed -n '/^\[/,$p'`
+	logsCmdTemplate     = `source ~/.nvm/nvm.sh; pm2 logs %s`
+	showCmdTemplate     = `source ~/.nvm/nvm.sh; pm2 show %s`
+	restartCmdTemplate  = `source ~/.nvm/nvm.sh; pm2 restart %s`
+	describeCmdTemplate = `source ~/.nvm/nvm.sh; pm2 describe %s`
 )
 
+var commandTemplates = map[string]string{
+	"pm2 logs":        logsCmdTemplate,
+	"pm2 show status": showCmdTemplate,
+	"pm2 restart":     restartCmdTemplate,
+	"pm2 describe":    describeCmdTemplate,
+}
+
 type commandOption struct {
-	Name    string
-	Command string
+	Name            string
+	CommandTemplate string
 }
 
 func (p *Pm2Manager) getPm2Processes() ([]string, error) {
@@ -37,8 +43,6 @@ func (p *Pm2Manager) getPm2Processes() ([]string, error) {
 		resources = append(resources, item.Name)
 	}
 
-	resources = append(resources, constants.ALL_OPTION)
-
 	return resources, nil
 }
 
@@ -50,42 +54,18 @@ func (p *Pm2Manager) SelectResource() (string, error) {
 	return p.prompter.ChooseFromList(resources, "Select PM2 resource"), nil
 }
 
-func (p *Pm2Manager) getCommandOptions(resource string) []commandOption {
-	selectedResource := ""
-	if resource != constants.ALL_OPTION {
-		selectedResource = resource
-	}
-
-	return []commandOption{
-		{
-			Name:    "pm2 logs",
-			Command: fmt.Sprintf(logsCmdTemplate, selectedResource),
-		},
-		{
-			Name:    "pm2 show status",
-			Command: fmt.Sprintf(showCmdTemplate, selectedResource),
-		},
-		{
-			Name:    "pm2 restart",
-			Command: fmt.Sprintf(restartCmdTemplate, selectedResource),
-		},
-	}
-}
-
-func (p *Pm2Manager) RunCommandOnResource(resource string) error {
-	options := p.getCommandOptions(resource)
-
+func (p *Pm2Manager) SelectCommandTemplate() (string, error) {
 	var commandNames []string
-	for _, opt := range options {
-		commandNames = append(commandNames, opt.Name)
+	for name := range commandTemplates {
+		commandNames = append(commandNames, name)
 	}
 
-	selectedCmdName := p.prompter.ChooseFromList(commandNames, "Select command:")
-	for _, opt := range options {
-		if opt.Name == selectedCmdName {
-			return p.sshConnector.RunInteractiveCommand(opt.Command)
-		}
+	selected := p.prompter.ChooseFromList(commandNames, "Select command:")
+
+	cmdTemplate, ok := commandTemplates[selected]
+	if !ok {
+		return "", fmt.Errorf("selected command not found: %s", selected)
 	}
 
-	return fmt.Errorf("selected command not found: %s", selectedCmdName)
+	return cmdTemplate, nil
 }

@@ -48,14 +48,17 @@ func (p *Pm2UseCase) Execute(envArg string) error {
 	}
 	defer p.sshConnector.CloseConnection()
 
-	selectedResource, err := p.pm2Manager.SelectResource()
+	resource, err := p.pm2Manager.SelectResource()
 	if err != nil {
 		return fmt.Errorf("selecting PM2 resource: %w", err)
 	}
 
-	if err := p.pm2Manager.RunCommandOnResource(selectedResource); err != nil {
-		return fmt.Errorf("running command on resource: %w", err)
+	cmdTemplate, err := p.pm2Manager.SelectCommandTemplate()
+	if err != nil {
+		return fmt.Errorf("Error while selecting command template: %w", err)
 	}
 
-	return nil
+	remoteCmd := fmt.Sprintf(cmdTemplate, resource)
+
+	return p.sshConnector.RunInteractiveCommand(remoteCmd)
 }
