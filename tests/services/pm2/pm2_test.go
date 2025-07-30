@@ -14,7 +14,7 @@ import (
 func TestLoadPm2ConfigOk(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
@@ -36,7 +36,7 @@ func TestLoadPm2ConfigOk(t *testing.T) {
 func TestLoadPm2ConfigInvalidFile(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.invalid.js")
 	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
@@ -47,7 +47,7 @@ func TestLoadPm2ConfigInvalidFile(t *testing.T) {
 func TestLoadPm2ConfigNodeScriptFails(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.nonexisting.js")
 	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
@@ -57,7 +57,7 @@ func TestLoadPm2ConfigNodeScriptFails(t *testing.T) {
 func TestSelectEnvFromConfigBadArg(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.emptyhosts.js")
 	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
@@ -69,7 +69,7 @@ func TestSelectEnvFromConfigBadArg(t *testing.T) {
 func TestSelectEnvFromConfigEmptyHosts(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.nonexisting.js")
 	err := pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
@@ -79,7 +79,7 @@ func TestSelectEnvFromConfigEmptyHosts(t *testing.T) {
 func TestSelectEnvFromConfigEmptyArg(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{0}, "", nil)
 
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
@@ -91,7 +91,7 @@ func TestSelectEnvFromConfigEmptyArg(t *testing.T) {
 func TestSelectEnvFromConfigOkArg(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
@@ -103,7 +103,7 @@ func TestSelectEnvFromConfigOkArg(t *testing.T) {
 func TestGetSSHConfigAutoSelectHost(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
@@ -118,7 +118,7 @@ func TestGetSSHConfigAutoSelectHost(t *testing.T) {
 func TestGetSSHConfigSelectSecondHost(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{1}, "", nil)
 
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 	sshConfig, err := pm2Manager.GetSSHConfig(&pm2Config, "production_RO_2")
@@ -132,7 +132,7 @@ func TestGetSSHConfigSelectSecondHost(t *testing.T) {
 func TestGetSSHConfigDummyEnv(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{1}, "", nil)
 
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 

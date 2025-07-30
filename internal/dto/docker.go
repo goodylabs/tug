@@ -1,6 +1,6 @@
 package dto
 
-type ServiceDTO struct {
+type DockerService struct {
 	ID       string `json:"ID"`
 	Image    string `json:"Image"`
 	Mode     string `json:"Mode"`
@@ -9,7 +9,7 @@ type ServiceDTO struct {
 	Replicas string `json:"Replicas"`
 }
 
-type ContainerDTO struct {
+type Container struct {
 	Command      string `json:"Command"`
 	CreatedAt    string `json:"CreatedAt"`
 	ID           string `json:"ID"`

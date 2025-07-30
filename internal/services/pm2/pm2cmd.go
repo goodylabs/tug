@@ -35,7 +35,7 @@ func (p *Pm2Manager) getPm2Processes() ([]string, error) {
 		return nil, fmt.Errorf("running PM2 jlist command: %w", err)
 	}
 
-	var pm2List []dto.Pm2ListItemDTO
+	var pm2List []dto.Pm2ListItem
 	if err := json.Unmarshal([]byte(output), &pm2List); err != nil {
 		return nil, fmt.Errorf("parsing PM2 list output: %w", err)
 	}

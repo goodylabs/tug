@@ -22,7 +22,7 @@ func NewSSHConnector() ports.SSHConnector {
 	return &sshConnector{}
 }
 
-func (a *sshConnector) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
+func (a *sshConnector) OpenConnection(sshConfig *dto.SSHConfig) error {
 	authMethods, err := loadSSHKeysFromDir()
 	if err != nil {
 		return err

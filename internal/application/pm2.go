@@ -26,7 +26,7 @@ func NewPm2UseCase(pm2Manager *pm2.Pm2Manager, sshConnector ports.SSHConnector, 
 }
 
 func (p *Pm2UseCase) Execute(envArg string) error {
-	var pm2Config dto.EconsystemConfigDTO
+	var pm2Config dto.EconsystemConfig
 
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	if err := p.pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config); err != nil {

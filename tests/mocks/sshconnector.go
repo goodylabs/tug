@@ -26,7 +26,7 @@ func NewSSHConnectorInteractiveCommandMock(expectedInteractiveCmd string) ports.
 	}
 }
 
-func (m *sshConnectorMock) OpenConnection(sshConfig *dto.SSHConfigDTO) error {
+func (m *sshConnectorMock) OpenConnection(sshConfig *dto.SSHConfig) error {
 	return nil
 }
 
