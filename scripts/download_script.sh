@@ -37,9 +37,10 @@ if [[ -z "$artifact_url" ]]; then
     exit 1
 fi
 
-wget -q --show-progress --progress=bar:force:noscroll \
-  --compression=auto --tries=3 --timeout=10 \
-  -O "$TUG_BIN_PATH/tug" "$artifact_url"
+echo "Downloading Tug binary for ${os_type}-${arch}..."
+
+curl --fail --location --progress-bar --compressed --retry 3 --retry-delay 5 \
+  --max-time 10 -o "$TUG_BIN_PATH/tug" "$artifact_url"
 
 chmod +x "$TUG_BIN_PATH/tug"
 
