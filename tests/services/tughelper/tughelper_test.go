@@ -31,7 +31,7 @@ func TestGetSSHDirPathOK(t *testing.T) {
 		tugHelper := mocks.SetupTugHelperWithMocks(testCase.promptChoices)
 		sshDirPath := filepath.Join(config.BASE_DIR, ".ssh")
 		result, err := tugHelper.GetSSHDirPath(sshDirPath)
-		assert.Equal(t, testCase.expected, result)
+		assert.Contains(t, result, testCase.expected)
 		assert.NoError(t, err, "Expected no error, got: %v", err)
 	}
 }

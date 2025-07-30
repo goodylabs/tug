@@ -2,6 +2,7 @@ package tughelper
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/utils"
@@ -19,9 +20,14 @@ func NewTugHelper(prompter ports.Prompter) *TugHelper {
 
 func (t *TugHelper) GetSSHDirPath(sshDirPath string) (string, error) {
 	var sshFiles []string
-	sshFiles, err := utils.ListFilesInDir(sshDirPath)
-	if err != nil {
+	var err error
+
+	if sshFiles, err = utils.ListFilesInDir(sshDirPath); err != nil {
 		return "", fmt.Errorf("Occurred error while listing files in %s directory: %w", sshDirPath, err)
+	}
+
+	for i, file := range sshFiles {
+		sshFiles[i] = filepath.Join(sshDirPath, file)
 	}
 
 	sshFiles = utils.FilterExclude(sshFiles, ".pub")
