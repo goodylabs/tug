@@ -41,9 +41,8 @@ func loadDevelopmentConfig() {
 }
 
 func loadTestingConfig() {
-	thatDir := filepath.Join(findProjectRoot(), ".testing")
-	BASE_DIR = thatDir
-	HOME_DIR = thatDir
+	BASE_DIR = filepath.Join(findProjectRoot(), ".testing")
+	HOME_DIR = filepath.Join(findProjectRoot(), ".testing")
 	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
 }
 
