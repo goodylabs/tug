@@ -26,28 +26,24 @@ func init() {
 	default:
 		loadProductionConfig()
 	}
-
-	loadBaseConfig()
 }
 
 func loadProductionConfig() {
 	BASE_DIR = getEnvOrError("PWD")
 	HOME_DIR = getEnvOrError("HOME")
+	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
 }
 
 func loadDevelopmentConfig() {
-	thatDir := filepath.Join(findProjectRoot(), ".development")
-	BASE_DIR = thatDir
-	HOME_DIR = thatDir
+	BASE_DIR = filepath.Join(findProjectRoot(), ".development")
+	HOME_DIR = getEnvOrError("HOME")
+	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
 }
 
 func loadTestingConfig() {
 	thatDir := filepath.Join(findProjectRoot(), ".testing")
 	BASE_DIR = thatDir
 	HOME_DIR = thatDir
-}
-
-func loadBaseConfig() {
 	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
 }
 
