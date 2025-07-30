@@ -16,7 +16,7 @@ const (
 	monitCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 monit %s`
 )
 
-var commandTemplates = map[string]string{
+var CommandTemplates = map[string]string{
 	"pm2 logs <resource>":     logsCmdTemplate,
 	"pm2 show <resource>":     showCmdTemplate,
 	"pm2 restart <resource>":  restartCmdTemplate,
@@ -29,7 +29,13 @@ type commandOption struct {
 	CommandTemplate string
 }
 
-func (p *Pm2Manager) getPm2Processes() ([]string, error) {
+var pm2ProcessesCache []string
+
+func (p *Pm2Manager) GetPm2Processes() ([]string, error) {
+	if pm2ProcessesCache != nil {
+		return pm2ProcessesCache, nil
+	}
+
 	output, err := p.sshConnector.RunCommand(jlistCmd)
 	if err != nil {
 		return nil, fmt.Errorf("running PM2 jlist command: %w", err)
@@ -45,29 +51,7 @@ func (p *Pm2Manager) getPm2Processes() ([]string, error) {
 		resources = append(resources, item.Name)
 	}
 
+	pm2ProcessesCache = resources
+
 	return resources, nil
-}
-
-func (p *Pm2Manager) SelectResource() (string, error) {
-	resources, err := p.getPm2Processes()
-	if err != nil {
-		return "", err
-	}
-	return p.prompter.ChooseFromList(resources, "Select PM2 <resource>")
-}
-
-func (p *Pm2Manager) SelectCommandTemplate() (string, error) {
-	var commandNames []string
-	for name := range commandTemplates {
-		commandNames = append(commandNames, name)
-	}
-
-	selected, _ := p.prompter.ChooseFromList(commandNames, "Select command")
-
-	cmdTemplate, ok := commandTemplates[selected]
-	if !ok {
-		return "", fmt.Errorf("selected command not found: %s", selected)
-	}
-
-	return cmdTemplate, nil
 }

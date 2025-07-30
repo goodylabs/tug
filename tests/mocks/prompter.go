@@ -22,3 +22,7 @@ func (p *prompterMock) ChooseFromList(options []string, label string) (string, e
 	utils.SortOptions(options)
 	return options[i], nil
 }
+
+func (p *prompterMock) ChooseFromMap(map[string]string, string) (string, error) {
+	return "", nil
+}

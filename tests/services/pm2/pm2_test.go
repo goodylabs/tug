@@ -54,38 +54,38 @@ func TestLoadPm2ConfigNodeScriptFails(t *testing.T) {
 	assert.ErrorContains(t, err, "Can not load config from file(probably doesn't")
 }
 
-func TestSelectEnvFromConfigBadArg(t *testing.T) {
+func TestGetAvailableEnvsBadArg(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfig
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, "ecosystem.config.emptyhosts.js")
 	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
-	env, err := pm2Manager.SelectEnvFromConfig(&pm2Config, "")
+	envs, err := pm2Manager.GetAvailableEnvs(&pm2Config, "")
 	assert.ErrorContains(t, err, "no environments found in PM2 config")
-	assert.Equal(t, "", env)
+	assert.True(t, len(envs) == 0)
 }
 
-func TestSelectEnvFromConfigEmptyArg(t *testing.T) {
+func TestGetAvailableEnvsEmptyArg(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{0}, "", nil)
 
 	var pm2Config dto.EconsystemConfig
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
-	env, err := pm2Manager.SelectEnvFromConfig(&pm2Config, "")
+	env, err := pm2Manager.GetAvailableEnvs(&pm2Config, "")
 	assert.NoError(t, err, "Expected no error when selecting environment from config")
 	assert.Equal(t, "production_1", env, "Expected environment to be 'production_1' when no argument is provided")
 }
 
-func TestSelectEnvFromConfigOkArg(t *testing.T) {
+func TestGetAvailableEnvsOkArg(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
 	var pm2Config dto.EconsystemConfig
 	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	pm2Manager.LoadPm2Config(ecosystemConfigPath, &pm2Config)
 
-	env, err := pm2Manager.SelectEnvFromConfig(&pm2Config, "staging_RO")
+	env, err := pm2Manager.GetAvailableEnvs(&pm2Config, "staging_RO")
 	assert.NoError(t, err, "Expected no error when selecting environment from config")
 	assert.Equal(t, "staging_RO", env, "Expected environment to be 'staging_RO' when valid argument is provided")
 }
