@@ -29,11 +29,11 @@ type commandOption struct {
 	CommandTemplate string
 }
 
-var pm2ProcessesCache []string
+var availableResourcesCache []string
 
-func (p *Pm2Manager) GetPm2Processes() ([]string, error) {
-	if pm2ProcessesCache != nil {
-		return pm2ProcessesCache, nil
+func (p *Pm2Manager) GetAvailableResources(sshConfig *dto.SSHConfig) ([]string, error) {
+	if availableResourcesCache != nil {
+		return availableResourcesCache, nil
 	}
 
 	output, err := p.sshConnector.RunCommand(jlistCmd)
@@ -51,7 +51,7 @@ func (p *Pm2Manager) GetPm2Processes() ([]string, error) {
 		resources = append(resources, item.Name)
 	}
 
-	pm2ProcessesCache = resources
+	availableResourcesCache = resources
 
 	return resources, nil
 }

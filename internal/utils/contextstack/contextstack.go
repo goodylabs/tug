@@ -1,53 +1,84 @@
 package contextstack
 
-import "github.com/goodylabs/tug/internal/dto"
+import (
+	"fmt"
+
+	"github.com/goodylabs/tug/internal/dto"
+	"github.com/goodylabs/tug/internal/ports"
+	"github.com/goodylabs/tug/internal/services/pm2"
+)
 
 type ContextStack struct {
-	sshConfig *dto.SSHConfig
-	action    string
-	resource  string
+	handler      ports.TechnologyHandler
+	sshConnector ports.SSHConnector
+	prompter     ports.Prompter
+	sshConfig    *dto.SSHConfig
+	action       string
+	resource     string
 }
 
-func NewContextStack() *ContextStack {
+func NewContextStack(handler ports.TechnologyHandler, sshConnector ports.SSHConnector, prompter ports.Prompter) *ContextStack {
 	return &ContextStack{
-		sshConfig: nil,
-		action:    "",
-		resource:  "",
+		handler:      handler,
+		sshConnector: sshConnector,
+		prompter:     prompter,
 	}
 }
 
-func (c *ContextStack) GetSSHConfig() *dto.SSHConfig {
-	return c.sshConfig
-}
+func (c *ContextStack) Execute() error {
+	for true {
+		if c.sshConfig == nil {
+			availableEnvs, err := c.handler.GetAvailableEnvs()
+			if err != nil {
+				return fmt.Errorf("selecting PM2 environment: %w", err)
+			}
 
-func (c *ContextStack) SetSSHConfig(sshConfig *dto.SSHConfig) {
-	c.sshConfig = sshConfig
-}
+			selectedEnv, err := c.prompter.ChooseFromList(availableEnvs, "Select PM2 <environment>")
+			if err != nil {
+				return fmt.Errorf("selecting PM2 environment: %w", err)
+			}
 
-func (c *ContextStack) ClearSSHConfig() {
-	c.sshConfig = nil
-}
+			sshConfig, err := c.handler.GetSSHConfig(selectedEnv)
+			if err != nil {
+				return fmt.Errorf("getting SSH config: %w", err)
+			}
 
-func (c *ContextStack) GetAction() string {
-	return c.action
-}
+			c.sshConnector.ConfigureSSHConnection(sshConfig)
 
-func (c *ContextStack) SetAction(action string) {
-	c.action = action
-}
+			c.sshConfig = sshConfig
+			continue
+		}
 
-func (c *ContextStack) ClearAction() {
-	c.action = ""
-}
+		if c.resource == "" {
+			resources, err := c.handler.GetAvailableResources(c.sshConfig)
+			if err != nil {
+				return fmt.Errorf("selecting PM2 resource: %w", err)
+			}
 
-func (c *ContextStack) GetResource() string {
-	return c.resource
-}
+			resource, err := c.prompter.ChooseFromList(resources, "Select PM2 <resource>")
+			if err != nil {
+				c.sshConfig = nil
+				continue
+			}
+			c.resource = resource
+			continue
+		}
 
-func (c *ContextStack) SetResource(resource string) {
-	c.resource = resource
-}
+		if c.action == "" {
+			cmdTemplate, err := c.prompter.ChooseFromMap(pm2.CommandTemplates, "Chose command")
+			if err != nil {
+				c.resource = ""
+				continue
+			}
+			c.action = cmdTemplate
+			continue
+		}
 
-func (c *ContextStack) ClearResource() {
-	c.resource = ""
+		remoteCmd := fmt.Sprintf(c.action, c.resource)
+		if err := c.sshConnector.RunInteractiveCommand(remoteCmd); err != nil {
+			c.action = ""
+			continue
+		}
+	}
+	return nil
 }

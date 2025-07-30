@@ -8,7 +8,7 @@ type Prompter interface {
 }
 
 type SSHConnector interface {
-	OpenConnection(*dto.SSHConfig) error
+	ConfigureSSHConnection(*dto.SSHConfig) error
 	CloseConnection() error
 	RunCommand(cmd string) (string, error)
 	RunInteractiveCommand(cmd string) error

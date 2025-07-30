@@ -32,7 +32,7 @@ func (d *DockerUseCase) Execute(envDir string) error {
 
 	sshConfig := d.dockerManager.GetSSHConfig(targetIP)
 
-	if err := d.sshConnector.OpenConnection(sshConfig); err != nil {
+	if err := d.sshConnector.ConfigureSSHConnection(sshConfig); err != nil {
 		return fmt.Errorf("opening SSH connection: %w", err)
 	}
 	defer d.sshConnector.CloseConnection()

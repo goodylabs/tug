@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 
+	"github.com/goodylabs/tug/internal/config"
+	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/utils"
@@ -59,7 +62,14 @@ func (p *Pm2Manager) LoadPm2Config(ecosystemConfigPath string, pm2Config *dto.Ec
 	return nil
 }
 
-func (p *Pm2Manager) GetAvailableEnvs(pm2Config *dto.EconsystemConfig, envArg string) ([]string, error) {
+func (p *Pm2Manager) GetAvailableEnvs() ([]string, error) {
+	var pm2Config dto.EconsystemConfig
+
+	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
+	if err := p.LoadPm2Config(ecosystemConfigPath, &pm2Config); err != nil {
+		return []string{}, fmt.Errorf("error loading PM2 config: %w", err)
+	}
+
 	if len(pm2Config.Deploy) == 0 {
 		return []string{}, fmt.Errorf("no environments found in PM2 config")
 	}
@@ -84,13 +94,20 @@ func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfig, selectedEnv str
 	return p.prompter.ChooseFromList(hosts, "Select host for environment "+selectedEnv)
 }
 
-func (p *Pm2Manager) GetSSHConfig(pm2Config *dto.EconsystemConfig, selectedEnv string) (*dto.SSHConfig, error) {
+func (p *Pm2Manager) GetSSHConfig(selectedEnv string) (*dto.SSHConfig, error) {
+
+	var pm2Config dto.EconsystemConfig
+	ecosystemConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
+	if err := p.LoadPm2Config(ecosystemConfigPath, &pm2Config); err != nil {
+		return nil, fmt.Errorf("error loading PM2 config: %w", err)
+	}
+
 	envConfig, exists := pm2Config.Deploy[selectedEnv]
 	if !exists {
 		return nil, fmt.Errorf("environment '%s' not found in loaded PM2 config", selectedEnv)
 	}
 
-	host, err := p.selectHost(pm2Config, selectedEnv)
+	host, err := p.selectHost(&pm2Config, selectedEnv)
 	if err != nil {
 		return nil, err
 	}
