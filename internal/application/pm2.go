@@ -24,6 +24,6 @@ var chunks = [3]string{}
 
 func (p *Pm2UseCase) Execute(envArg string) error {
 
-	contextStack := contextstack.NewContextStack(p.pm2Manager, p.sshConnector, p.prompter)
+	contextStack := contextstack.NewGeneric(p.pm2Manager, p.sshConnector, p.prompter)
 	return contextStack.Execute()
 }
