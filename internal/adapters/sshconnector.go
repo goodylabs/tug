@@ -57,17 +57,18 @@ func (s *sshConnector) CloseConnection() error {
 }
 
 func (s *sshConnector) RunCommand(cmd string) (string, error) {
+	var ErrSSHConnection = fmt.Errorf("Error establishing SSH connection to the server. Can you connect to that server by yourself, if so try to run `tug initialize` to define which ssh key you want to use.")
 	if s.client == nil {
-		return "", nil
+		return "", ErrSSHConnection
 	}
 	session, err := s.client.NewSession()
 	if err != nil {
-		return "", err
+		return "", ErrSSHConnection
 	}
 	defer session.Close()
 
 	output, err := session.CombinedOutput(cmd)
-	return string(output), err
+	return string(output), nil
 }
 
 func (s *sshConnector) RunInteractiveCommand(cmd string) error {

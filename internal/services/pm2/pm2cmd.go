@@ -2,6 +2,7 @@ package pm2
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/goodylabs/tug/internal/dto"
 )
@@ -35,7 +36,7 @@ func (p *Pm2Manager) GetAvailableResources(sshConfig *dto.SSHConfig) ([]string, 
 
 	var pm2List []dto.Pm2ListItem
 	if err := json.Unmarshal([]byte(output), &pm2List); err != nil {
-		return nil, err
+		return nil, errors.New("failed to parse PM2 list output: " + err.Error())
 	}
 
 	var resources []string
