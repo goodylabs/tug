@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/goodylabs/tug/internal/dto"
@@ -85,7 +87,14 @@ func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 		ssh.TTY_OP_OSPEED: 14400,
 	}
 
-	if err := session.RequestPty("xterm", 40, 80, modes); err != nil {
+	// Pobierz początkowy rozmiar terminala
+	fd := int(os.Stdin.Fd())
+	width, height, err := term.GetSize(fd)
+	if err != nil {
+		return err
+	}
+
+	if err := session.RequestPty("xterm", height, width, modes); err != nil {
 		return err
 	}
 
@@ -93,12 +102,26 @@ func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
 
-	fd := int(os.Stdin.Fd())
 	oldState, err := term.MakeRaw(fd)
 	if err != nil {
 		return err
 	}
 	defer term.Restore(fd, oldState)
+
+	// Kanał na sygnały SIGWINCH (resize terminala)
+	sigWinch := make(chan os.Signal, 1)
+	signal.Notify(sigWinch, syscall.SIGWINCH)
+	defer signal.Stop(sigWinch)
+
+	go func() {
+		for range sigWinch {
+			width, height, err := term.GetSize(fd)
+			if err != nil {
+				continue
+			}
+			session.WindowChange(height, width)
+		}
+	}()
 
 	return session.Run(cmd)
 }
