@@ -2,6 +2,7 @@ package adapters
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	// "github.com/cqroot/prompt"
@@ -9,6 +10,7 @@ import (
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/utils"
 	"github.com/manifoldco/promptui"
+	"golang.org/x/term"
 )
 
 type prompter struct{}
@@ -24,7 +26,7 @@ func (p *prompter) ChooseFromList(options []string, label string) (string, error
 
 	p.clear()
 
-	return p.choseOption(options, label)
+	return p.runPrompter(options, label)
 }
 
 func (p *prompter) ChooseFromMap(options map[string]string, label string) (string, error) {
@@ -41,7 +43,7 @@ func (p *prompter) ChooseFromMap(options map[string]string, label string) (strin
 
 	p.clear()
 
-	resultKey, err := p.choseOption(keys, label)
+	resultKey, err := p.runPrompter(keys, label)
 
 	if err != nil {
 		return "", err
@@ -54,13 +56,18 @@ func (p *prompter) clear() {
 	fmt.Print("\033[H\033[2J")
 }
 
-func (p *prompter) choseOption(options []string, label string) (string, error) {
+func (p *prompter) runPrompter(options []string, label string) (string, error) {
+	_, height, err := term.GetSize(int(os.Stdout.Fd()))
+	if err != nil {
+		panic(err)
+	}
+
 	utils.SortOptions(options)
 
 	prompt := promptui.Select{
 		Label:             label,
 		Items:             options,
-		Size:              10,
+		Size:              height - 3,
 		StartInSearchMode: true,
 		Searcher: func(input string, index int) bool {
 			return strings.Contains(options[index], input)
