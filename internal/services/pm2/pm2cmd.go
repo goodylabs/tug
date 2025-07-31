@@ -12,7 +12,7 @@ const (
 	showCmdTemplate     = `source ~/.nvm/nvm.sh; pm2 show %s && read`
 	restartCmdTemplate  = `source ~/.nvm/nvm.sh; pm2 restart %s`
 	describeCmdTemplate = `source ~/.nvm/nvm.sh; pm2 describe %s && read`
-	monitCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 monit %s && read`
+	monitCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 monit %s`
 )
 
 var CommandTemplates = map[string]string{

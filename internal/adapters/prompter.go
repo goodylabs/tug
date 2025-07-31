@@ -23,27 +23,24 @@ func (p *prompter) ChooseFromList(options []string, label string) (string, error
 		return options[0], nil
 	}
 
-	fmt.Println("\033[H\033[2J")
-
 	utils.SortOptions(options)
 
+	p.clear()
 	result, err := prompt.New().
 		Ask(label).
 		Choose(
 			options,
-			choose.WithDefaultIndex(1),
-			choose.WithHelp(true),
+			choose.WithDefaultIndex(0),
+			choose.WithHelp(false),
 		)
 	return result, err
 }
 
 func (p *prompter) clear() {
-	fmt.Println("\033[H\033[2J")
+	fmt.Print("\033[H\033[2J")
 }
 
 func (p *prompter) ChooseFromMap(options map[string]string, label string) (string, error) {
-	p.clear()
-
 	if len(options) == 1 {
 		for _, v := range options {
 			return v, nil
@@ -56,6 +53,7 @@ func (p *prompter) ChooseFromMap(options map[string]string, label string) (strin
 	}
 	utils.SortOptions(keys)
 
+	p.clear()
 	resultKey, err := prompt.New().
 		Ask(label).
 		Choose(
