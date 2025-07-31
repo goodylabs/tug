@@ -11,5 +11,5 @@ type TechnologyHandler interface {
 
 type Pm2Manager interface {
 	TechnologyHandler
-	RetrievePm2Config(ecosystemConfigPath string) (*dto.EconsystemConfig, error)
+	RetrievePm2Config() (*dto.EconsystemConfig, error)
 }

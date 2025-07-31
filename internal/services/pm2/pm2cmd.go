@@ -13,6 +13,8 @@ const (
 	restartCmdTemplate  = `source ~/.nvm/nvm.sh; pm2 restart %s`
 	describeCmdTemplate = `source ~/.nvm/nvm.sh; pm2 describe %s && read`
 	monitCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 monit %s`
+	bashCmdTemplate     = `bash`
+	topCmdTemplate      = `top`
 )
 
 var CommandTemplates = map[string]string{
@@ -21,6 +23,8 @@ var CommandTemplates = map[string]string{
 	"pm2 restart <resource>":  restartCmdTemplate,
 	"pm2 describe <resource>": describeCmdTemplate,
 	"pm2 monit <resource>":    monitCmdTemplate,
+	"bash":                    bashCmdTemplate,
+	"top":                     topCmdTemplate,
 }
 
 func (p *Pm2Manager) GetAvailableResources(sshConfig *dto.SSHConfig) ([]string, error) {

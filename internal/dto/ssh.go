@@ -1,7 +1,5 @@
 package dto
 
-import "strconv"
-
 type SSHConfig struct {
 	User string `json:"user"`
 	Host string `json:"host"`
@@ -9,5 +7,5 @@ type SSHConfig struct {
 }
 
 func (s *SSHConfig) GetSSHConnectionString() string {
-	return s.User + "@" + s.Host + ":" + strconv.Itoa(s.Port)
+	return s.User + "@" + s.Host
 }
