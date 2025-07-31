@@ -1,7 +1,6 @@
 package application
 
 import (
-	"fmt"
 	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/config"
@@ -36,7 +35,5 @@ func (i *InitializeUseCase) Execute() error {
 	if err = tughelper.SetTugConfig(&tugConfig); err != nil {
 		return err
 	}
-
-	fmt.Println("Tug configuration initialized successfully.")
 	return nil
 }

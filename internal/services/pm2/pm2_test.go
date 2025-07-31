@@ -1,7 +1,6 @@
 package pm2_test
 
 import (
-	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -28,7 +27,6 @@ func TestRetrievePm2Config(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
 	config.Load()
-	fmt.Println("BASE_DIR:", config.BASE_DIR)
 
 	pm2ConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
 	pm2Config, err := pm2Manager.RetrievePm2Config(pm2ConfigPath)

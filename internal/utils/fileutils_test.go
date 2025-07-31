@@ -1,7 +1,6 @@
 package utils_test
 
 import (
-	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -26,7 +25,6 @@ func TestGetFileLinesOk(t *testing.T) {
 
 	for _, tt := range tests {
 		scriptAbsPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR, tt.envDir, "deploy.sh")
-		fmt.Println("Testing script path:", scriptAbsPath)
 		lines, err := utils.GetFileLines(scriptAbsPath)
 		assert.Equal(t, tt.linesNumber, len(lines))
 		assert.NoError(t, err)
