@@ -32,6 +32,7 @@ func (p *prompter) ChooseFromList(options []string, label string) (string, error
 			options,
 			choose.WithDefaultIndex(0),
 			choose.WithHelp(false),
+			choose.WithTheme(choose.ThemeArrow),
 		)
 	return result, err
 }
