@@ -2,6 +2,7 @@ package application
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/goodylabs/tug/internal/ports"
 )
@@ -24,6 +25,9 @@ func (p *CheckConnectionUseCase) Execute() error {
 		return err
 	}
 
+	var wg sync.WaitGroup
+	errCh := make(chan error, 1)
+
 	for _, env := range availableEnvs {
 		hosts, err := p.handler.GetAvailableHosts(env)
 		if err != nil {
@@ -31,43 +35,48 @@ func (p *CheckConnectionUseCase) Execute() error {
 		}
 
 		for _, host := range hosts {
-			template := "Env: %s, Host: %s - %s\n"
-			sshConfig, err := p.handler.GetSSHConfig(env, host)
-			if err != nil {
-				return err
-			}
-			sshConStr := sshConfig.GetSSHConnectionString()
-			if err := p.sshConnector.ConfigureSSHConnection(sshConfig); err != nil {
-				fmt.Printf(template, env, sshConStr, "🚫 can not ssh connect")
-				continue
-			}
-
-			_, err = p.handler.GetAvailableResources(sshConfig)
-			if err != nil {
-				fmt.Printf(template, env, sshConStr, "⚠️ can not list resources")
-				continue
-			}
-
-			fmt.Printf(template, env, sshConStr, "✅ - everything is ok")
+			wg.Add(1)
+			go func(env, host string) {
+				defer wg.Done()
+				if err := p.checkHost(env, host); err != nil {
+					select {
+					case errCh <- err:
+					default:
+					}
+				}
+			}(env, host)
 		}
 	}
-	// p.sshConnector.SetSSHConfig(selectedEnv)
 
-	// resources, err := p.handler.GetAvailableResources(p.sshConnector.GetSSHConfig())
-	// if err != nil {
-	// 	return false, err
-	// }
+	wg.Wait()
 
-	// if len(resources) == 0 {
-	// 	return false, nil // No resources available
-	// }
+	select {
+	case err := <-errCh:
+		return err
+	default:
+		return nil
+	}
+}
 
-	// selectedResource, err := prompter.SelectResource(resources)
-	// if err != nil {
-	// 	return false, err
-	// }
+func (p *CheckConnectionUseCase) checkHost(env, host string) error {
+	template := "Env: %s, Host: %s - %s\n"
 
-	// p.sshConnector.SetResource(selectedResource)
+	sshConfig, err := p.handler.GetSSHConfig(env, host)
+	if err != nil {
+		return err
+	}
+	sshConStr := sshConfig.GetSSHConnectionString()
 
+	if err := p.sshConnector.ConfigureSSHConnection(sshConfig); err != nil {
+		fmt.Printf(template, env, sshConStr, "🚫 can not ssh connect")
+		return nil
+	}
+
+	if _, err := p.handler.GetAvailableResources(sshConfig); err != nil {
+		fmt.Printf(template, env, sshConStr, "⚠️ can not list resources")
+		return nil
+	}
+
+	fmt.Printf(template, env, sshConStr, "✅ - everything is ok")
 	return nil
 }
