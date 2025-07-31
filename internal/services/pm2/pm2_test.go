@@ -1,11 +1,9 @@
 package pm2_test
 
 import (
-	"path/filepath"
 	"testing"
 
 	"github.com/goodylabs/tug/internal/config"
-	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )
@@ -28,8 +26,7 @@ func TestRetrievePm2Config(t *testing.T) {
 
 	config.Load()
 
-	pm2ConfigPath := filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE)
-	pm2Config, err := pm2Manager.RetrievePm2Config(pm2ConfigPath)
+	pm2Config, err := pm2Manager.RetrievePm2Config()
 
 	assert.NoError(t, err)
 	assert.NotNil(t, pm2Config)
