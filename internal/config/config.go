@@ -20,13 +20,14 @@ func Load() {
 	godotenv.Load(".env")
 	tugEnv := os.Getenv("TUG_ENV")
 	fmt.Println("Using TUG_ENV:", tugEnv)
-	projectRoot := findProjectRoot()
 
 	switch tugEnv {
 	case "development":
+		projectRoot := findProjectRoot()
 		BASE_DIR = filepath.Join(projectRoot, ".development")
 		HOME_DIR = getEnvOrError("HOME")
 	case "testing":
+		projectRoot := findProjectRoot()
 		BASE_DIR = filepath.Join(projectRoot, ".testing")
 		HOME_DIR = filepath.Join(projectRoot, ".testing")
 	default:

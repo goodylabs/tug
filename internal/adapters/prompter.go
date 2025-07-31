@@ -2,17 +2,16 @@ package adapters
 
 import (
 	"fmt"
-	"sync/atomic"
+	"strings"
 
-	"github.com/cqroot/prompt"
-	"github.com/cqroot/prompt/choose"
+	// "github.com/cqroot/prompt"
+	// "github.com/cqroot/prompt/choose"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/utils"
+	"github.com/manifoldco/promptui"
 )
 
-type prompter struct {
-	ctrlCPressed atomic.Bool
-}
+type prompter struct{}
 
 func NewPrompter() ports.Prompter {
 	return &prompter{}
@@ -23,22 +22,9 @@ func (p *prompter) ChooseFromList(options []string, label string) (string, error
 		return options[0], nil
 	}
 
-	utils.SortOptions(options)
-
 	p.clear()
-	result, err := prompt.New().
-		Ask(label).
-		Choose(
-			options,
-			choose.WithDefaultIndex(0),
-			choose.WithHelp(false),
-			choose.WithTheme(choose.ThemeArrow),
-		)
-	return result, err
-}
 
-func (p *prompter) clear() {
-	fmt.Print("\033[H\033[2J")
+	return p.choseOption(options, label)
 }
 
 func (p *prompter) ChooseFromMap(options map[string]string, label string) (string, error) {
@@ -52,19 +38,38 @@ func (p *prompter) ChooseFromMap(options map[string]string, label string) (strin
 	for k := range options {
 		keys = append(keys, k)
 	}
-	utils.SortOptions(keys)
 
 	p.clear()
-	resultKey, err := prompt.New().
-		Ask(label).
-		Choose(
-			keys,
-			choose.WithDefaultIndex(0),
-			choose.WithHelp(false),
-		)
+
+	resultKey, err := p.choseOption(keys, label)
+
 	if err != nil {
 		return "", err
 	}
 
 	return options[resultKey], nil
+}
+
+func (p *prompter) clear() {
+	fmt.Print("\033[H\033[2J")
+}
+
+func (p *prompter) choseOption(options []string, label string) (string, error) {
+	utils.SortOptions(options)
+
+	prompt := promptui.Select{
+		Label:             label,
+		Items:             options,
+		Size:              10,
+		StartInSearchMode: true,
+		Searcher: func(input string, index int) bool {
+			return strings.Contains(options[index], input)
+		},
+	}
+
+	_, result, err := prompt.Run()
+	if err != nil {
+		return "", err
+	}
+	return result, nil
 }
