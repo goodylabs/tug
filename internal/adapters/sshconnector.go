@@ -87,7 +87,6 @@ func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 		ssh.TTY_OP_OSPEED: 14400,
 	}
 
-	// Pobierz początkowy rozmiar terminala
 	fd := int(os.Stdin.Fd())
 	width, height, err := term.GetSize(fd)
 	if err != nil {
@@ -108,7 +107,6 @@ func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 	}
 	defer term.Restore(fd, oldState)
 
-	// Kanał na sygnały SIGWINCH (resize terminala)
 	sigWinch := make(chan os.Signal, 1)
 	signal.Notify(sigWinch, syscall.SIGWINCH)
 	defer signal.Stop(sigWinch)

@@ -66,6 +66,14 @@ Co to robi tak po kolei?
 
 3. Po tym wszystkim generuje odpowiednią komendę i ją wykonuje na zdalnym serwerze.
 
+### Nawigacja
+
+- strzałka w górę/dół - przechodzenie między opcjami
+- enter - wybór opcji
+- ctrl + c - powrót do poprzedniego widoku
+
+### Przykład użycia
+
 ```bash
 # Podstawowe użycie
 tug pm2

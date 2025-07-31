@@ -75,6 +75,7 @@ func (p *prompter) runPrompter(options []string, label string) (string, error) {
 	}
 
 	_, result, err := prompt.Run()
+	p.clear()
 	if err != nil {
 		return "", err
 	}
