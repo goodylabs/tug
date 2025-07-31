@@ -9,7 +9,7 @@ TUG to narzędzie cli które pomaga podglądać rzeczy co się dzieje na staging
 1. Dodaj poniższą ścieżkę do swojego PATH. Aby to zrobić na stałe dodaj poniższą linię do swojego pliku `~/.bashrc` lub `~/.zshrc` (w zależności od używanej powłoki):
 
 ```bash
-export PATH="$HOME/.tug/bin:$PATH"
+echo 'export PATH="$HOME/.tug/bin:$PATH"' >> ${HOME}/.$(basename "$SHELL")rc
 ```
 
 2. Zrestartuj terminal lub załaduj zmiany w bieżącej sesji:

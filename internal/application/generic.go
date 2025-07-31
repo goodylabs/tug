@@ -62,7 +62,7 @@ func (g *GenericUseCase) stepSelectEnv() (bool, error) {
 		return false, err
 	}
 
-	selectedEnv, err := g.prompter.ChooseFromList(availableEnvs, "Select PM2 <environment>")
+	selectedEnv, err := g.prompter.ChooseFromList(availableEnvs, "ENVIRONMENT")
 	if err != nil {
 		return false, nil
 	}
@@ -72,7 +72,8 @@ func (g *GenericUseCase) stepSelectEnv() (bool, error) {
 		return false, err
 	}
 
-	selectedHost, err := g.prompter.ChooseFromList(availableHosts, "Select host for "+selectedEnv)
+	label := fmt.Sprintf("%s HOST", selectedEnv)
+	selectedHost, err := g.prompter.ChooseFromList(availableHosts, label)
 	if err != nil {
 		return false, nil
 	}
@@ -94,7 +95,7 @@ func (g *GenericUseCase) stepSelectResource() (bool, error) {
 		return false, err
 	}
 
-	resource, err := g.prompter.ChooseFromList(resources, "Select PM2 <resource>")
+	resource, err := g.prompter.ChooseFromList(resources, "RESOURCE")
 	if err != nil {
 		g.context.sshConfig = nil
 		return false, nil
@@ -104,7 +105,7 @@ func (g *GenericUseCase) stepSelectResource() (bool, error) {
 }
 
 func (g *GenericUseCase) stepSelectAction() (bool, error) {
-	cmdTemplate, err := g.prompter.ChooseFromMap(pm2.CommandTemplates, "Chose command")
+	cmdTemplate, err := g.prompter.ChooseFromMap(pm2.CommandTemplates, "ACTION")
 	if err != nil {
 		g.context.resource = ""
 		return false, nil
