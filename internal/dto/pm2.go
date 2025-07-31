@@ -18,6 +18,14 @@ func (e *EconsystemConfig) ListEnvironments() []string {
 	return envs
 }
 
+func (e *EconsystemConfig) ListHostsInEnv(env string) []string {
+	hosts := []string{}
+	for host := range e.Deploy[env].Host {
+		hosts = append(hosts, e.Deploy[env].Host[host])
+	}
+	return hosts
+}
+
 type Pm2ListItem struct {
 	Name string `json:"name"`
 }

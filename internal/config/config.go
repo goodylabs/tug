@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -19,7 +18,6 @@ var (
 func Load() {
 	godotenv.Load(".env")
 	tugEnv := os.Getenv("TUG_ENV")
-	fmt.Println("Using TUG_ENV:", tugEnv)
 
 	switch tugEnv {
 	case "development":

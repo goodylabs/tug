@@ -67,7 +67,17 @@ func (g *GenericUseCase) stepSelectEnv() (bool, error) {
 		return false, nil
 	}
 
-	sshConfig, err := g.handler.GetSSHConfig(selectedEnv)
+	availableHosts, err := g.handler.GetAvailableHosts(selectedEnv)
+	if err != nil {
+		return false, err
+	}
+
+	selectedHost, err := g.prompter.ChooseFromList(availableHosts, "Select host for "+selectedEnv)
+	if err != nil {
+		return false, nil
+	}
+
+	sshConfig, err := g.handler.GetSSHConfig(selectedEnv, selectedHost)
 	if err != nil {
 		return false, err
 	}

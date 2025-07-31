@@ -89,7 +89,7 @@ func TestRetrievePm2Config(t *testing.T) {
 func TestGetSSHConfigAutoSelectHost(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{}, "", nil)
 
-	sshConfig, err := pm2Manager.GetSSHConfig("staging_RO")
+	sshConfig, err := pm2Manager.GetSSHConfig("staging_RO", "yyy.yyy.yyy.yyy")
 
 	assert.NoError(t, err)
 	assert.Equal(t, sshConfig.User, "staging-user")
@@ -100,7 +100,7 @@ func TestGetSSHConfigAutoSelectHost(t *testing.T) {
 func TestGetSSHConfigSelectSecondHost(t *testing.T) {
 	pm2Manager := mocks.SetupPm2ManagerWithMocks([]int{1}, "", nil)
 
-	sshConfig, err := pm2Manager.GetSSHConfig("production_RO_2")
+	sshConfig, err := pm2Manager.GetSSHConfig("production_RO_2", "ddd.ddd.ddd.ddd")
 
 	assert.NoError(t, err)
 	assert.Equal(t, sshConfig.User, "root")

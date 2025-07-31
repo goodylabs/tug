@@ -84,32 +84,21 @@ func (p *Pm2Manager) GetAvailableEnvs() ([]string, error) {
 	return options, nil
 }
 
-func (p *Pm2Manager) selectHost(pm2Config *dto.EconsystemConfig, selectedEnv string) (string, error) {
-	hosts := pm2Config.Deploy[selectedEnv].Host
-	if len(hosts) == 0 {
-		return "", nil
+func (p *Pm2Manager) GetAvailableHosts(env string) ([]string, error) {
+	if p.pm2Config == nil {
+		return nil, fmt.Errorf("PM2 configuration not loaded")
 	}
-
-	if len(hosts) == 1 {
-		return hosts[0], nil
-	}
-
-	return p.prompter.ChooseFromList(hosts, "Select host for environment "+selectedEnv)
+	return p.pm2Config.ListHostsInEnv(env), nil
 }
 
-func (p *Pm2Manager) GetSSHConfig(selectedEnv string) (*dto.SSHConfig, error) {
+func (p *Pm2Manager) GetSSHConfig(env, host string) (*dto.SSHConfig, error) {
 	pm2Config, err := p.RetrievePm2Config(filepath.Join(config.BASE_DIR, constants.ECOSYSTEM_CONFIG_FILE))
 	if err != nil {
 		return nil, err
 	}
 
-	envConfig, exists := pm2Config.Deploy[selectedEnv]
+	envConfig, exists := pm2Config.Deploy[env]
 	if !exists {
-		return nil, err
-	}
-
-	host, err := p.selectHost(pm2Config, selectedEnv)
-	if err != nil {
 		return nil, err
 	}
 
