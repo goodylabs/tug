@@ -57,7 +57,7 @@ func (s *sshConnector) CloseConnection() error {
 }
 
 func (s *sshConnector) RunCommand(cmd string) (string, error) {
-	var ErrSSHConnection = fmt.Errorf("Error establishing SSH connection to the server. Can you connect to that server by yourself, if so try to run `tug initialize` to define which ssh key you want to use.")
+	var ErrSSHConnection = fmt.Errorf("Error establishing SSH connection to the server.")
 	if s.client == nil {
 		return "", ErrSSHConnection
 	}
