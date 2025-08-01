@@ -1,1 +1,0 @@
-inny komunikat jak się nie łączę po ssh niż tug initialize
