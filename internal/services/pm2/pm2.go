@@ -1,6 +1,8 @@
 package pm2
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -13,7 +15,26 @@ import (
 	"github.com/goodylabs/tug/internal/utils"
 )
 
-var tmpJsonPath = "/tmp/ecosystem.json"
+const (
+	jlistCmd            = `source ~/.nvm/nvm.sh; pm2 jlist | sed -n '/^\[/,$p'`
+	logsCmdTemplate     = `source ~/.nvm/nvm.sh; pm2 logs %s`
+	showCmdTemplate     = `source ~/.nvm/nvm.sh; pm2 show %s && read`
+	restartCmdTemplate  = `source ~/.nvm/nvm.sh; pm2 restart %s`
+	describeCmdTemplate = `source ~/.nvm/nvm.sh; pm2 describe %s && read`
+	monitCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 monit %s`
+	updateCmdTemplate   = `source ~/.nvm/nvm.sh; pm2 update`
+)
+
+var CommandTemplates = map[string]string{
+	"[pm2] logs <resource>":     logsCmdTemplate,
+	"[pm2] show <resource>":     showCmdTemplate,
+	"[pm2] restart <resource>":  restartCmdTemplate,
+	"[pm2] describe <resource>": describeCmdTemplate,
+	"[pm2] monit <resource>":    monitCmdTemplate,
+	"[pm2] update":              updateCmdTemplate,
+}
+
+const tmpJsonPath = "/tmp/ecosystem.json"
 
 type Pm2Manager struct {
 	prompter     ports.Prompter
@@ -27,6 +48,70 @@ func NewPm2Manager(prompter ports.Prompter, sshConnector ports.SSHConnector) por
 		sshConnector: sshConnector,
 	}
 }
+
+func (p *Pm2Manager) GetAvailableEnvs() ([]string, error) {
+	pm2Config, err := p.RetrievePm2Config()
+	if err != nil {
+		return []string{}, err
+	}
+
+	if len(pm2Config.Deploy) == 0 {
+		return []string{}, err
+	}
+
+	var options []string
+	for env := range pm2Config.Deploy {
+		options = append(options, env)
+	}
+	return options, nil
+}
+
+func (p *Pm2Manager) GetAvailableHosts(env string) ([]string, error) {
+	pm2Config, err := p.RetrievePm2Config()
+	if err != nil {
+		return nil, err
+	}
+	return pm2Config.ListHostsInEnv(env), nil
+}
+
+func (p *Pm2Manager) GetSSHConfig(env, host string) (*dto.SSHConfig, error) {
+	pm2Config, err := p.RetrievePm2Config()
+	if err != nil {
+		return nil, err
+	}
+
+	envConfig, exists := pm2Config.Deploy[env]
+	if !exists {
+		return nil, err
+	}
+
+	return &dto.SSHConfig{
+		User: envConfig.User,
+		Host: host,
+		Port: 22,
+	}, nil
+}
+
+func (p *Pm2Manager) GetAvailableResources(sshConfig *dto.SSHConfig) ([]string, error) {
+	output, err := p.sshConnector.RunCommand(jlistCmd)
+	if err != nil {
+		return nil, err
+	}
+
+	var pm2List []dto.Pm2ListItem
+	if err := json.Unmarshal([]byte(output), &pm2List); err != nil {
+		return nil, errors.New("failed to parse PM2 list output: " + err.Error())
+	}
+
+	var resources []string
+	for _, item := range pm2List {
+		resources = append(resources, item.Name)
+	}
+
+	return resources, nil
+}
+
+// NOT IN TECHNOLOGY HANDLER INTERFACE
 
 func (p *Pm2Manager) GetPm2ConfigPath() (string, error) {
 	for _, name := range []string{"ecosystem.config.js", "ecosystem.config.cjs"} {
@@ -102,46 +187,4 @@ func (p *Pm2Manager) RetrievePm2Config() (*dto.EconsystemConfig, error) {
 
 	p.pm2Config = &config
 	return p.pm2Config, nil
-}
-func (p *Pm2Manager) GetAvailableEnvs() ([]string, error) {
-	pm2Config, err := p.RetrievePm2Config()
-	if err != nil {
-		return []string{}, err
-	}
-
-	if len(pm2Config.Deploy) == 0 {
-		return []string{}, err
-	}
-
-	var options []string
-	for env := range pm2Config.Deploy {
-		options = append(options, env)
-	}
-	return options, nil
-}
-
-func (p *Pm2Manager) GetAvailableHosts(env string) ([]string, error) {
-	pm2Config, err := p.RetrievePm2Config()
-	if err != nil {
-		return nil, err
-	}
-	return pm2Config.ListHostsInEnv(env), nil
-}
-
-func (p *Pm2Manager) GetSSHConfig(env, host string) (*dto.SSHConfig, error) {
-	pm2Config, err := p.RetrievePm2Config()
-	if err != nil {
-		return nil, err
-	}
-
-	envConfig, exists := pm2Config.Deploy[env]
-	if !exists {
-		return nil, err
-	}
-
-	return &dto.SSHConfig{
-		User: envConfig.User,
-		Host: host,
-		Port: 22,
-	}, nil
 }
