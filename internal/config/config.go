@@ -37,13 +37,6 @@ func init() {
 	PM2_CONFIG_PATH = filepath.Join(BASE_DIR, "ecosystem.config.js")
 }
 
-func loadTestingConfig() {
-	projectRoot := findProjectRoot()
-	BASE_DIR = filepath.Join(projectRoot, ".testing")
-	HOME_DIR = filepath.Join(projectRoot, ".testing")
-	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
-}
-
 func getEnvOrError(envName string) string {
 	value := os.Getenv(envName)
 	if value == "" {
