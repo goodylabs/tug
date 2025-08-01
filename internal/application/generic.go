@@ -6,6 +6,7 @@ import (
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/services/pm2"
+	"github.com/goodylabs/tug/internal/utils/stageorchestrator"
 )
 
 type GenericUseCase struct {
@@ -28,32 +29,15 @@ func NewGenericUseCase(handler ports.TechnologyHandler, sshConnector ports.SSHCo
 }
 
 func (g *GenericUseCase) Execute() error {
-	steps := []func() (bool, error){
+	steps := []stageorchestrator.StepFunc{
 		g.stepSelectEnv,
 		g.stepSelectResource,
 		g.stepSelectAction,
 		g.stepExecuteAction,
 	}
+	stageOrchestrator := stageorchestrator.NewStageOrchestrator(steps)
 
-	currentStep := 0
-
-	for currentStep < len(steps) {
-		nextStep, err := steps[currentStep]()
-		if err != nil {
-			return err
-		}
-		if nextStep {
-			currentStep++
-		} else {
-			if currentStep == 0 {
-				fmt.Println("Exiting PM2 command execution.")
-				return nil
-			}
-			currentStep--
-		}
-
-	}
-	return nil
+	return stageOrchestrator.Run()
 }
 
 func (g *GenericUseCase) stepSelectEnv() (bool, error) {
