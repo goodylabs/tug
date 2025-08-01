@@ -16,9 +16,10 @@ type GenericUseCase struct {
 	sshConnector ports.SSHConnector
 	prompter     ports.Prompter
 	context      struct {
-		sshConfig *dto.SSHConfig
-		action    string
-		resource  string
+		selectedEnv string
+		sshConfig   *dto.SSHConfig
+		action      string
+		resource    string
 	}
 }
 
@@ -33,6 +34,7 @@ func NewGenericUseCase(handler ports.TechnologyHandler, sshConnector ports.SSHCo
 func (g *GenericUseCase) Execute() error {
 	steps := []stageorchestrator.StepFunc{
 		g.stepSelectEnv,
+		g.stepSelectHost,
 		g.stepSelectResource,
 		g.stepSelectAction,
 		g.stepExecuteAction,
@@ -53,7 +55,13 @@ func (g *GenericUseCase) stepSelectEnv() (bool, error) {
 		return false, nil
 	}
 
-	availableHosts, err := g.handler.GetAvailableHosts(selectedEnv)
+	g.context.selectedEnv = selectedEnv
+
+	return true, nil
+}
+
+func (g *GenericUseCase) stepSelectHost() (bool, error) {
+	availableHosts, err := g.handler.GetAvailableHosts(g.context.selectedEnv)
 	if err != nil {
 		return false, err
 	}
@@ -64,7 +72,7 @@ func (g *GenericUseCase) stepSelectEnv() (bool, error) {
 	}
 	fmt.Println("Connecting to server...")
 
-	sshConfig, err := g.handler.GetSSHConfig(selectedEnv, selectedHost)
+	sshConfig, err := g.handler.GetSSHConfig(g.context.selectedEnv, selectedHost)
 	if err != nil {
 		return false, err
 	}
