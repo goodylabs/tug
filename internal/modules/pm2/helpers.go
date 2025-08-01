@@ -10,18 +10,18 @@ import (
 	"github.com/goodylabs/tug/internal/config"
 )
 
-func getPm2ConfigPath() (string, error) {
-	options := []string{"ecosystem.config.js", "ecosystem.config.cjs"}
+func GetPm2ConfigPath(dir string) (string, error) {
+	options := []string{"ecosystem.config.cjs", "ecosystem.config.js"}
 	for _, name := range options {
-		path := filepath.Join(config.BASE_DIR, name)
+		path := filepath.Join(dir, name)
 		if _, err := os.Stat(path); err == nil {
 			return path, nil
 		}
 	}
-	return "", fmt.Errorf("ecosystem config file not found in %s", config.BASE_DIR)
+	return "", fmt.Errorf("ecosystem.config.cjs/js file not found in %s", config.BASE_DIR)
 }
 
-func convertJsFileToJson(path string) error {
+func ConvertJsFileToJson(path string) error {
 	var nodeScript string
 
 	switch {
@@ -30,11 +30,11 @@ func convertJsFileToJson(path string) error {
 	case strings.HasSuffix(path, ".cjs"):
 		nodeScript = fmt.Sprintf(ecosystemCjsScript, path, path, tmpJsonPath)
 	default:
-		return fmt.Errorf("unsupported ecosystem config file type: %s", path)
+		return fmt.Errorf("unsupported ecosystem.config.cjs/js file type: %s", path)
 	}
 
 	if err := exec.Command("node", "-e", nodeScript).Run(); err != nil {
-		return fmt.Errorf("failed to convert ecosystem config file to JSON: %w", err)
+		return fmt.Errorf("failed to convert ecosystem.config.cjs/js file to JSON: %w", err)
 	}
 	return nil
 }

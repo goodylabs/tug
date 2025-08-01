@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func init() {
-	config.Load()
-}
+// func init() {
+// 	config.Load()
+// }
 
 func TestInitializeUseCaseOk(t *testing.T) {
 	testCases := []struct {

@@ -15,7 +15,7 @@ var (
 	PM2_CONFIG_PATH string
 )
 
-func Load() {
+func init() {
 	godotenv.Load(".env")
 	tugEnv := os.Getenv("TUG_ENV")
 

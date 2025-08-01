@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 )
@@ -25,12 +26,12 @@ func (p *Pm2Handler) LoadConfigFromFile() error {
 		return errors.New("Can not load config - it is already loaded")
 	}
 
-	configPath, err := getPm2ConfigPath()
+	configPath, err := GetPm2ConfigPath(config.BASE_DIR)
 	if err != nil {
 		return err
 	}
 
-	if err := convertJsFileToJson(configPath); err != nil {
+	if err := ConvertJsFileToJson(configPath); err != nil {
 		return err
 	}
 
