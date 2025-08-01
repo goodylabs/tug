@@ -3,13 +3,14 @@ package pm2
 import (
 	"encoding/json"
 	"errors"
+	"os"
 
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 )
 
 type Pm2Handler struct {
-	pm2Config    *pm2ConfigDTO
+	config       *pm2ConfigDTO
 	sshConnector ports.SSHConnector
 }
 
@@ -20,7 +21,7 @@ func NewPm2Handler(sshConnector ports.SSHConnector) ports.TechnologyHandler {
 }
 
 func (p *Pm2Handler) LoadConfigFromFile() error {
-	if p.pm2Config != nil {
+	if p.config != nil {
 		return errors.New("Can not load config - it is already loaded")
 	}
 
@@ -33,50 +34,54 @@ func (p *Pm2Handler) LoadConfigFromFile() error {
 		return err
 	}
 
+	jsonFile, err := os.ReadFile(tmpJsonPath)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(jsonFile, &p.config); err != nil {
+		return errors.New("failed to unmarshal PM2 config: " + err.Error())
+	}
+
+	if len(p.config.Deploy) == 0 {
+		return errors.New("PM2 config is missing 'deploy' environments")
+	}
+
+	for env, cfg := range p.config.Deploy {
+		if cfg.User == "" {
+			return errors.New("missing user for environment: " + env)
+		}
+		if len(cfg.Host) == 0 {
+			return errors.New("no hosts defined for environment: " + env)
+		}
+	}
+
 	return nil
 }
 
 func (p *Pm2Handler) GetAvailableEnvs() ([]string, error) {
-	if p.pm2Config == nil {
+	if p.config == nil {
 		return []string{}, errors.New("Can not get available environments - config is not loaded")
 	}
 
-	if len(p.pm2Config.Deploy) == 0 {
-		return []string{}, errors.New("No environments found in PM2 config")
-	}
-
-	var options []string
-	for env := range p.pm2Config.Deploy {
-		options = append(options, env)
-	}
-	return options, nil
+	return p.config.ListEnvironments(), nil
 }
 
 func (p *Pm2Handler) GetAvailableHosts(env string) ([]string, error) {
-	if p.pm2Config == nil {
+	if p.config == nil {
 		return nil, errors.New("Can not get available hosts - config is not loaded")
 	}
 
-	hosts := p.pm2Config.ListHostsInEnv(env)
-	if len(hosts) == 0 {
-		return nil, errors.New("No hosts found for the specified environment")
-	}
-
-	return hosts, nil
+	return p.config.ListHostsInEnv(env), nil
 }
 
 func (p *Pm2Handler) GetSSHConfig(env, host string) (*dto.SSHConfig, error) {
-	if p.pm2Config == nil {
+	if p.config == nil {
 		return nil, errors.New("Can not get SSH config - PM2 config is not loaded")
 	}
 
-	envConfig, exists := p.pm2Config.Deploy[env]
-	if !exists {
-		return nil, errors.New("Environment not found in PM2 config")
-	}
-
 	return &dto.SSHConfig{
-		User: envConfig.User,
+		User: p.config.Deploy[env].User,
 		Host: host,
 		Port: 22,
 	}, nil
