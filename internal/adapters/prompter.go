@@ -20,22 +20,12 @@ func NewPrompter() ports.Prompter {
 }
 
 func (p *prompter) ChooseFromList(options []string, label string) (string, error) {
-	if len(options) == 1 {
-		return options[0], nil
-	}
-
 	p.clear()
 
 	return p.runPrompter(options, label)
 }
 
 func (p *prompter) ChooseFromMap(options map[string]string, label string) (string, error) {
-	if len(options) == 1 {
-		for _, v := range options {
-			return v, nil
-		}
-	}
-
 	keys := make([]string, 0, len(options))
 	for k := range options {
 		keys = append(keys, k)

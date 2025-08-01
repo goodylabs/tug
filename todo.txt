@@ -1,0 +1,2 @@
+brak auto wyboru jak krótka lista
+inny komunikat jak się nie łączę po ssh niż tug initialize
