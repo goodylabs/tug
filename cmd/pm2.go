@@ -20,8 +20,8 @@ var pm2Cmd = &cobra.Command{
 			})
 		} else {
 			container := internal.InitDependencyContainer("pm2")
-			err = container.Invoke(func(GenericUseCase *application.GenericUseCase) error {
-				return GenericUseCase.Execute()
+			err = container.Invoke(func(UseModuleUseCase *application.UseModuleUseCase) error {
+				return UseModuleUseCase.Execute()
 			})
 		}
 		if err != nil {

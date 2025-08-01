@@ -32,7 +32,7 @@ func InitDependencyContainer(manager managerType) *dig.Container {
 		})
 	}
 
-	container.Provide(application.NewGenericUseCase)
+	container.Provide(application.NewUseModuleUseCase)
 	container.Provide(application.NewCheckConnectionUseCase)
 	container.Provide(application.NewInitializeUseCase)
 
