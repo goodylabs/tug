@@ -5,7 +5,8 @@ import "fmt"
 type StepFunc func() (bool, error)
 
 type StageOrchestrator struct {
-	steps []StepFunc
+	steps       []StepFunc
+	currentStep int
 }
 
 func NewStageOrchestrator(steps []StepFunc) *StageOrchestrator {
@@ -15,22 +16,24 @@ func NewStageOrchestrator(steps []StepFunc) *StageOrchestrator {
 }
 
 func (s *StageOrchestrator) Run() error {
-	currentStep := 0
-
-	for currentStep < len(s.steps) {
-		nextStep, err := s.steps[currentStep]()
+	for s.currentStep < len(s.steps) {
+		nextStep, err := s.steps[s.currentStep]()
 		if err != nil {
 			return err
 		}
 		if nextStep {
-			currentStep++
+			s.currentStep++
 			continue
 		}
-		if currentStep == 0 {
+		if s.currentStep == 0 {
 			fmt.Println("Exiting...")
 			return nil
 		}
-		currentStep--
+		s.currentStep--
 	}
 	return nil
+}
+
+func (s *StageOrchestrator) GetCurrentStep() int {
+	return s.currentStep
 }
