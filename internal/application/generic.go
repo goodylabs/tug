@@ -5,11 +5,8 @@ import (
 
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
-	"github.com/goodylabs/tug/internal/services/pm2"
 	"github.com/goodylabs/tug/internal/utils/stageorchestrator"
 )
-
-//
 
 type GenericUseCase struct {
 	handler      ports.TechnologyHandler
@@ -39,7 +36,12 @@ func (g *GenericUseCase) Execute() error {
 		g.stepSelectAction,
 		g.stepExecuteAction,
 	}
+
 	stageOrchestrator := stageorchestrator.NewStageOrchestrator(steps)
+
+	if err := g.handler.LoadConfigFromFile(); err != nil {
+		return err
+	}
 
 	return stageOrchestrator.Run()
 }
@@ -99,7 +101,7 @@ func (g *GenericUseCase) stepSelectResource() (bool, error) {
 }
 
 func (g *GenericUseCase) stepSelectAction() (bool, error) {
-	cmdTemplate, err := g.prompter.ChooseFromMap(pm2.CommandTemplates, "ACTIONS")
+	cmdTemplate, err := g.prompter.ChooseFromMap(g.handler.GetAvailableActionTemplates(), "ACTIONS")
 	if err != nil {
 		g.context.resource = ""
 		fmt.Println("Looking for resources...")

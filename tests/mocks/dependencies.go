@@ -2,8 +2,8 @@ package mocks
 
 import (
 	"github.com/goodylabs/tug/internal/application"
+	"github.com/goodylabs/tug/internal/modules/pm2"
 	"github.com/goodylabs/tug/internal/ports"
-	"github.com/goodylabs/tug/internal/services/pm2"
 )
 
 func SetupPm2ManagerWithMocks(prompts []int, sshOutput string, sshErr error) ports.Pm2Manager {

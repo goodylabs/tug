@@ -1,6 +1,6 @@
-package dto
+package pm2
 
-type EconsystemConfig struct {
+type pm2ConfigDTO struct {
 	Apps []struct {
 		Name string `json:"name"`
 	} `json:"apps"`
@@ -10,7 +10,7 @@ type EconsystemConfig struct {
 	} `json:"deploy"`
 }
 
-func (e *EconsystemConfig) ListEnvironments() []string {
+func (e *pm2ConfigDTO) ListEnvironments() []string {
 	envs := make([]string, 0, len(e.Deploy))
 	for env := range e.Deploy {
 		envs = append(envs, env)
@@ -18,7 +18,7 @@ func (e *EconsystemConfig) ListEnvironments() []string {
 	return envs
 }
 
-func (e *EconsystemConfig) ListHostsInEnv(env string) []string {
+func (e *pm2ConfigDTO) ListHostsInEnv(env string) []string {
 	hosts := []string{}
 	for host := range e.Deploy[env].Host {
 		hosts = append(hosts, e.Deploy[env].Host[host])
@@ -26,6 +26,6 @@ func (e *EconsystemConfig) ListHostsInEnv(env string) []string {
 	return hosts
 }
 
-type Pm2ListItem struct {
+type pm2ListItemDTO struct {
 	Name string `json:"name"`
 }

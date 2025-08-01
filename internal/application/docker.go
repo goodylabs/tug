@@ -5,8 +5,8 @@ import (
 
 	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/constants"
+	"github.com/goodylabs/tug/internal/modules/docker"
 	"github.com/goodylabs/tug/internal/ports"
-	"github.com/goodylabs/tug/internal/services/docker"
 )
 
 type DockerUseCase struct {

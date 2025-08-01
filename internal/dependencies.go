@@ -3,9 +3,9 @@ package internal
 import (
 	"github.com/goodylabs/tug/internal/adapters"
 	"github.com/goodylabs/tug/internal/application"
+	"github.com/goodylabs/tug/internal/modules/docker"
+	"github.com/goodylabs/tug/internal/modules/pm2"
 	"github.com/goodylabs/tug/internal/ports"
-	"github.com/goodylabs/tug/internal/services/docker"
-	"github.com/goodylabs/tug/internal/services/pm2"
 	"go.uber.org/dig"
 )
 
@@ -26,8 +26,8 @@ func InitDependencyContainer(manager managerType) *dig.Container {
 	case DockerManager:
 		container.Provide(docker.NewDockerManager)
 	case Pm2Manager:
-		container.Provide(pm2.NewPm2Manager)
-		container.Provide(func(m ports.Pm2Manager) ports.TechnologyHandler {
+		container.Provide(pm2.NewPm2Handler)
+		container.Provide(func(m ports.TechnologyHandler) ports.TechnologyHandler {
 			return m
 		})
 	}

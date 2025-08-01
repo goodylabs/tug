@@ -6,7 +6,7 @@ package docker_test
 
 // 	"github.com/goodylabs/tug/internal/config"
 // 	"github.com/goodylabs/tug/internal/constants"
-// 	"github.com/goodylabs/tug/internal/services/docker"
+// 	"github.com/goodylabs/tug/internal/modules/docker"
 // 	"github.com/goodylabs/tug/tests/mocks"
 // 	"github.com/stretchr/testify/assert"
 // )
