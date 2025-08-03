@@ -17,10 +17,6 @@ type tugHelperTestCase struct {
 	value         string
 }
 
-// func init() {
-// 	config.Load()
-// }
-
 func TestSetGetTugConfig(t *testing.T) {
 	os.Remove(config.TUG_CONFIG_PATH)
 
