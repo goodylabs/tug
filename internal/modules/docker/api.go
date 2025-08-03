@@ -115,24 +115,3 @@ func (d *DockerManager) GetAvailableResources(*dto.SSHConfig) ([]string, error) 
 func (d *DockerManager) GetAvailableActionTemplates() map[string]string {
 	return commandTemplates
 }
-
-// func (d *DockerManager) RunCommandOnContainer(container containerDTO) error {
-// 	commands := []string{
-// 		"docker logs -f " + container.Name,
-// 		"docker exec -it " + container.Name + " sh",
-// 		"docker logs " + container.Name,
-// 		"docker stop " + container.Name,
-// 		"docker start " + container.Name,
-// 	}
-
-// 	selected, _ := d.prompter.ChooseFromList(commands, "Select command to execute")
-// 	if selected == "" {
-// 		return errors.New("no command selected")
-// 	}
-
-// 	if err := d.sshConnector.RunInteractiveCommand(selected); err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
