@@ -20,14 +20,12 @@ var dockerCmd = &cobra.Command{
 	Use:   "docker <envDir>",
 	Short: "Run Docker-related commands for a specific environment",
 	Long:  dockerLongDesc,
-	Args:  cobra.ExactArgs(1),
+	// Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		envDir := args[0]
-
 		container := internal.InitDependencyContainer("docker")
 
-		err := container.Invoke(func(dockerUseCase *application.DockerUseCase) error {
-			return dockerUseCase.Execute(envDir)
+		err := container.Invoke(func(useModuleUseCase *application.UseModuleUseCase) error {
+			return useModuleUseCase.Execute()
 		})
 		if err != nil {
 			cmd.PrintErrf("%v\n", err)

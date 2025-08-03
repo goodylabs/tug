@@ -17,5 +17,6 @@ const (
 
 const (
 	ECOSYSTEM_CONFIG_FILE = "ecosystem.config.js"
+	DOCKER_CONFIG_FILE    = "deploy.sh"
 	DEVOPS_DIR            = "devops"
 )

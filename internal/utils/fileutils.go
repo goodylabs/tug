@@ -36,3 +36,19 @@ func ListFilesInDir(dirPath string) ([]string, error) {
 
 	return fileNames, nil
 }
+
+func ListDirsOnPath(dirPath string) ([]string, error) {
+	files, err := os.ReadDir(dirPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var dirNames []string
+	for _, file := range files {
+		if file.IsDir() {
+			dirNames = append(dirNames, file.Name())
+		}
+	}
+
+	return dirNames, nil
+}

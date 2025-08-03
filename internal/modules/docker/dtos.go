@@ -1,15 +1,16 @@
-package dto
+package docker
 
-type DockerService struct {
-	ID       string `json:"ID"`
-	Image    string `json:"Image"`
-	Mode     string `json:"Mode"`
-	Name     string `json:"Name"`
-	Ports    string `json:"Ports"`
-	Replicas string `json:"Replicas"`
+type dockerConfigEnv struct {
+	Name  string
+	User  string
+	Hosts []string
 }
 
-type Container struct {
+type dockerConfig struct {
+	Envs map[string]dockerConfigEnv
+}
+
+type containerDTO struct {
 	Command      string `json:"Command"`
 	CreatedAt    string `json:"CreatedAt"`
 	ID           string `json:"ID"`
