@@ -1,6 +1,7 @@
 package application
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/config"
@@ -27,7 +28,10 @@ func (i *InitializeUseCase) Execute() error {
 		return err
 	}
 
-	sshKeyPath, _ := i.prompter.ChooseFromList(sshFiles, "Which SSH key do you want to use?")
+	sshKeyPath, err := i.prompter.ChooseFromList(sshFiles, "Which SSH key do you want to use?")
+	if err != nil {
+		return fmt.Errorf("failed to choose SSH key: %w", err)
+	}
 
 	tugConfig := dto.TugConfig{
 		SSHKeyPath: sshKeyPath,
@@ -35,5 +39,7 @@ func (i *InitializeUseCase) Execute() error {
 	if err = tughelper.SetTugConfig(&tugConfig); err != nil {
 		return err
 	}
+
+	fmt.Println("Tug configuration initialized successfully!")
 	return nil
 }
