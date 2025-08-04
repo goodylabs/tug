@@ -7,7 +7,7 @@ import (
 )
 
 var pm2Cmd = &cobra.Command{
-	Use:   "pm2 <envDir>",
+	Use:   "pm2",
 	Short: "Abstraction layer for pm2 operations related to project repo",
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
