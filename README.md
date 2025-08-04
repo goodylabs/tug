@@ -82,11 +82,6 @@ tug pm2 --check
 
 # Podstawowe użycie
 tug pm2
-
-# Jak wiesz dokładnie jakie środowisko to możesz od razu podać
-tug pm2 staging
-tug pm2 staging_RO
-tug pm2 production
 ```
 
 ---
