@@ -89,8 +89,6 @@ tug pm2 staging_RO
 tug pm2 production
 ```
 
-Oto tłumaczenie dokumentacji TUG na język angielski:
-
 ---
 
 # TUG (EN)
