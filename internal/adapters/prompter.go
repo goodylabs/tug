@@ -3,6 +3,7 @@ package adapters
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 
 	// "github.com/cqroot/prompt"
@@ -61,6 +62,10 @@ func (p *prompter) clear() {
 }
 
 func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (string, error) {
+	sort.Slice(options, func(i, j int) bool {
+		return options[i].Label < options[j].Label
+	})
+
 	_, height, err := term.GetSize(int(os.Stdout.Fd()))
 	if err != nil {
 		panic(err)
