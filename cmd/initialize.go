@@ -15,9 +15,9 @@ var initializeCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  `Initialize configuration for tug`,
 	Run: func(cmd *cobra.Command, args []string) {
-		container := internal.InitDependencyContainer("")
-		err := container.Invoke(func(pm2UseCase *application.InitializeUseCase) error {
-			return pm2UseCase.Execute()
+		container := internal.InitDependencyContainer()
+		err := container.Invoke(func(initializeUseCase *application.InitializeUseCase) error {
+			return initializeUseCase.Execute()
 		})
 		if err != nil {
 			cmd.PrintErrf("%v\n", err)

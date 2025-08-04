@@ -20,6 +20,10 @@ func NewCheckConnectionUseCase(handler ports.TechnologyHandler, sshConnector por
 }
 
 func (p *CheckConnectionUseCase) Execute() error {
+	if err := p.handler.LoadConfigFromFile(); err != nil {
+		return err
+	}
+
 	availableEnvs, err := p.handler.GetAvailableEnvs()
 	if err != nil {
 		return err

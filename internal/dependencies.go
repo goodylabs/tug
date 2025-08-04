@@ -5,31 +5,27 @@ import (
 	"github.com/goodylabs/tug/internal/application"
 	"github.com/goodylabs/tug/internal/modules/docker"
 	"github.com/goodylabs/tug/internal/modules/pm2"
-	"github.com/goodylabs/tug/internal/ports"
 	"go.uber.org/dig"
 )
 
-type managerType string
+type OptFunc func(*dig.Container)
 
-const (
-	DockerManager managerType = "docker"
-	Pm2Manager    managerType = "pm2"
-)
+func WithDockerHandler(container *dig.Container) {
+	container.Provide(docker.NewDockerManager)
+}
 
-func InitDependencyContainer(manager managerType) *dig.Container {
+func WithPm2Handler(container *dig.Container) {
+	container.Provide(pm2.NewPm2Handler)
+}
+
+func InitDependencyContainer(opts ...OptFunc) *dig.Container {
 	container := dig.New()
 
 	container.Provide(adapters.NewSSHConnector)
 	container.Provide(adapters.NewPrompter)
 
-	switch manager {
-	case DockerManager:
-		container.Provide(docker.NewDockerManager)
-	case Pm2Manager:
-		container.Provide(pm2.NewPm2Handler)
-		container.Provide(func(m ports.TechnologyHandler) ports.TechnologyHandler {
-			return m
-		})
+	for _, opt := range opts {
+		opt(container)
 	}
 
 	container.Provide(application.NewUseModuleUseCase)

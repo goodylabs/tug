@@ -13,13 +13,14 @@ var pm2Cmd = &cobra.Command{
 		var err error
 		check, err := cmd.Flags().GetBool("check")
 
+		container := internal.InitDependencyContainer(
+			internal.WithPm2Handler,
+		)
 		if check {
-			container := internal.InitDependencyContainer("pm2")
 			err = container.Invoke(func(checkConnectionUseCase *application.CheckConnectionUseCase) error {
 				return checkConnectionUseCase.Execute()
 			})
 		} else {
-			container := internal.InitDependencyContainer("pm2")
 			err = container.Invoke(func(useModuleUseCase *application.UseModuleUseCase) error {
 				return useModuleUseCase.Execute()
 			})
