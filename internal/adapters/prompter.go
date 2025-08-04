@@ -8,7 +8,6 @@ import (
 	// "github.com/cqroot/prompt"
 	// "github.com/cqroot/prompt/choose"
 	"github.com/goodylabs/tug/internal/ports"
-	"github.com/goodylabs/tug/internal/utils"
 	"github.com/manifoldco/promptui"
 	"golang.org/x/term"
 )
@@ -22,7 +21,15 @@ func NewPrompter() ports.Prompter {
 func (p *prompter) ChooseFromList(options []string, label string) (string, error) {
 	p.clear()
 
-	return p.runPrompter(options, label)
+	optionsDisplayValueOpts := make([]ports.DisplayValueOpts, len(options))
+	for i, key := range options {
+		optionsDisplayValueOpts[i] = ports.DisplayValueOpts{
+			Label: key,
+			Value: key,
+		}
+	}
+
+	return p.runPrompter(optionsDisplayValueOpts, label)
 }
 
 func (p *prompter) ChooseFromMap(options map[string]string, label string) (string, error) {
@@ -33,7 +40,14 @@ func (p *prompter) ChooseFromMap(options map[string]string, label string) (strin
 
 	p.clear()
 
-	resultKey, err := p.runPrompter(keys, label)
+	optionsDisplayValueOpts := make([]ports.DisplayValueOpts, len(keys))
+	for i, key := range keys {
+		optionsDisplayValueOpts[i] = ports.DisplayValueOpts{
+			Label: key,
+			Value: key,
+		}
+	}
+	resultKey, err := p.runPrompter(optionsDisplayValueOpts, label)
 
 	if err != nil {
 		return "", err
@@ -46,28 +60,40 @@ func (p *prompter) clear() {
 	fmt.Print("\033[H\033[2J")
 }
 
-func (p *prompter) runPrompter(options []string, label string) (string, error) {
+func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (string, error) {
 	_, height, err := term.GetSize(int(os.Stdout.Fd()))
 	if err != nil {
 		panic(err)
 	}
-
-	utils.SortOptions(options)
 
 	prompt := promptui.Select{
 		Label:             label,
 		Items:             options,
 		Size:              height - 3,
 		StartInSearchMode: true,
+		Templates: &promptui.SelectTemplates{
+			Label:    "{{ . }}",
+			Active:   "▸ {{ .Label | cyan }}",
+			Inactive: "  {{ .Label }}",
+			Selected: "✔ {{ .Label | green }}",
+		},
 		Searcher: func(input string, index int) bool {
-			return strings.Contains(options[index], input)
+			option := options[index]
+			return strings.Contains(option.Label, input)
 		},
 	}
 
-	_, result, err := prompt.Run()
-	p.clear()
+	i, _, err := prompt.Run()
 	if err != nil {
+		p.clear()
 		return "", err
 	}
-	return result, nil
+	p.clear()
+	return options[i].Value, nil
+}
+
+func (p *prompter) ChooseFromListWithDisplayValue(options []ports.DisplayValueOpts, label string) (string, error) {
+	p.clear()
+
+	return p.runPrompter(options, label)
 }

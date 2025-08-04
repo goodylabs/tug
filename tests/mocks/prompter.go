@@ -26,3 +26,7 @@ func (p *prompterMock) ChooseFromList(options []string, label string) (string, e
 func (p *prompterMock) ChooseFromMap(map[string]string, string) (string, error) {
 	return "", nil
 }
+
+func (p *prompterMock) ChooseFromListWithDisplayValue([]ports.DisplayValueOpts, string) (string, error) {
+	return "", nil
+}
