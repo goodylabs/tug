@@ -10,7 +10,6 @@ var pm2Cmd = &cobra.Command{
 	Use:   "pm2",
 	Short: "Abstraction layer for pm2 operations related to project repo",
 	Run: func(cmd *cobra.Command, args []string) {
-		var err error
 		check, err := cmd.Flags().GetBool("check")
 
 		container := internal.InitDependencyContainer(
@@ -33,5 +32,5 @@ var pm2Cmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(pm2Cmd)
-	pm2Cmd.Flags().Bool("check", false, "Check SSH connections before running PM2 commands")
+	pm2Cmd.Flags().Bool("check", false, "Check SSH connections before running Docker commands")
 }
