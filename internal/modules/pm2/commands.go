@@ -9,6 +9,8 @@ const (
 	describeCmdTemplate = `source ~/.nvm/nvm.sh; pm2 describe %s && read`
 	monitCmdTemplate    = `source ~/.nvm/nvm.sh; pm2 monit %s`
 	updateCmdTemplate   = `source ~/.nvm/nvm.sh; pm2 update`
+	bashCmdTemplate     = `source ~/.nvm/nvm.sh; bash && %s read`
+	htopCmdTemplate     = `source ~/.nvm/nvm.sh; htop && %s read`
 )
 
 var commandTemplates = map[string]string{
@@ -19,4 +21,6 @@ var commandTemplates = map[string]string{
 	"[pm2] describe  <resource>": describeCmdTemplate,
 	"[pm2] monit     <resource>": monitCmdTemplate,
 	"[pm2] update":               updateCmdTemplate,
+	"[shell] bash":               bashCmdTemplate,
+	"[shell] htop":               htopCmdTemplate,
 }
