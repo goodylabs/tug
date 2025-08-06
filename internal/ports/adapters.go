@@ -1,7 +1,5 @@
 package ports
 
-import "github.com/goodylabs/tug/internal/dto"
-
 type DisplayValueOpts struct {
 	Value string
 	Label string
@@ -14,7 +12,7 @@ type Prompter interface {
 }
 
 type SSHConnector interface {
-	ConfigureSSHConnection(*dto.SSHConfig) error
+	ConfigureSSHConnection(*SSHConfig) error
 	CloseConnection() error
 	RunCommand(cmd string) (string, error)
 	RunInteractiveCommand(cmd string) error

@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/goodylabs/tug/internal/config"
-	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 )
 
@@ -76,19 +75,19 @@ func (p *Pm2Handler) GetAvailableHosts(env string) ([]string, error) {
 	return p.config.ListHostsInEnv(env), nil
 }
 
-func (p *Pm2Handler) GetSSHConfig(env, host string) (*dto.SSHConfig, error) {
+func (p *Pm2Handler) GetSSHConfig(env, host string) (*ports.SSHConfig, error) {
 	if p.config == nil {
 		return nil, errors.New("Can not get SSH config - PM2 config is not loaded")
 	}
 
-	return &dto.SSHConfig{
+	return &ports.SSHConfig{
 		User: p.config.Deploy[env].User,
 		Host: host,
 		Port: 22,
 	}, nil
 }
 
-func (p *Pm2Handler) GetAvailableResources(sshConfig *dto.SSHConfig) ([]string, error) {
+func (p *Pm2Handler) GetAvailableResources(sshConfig *ports.SSHConfig) ([]string, error) {
 	output, err := p.sshConnector.RunCommand(jlistCmd)
 	if err != nil {
 		return nil, err

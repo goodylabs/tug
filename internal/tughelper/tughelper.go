@@ -4,7 +4,6 @@ import (
 	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/config"
-	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/utils"
 )
 
@@ -29,12 +28,12 @@ func GetAvailableSSHFiles(sshDirPath string) ([]string, error) {
 	return sshFiles, err
 }
 
-func GetTugConfig() (*dto.TugConfig, error) {
-	var tugConfig *dto.TugConfig
+func GetTugConfig() (*TugConfig, error) {
+	var tugConfig *TugConfig
 	err := utils.ReadJSON(config.TUG_CONFIG_PATH, &tugConfig)
 	return tugConfig, err
 }
 
-func SetTugConfig(tugConfig *dto.TugConfig) error {
+func SetTugConfig(tugConfig *TugConfig) error {
 	return utils.WriteJSON(config.TUG_CONFIG_PATH, &tugConfig)
 }

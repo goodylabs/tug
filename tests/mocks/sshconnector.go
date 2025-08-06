@@ -3,7 +3,6 @@ package mocks
 import (
 	"errors"
 
-	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 )
 
@@ -26,7 +25,7 @@ func NewSSHConnectorInteractiveCommandMock(expectedInteractiveCmd string) ports.
 	}
 }
 
-func (m *sshConnectorMock) ConfigureSSHConnection(sshConfig *dto.SSHConfig) error {
+func (m *sshConnectorMock) ConfigureSSHConnection(sshConfig *ports.SSHConfig) error {
 	return nil
 }
 

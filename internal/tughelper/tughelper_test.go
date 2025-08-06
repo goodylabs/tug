@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/goodylabs/tug/internal/config"
-	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/tughelper"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +22,7 @@ func TestSetGetTugConfig(t *testing.T) {
 	_, err := tughelper.GetTugConfig()
 	assert.Error(t, err)
 
-	tugConfig := &dto.TugConfig{
+	tugConfig := &tughelper.TugConfig{
 		SSHKeyPath: "test_key_path",
 	}
 	err = tughelper.SetTugConfig(tugConfig)

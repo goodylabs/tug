@@ -10,7 +10,6 @@ import (
 
 	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/constants"
-	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/utils"
 )
@@ -80,15 +79,15 @@ func (d *DockerManager) GetAvailableHosts(env string) ([]string, error) {
 
 	return d.config.Envs[env].Hosts, nil
 }
-func (d *DockerManager) GetSSHConfig(env, host string) (*dto.SSHConfig, error) {
-	return &dto.SSHConfig{
+func (d *DockerManager) GetSSHConfig(env, host string) (*ports.SSHConfig, error) {
+	return &ports.SSHConfig{
 		Host: host,
 		User: d.config.Envs[env].User,
 		Port: 22,
 	}, nil
 }
 
-func (d *DockerManager) GetAvailableResources(*dto.SSHConfig) ([]string, error) {
+func (d *DockerManager) GetAvailableResources(*ports.SSHConfig) ([]string, error) {
 	var containers []containerDTO
 
 	output, err := d.sshConnector.RunCommand(dockerListCmd)

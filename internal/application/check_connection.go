@@ -69,7 +69,8 @@ func (p *CheckConnectionUseCase) checkHost(env, host string) error {
 	if err != nil {
 		return err
 	}
-	sshConStr := sshConfig.GetSSHConnectionString()
+
+	sshConStr := sshConfig.User + "@" + sshConfig.Host
 
 	if err := p.sshConnector.ConfigureSSHConnection(sshConfig); err != nil {
 		fmt.Printf(template, env, sshConStr, "🚫 can not ssh connect")

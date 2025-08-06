@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 
 	"github.com/goodylabs/tug/internal/config"
-	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/tughelper"
 )
@@ -33,7 +32,7 @@ func (i *InitializeUseCase) Execute() error {
 		return fmt.Errorf("failed to choose SSH key: %w", err)
 	}
 
-	tugConfig := dto.TugConfig{
+	tugConfig := tughelper.TugConfig{
 		SSHKeyPath: sshKeyPath,
 	}
 	if err = tughelper.SetTugConfig(&tugConfig); err != nil {

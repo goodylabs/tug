@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 )
 
@@ -16,7 +15,7 @@ type UseModuleUseCase struct {
 	prompter     ports.Prompter
 	context      struct {
 		selectedEnv string
-		sshConfig   *dto.SSHConfig
+		sshConfig   *ports.SSHConfig
 		action      string
 		resource    string
 	}

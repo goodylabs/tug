@@ -9,7 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/tughelper"
 	"golang.org/x/crypto/ssh"
@@ -24,7 +23,7 @@ func NewSSHConnector() ports.SSHConnector {
 	return &sshConnector{}
 }
 
-func (s *sshConnector) ConfigureSSHConnection(sshConfig *dto.SSHConfig) error {
+func (s *sshConnector) ConfigureSSHConnection(sshConfig *ports.SSHConfig) error {
 	authMethods, err := s.loadSSHKeysFromDir()
 	if err != nil {
 		return err
