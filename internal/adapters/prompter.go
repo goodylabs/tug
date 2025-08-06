@@ -1,27 +1,29 @@
 package adapters
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"sort"
 	"strings"
 
-	// "github.com/cqroot/prompt"
-	// "github.com/cqroot/prompt/choose"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/manifoldco/promptui"
 	"golang.org/x/term"
 )
 
-type prompter struct{}
+type prompter struct {
+	lastIndexes map[string]int
+}
 
 func NewPrompter() ports.Prompter {
-	return &prompter{}
+	return &prompter{
+		lastIndexes: make(map[string]int),
+	}
 }
 
 func (p *prompter) ChooseFromList(options []string, label string) (string, error) {
-	p.clear()
-
 	optionsDisplayValueOpts := make([]ports.DisplayValueOpts, len(options))
 	for i, key := range options {
 		optionsDisplayValueOpts[i] = ports.DisplayValueOpts{
@@ -38,8 +40,6 @@ func (p *prompter) ChooseFromMap(options map[string]string, label string) (strin
 	for k := range options {
 		keys = append(keys, k)
 	}
-
-	p.clear()
 
 	optionsDisplayValueOpts := make([]ports.DisplayValueOpts, len(keys))
 	for i, key := range keys {
@@ -61,7 +61,18 @@ func (p *prompter) clear() {
 	fmt.Print("\033[H\033[2J")
 }
 
+func (p *prompter) hashOptions(options []ports.DisplayValueOpts) string {
+	labels := make([]string, len(options))
+	for i, opt := range options {
+		labels[i] = opt.Label
+	}
+	hash := sha256.Sum256([]byte(strings.Join(labels, "|")))
+	return hex.EncodeToString(hash[:])
+}
+
 func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (string, error) {
+	p.clear()
+
 	sort.Slice(options, func(i, j int) bool {
 		return options[i].Label < options[j].Label
 	})
@@ -71,11 +82,14 @@ func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (
 		panic(err)
 	}
 
+	hashKey := p.hashOptions(options)
+	lastIndex := p.lastIndexes[hashKey]
+
 	prompt := promptui.Select{
 		Label:             label,
 		Items:             options,
 		Size:              height - 3,
-		StartInSearchMode: true,
+		StartInSearchMode: false,
 		Templates: &promptui.SelectTemplates{
 			Label:    "{{ . }}",
 			Active:   "▸ {{ .Label | cyan }}",
@@ -86,19 +100,20 @@ func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (
 			option := options[index]
 			return strings.Contains(option.Label, input)
 		},
+		CursorPos: lastIndex,
 	}
 
 	i, _, err := prompt.Run()
+	p.clear()
 	if err != nil {
-		p.clear()
 		return "", err
 	}
-	p.clear()
+
+	p.lastIndexes[hashKey] = i
 	return options[i].Value, nil
 }
 
 func (p *prompter) ChooseFromListWithDisplayValue(options []ports.DisplayValueOpts, label string) (string, error) {
 	p.clear()
-
 	return p.runPrompter(options, label)
 }

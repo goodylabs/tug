@@ -2,11 +2,13 @@ package application
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/goodylabs/tug/internal/dto"
 	"github.com/goodylabs/tug/internal/ports"
-	"github.com/goodylabs/tug/internal/utils/stageorchestrator"
 )
+
+type stepFunc func() (stepFunc, error)
 
 type UseModuleUseCase struct {
 	handler      ports.TechnologyHandler
@@ -18,6 +20,7 @@ type UseModuleUseCase struct {
 		action      string
 		resource    string
 	}
+	stack []stepFunc
 }
 
 func NewUseModuleUseCase(handler ports.TechnologyHandler, sshConnector ports.SSHConnector, prompter ports.Prompter) *UseModuleUseCase {
@@ -29,92 +32,106 @@ func NewUseModuleUseCase(handler ports.TechnologyHandler, sshConnector ports.SSH
 }
 
 func (u *UseModuleUseCase) Execute() error {
-	steps := []stageorchestrator.StepFunc{
-		u.stepSelectEnv,
-		u.stepSelectHost,
-		u.stepSelectResource,
-		u.stepSelectAction,
-		u.stepExecuteAction,
-	}
-
-	stageOrchestrator := stageorchestrator.NewStageOrchestrator(steps)
 
 	if err := u.handler.LoadConfigFromFile(); err != nil {
 		return err
 	}
 
-	return stageOrchestrator.Run()
+	u.stack = []stepFunc{u.stepSelectEnv}
+
+	for len(u.stack) > 0 {
+		stackLen := len(u.stack)
+		nextStep, err := u.stack[stackLen-1]()
+		if err != nil {
+			return err
+		}
+		if nextStep == nil {
+			u.stack = u.stack[:stackLen-1]
+			continue
+		}
+		u.stack = append(u.stack, nextStep)
+	}
+
+	return nil
 }
 
-func (u *UseModuleUseCase) stepSelectEnv() (bool, error) {
+func (u *UseModuleUseCase) stepSelectEnv() (stepFunc, error) {
 	availableEnvs, err := u.handler.GetAvailableEnvs()
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	selectedEnv, err := u.prompter.ChooseFromList(availableEnvs, "ENVIRONMENTS")
 	if err != nil {
-		return false, nil
+		return nil, nil
 	}
 
 	u.context.selectedEnv = selectedEnv
 
-	return true, nil
+	return u.stepSelectHost, nil
 }
 
-func (u *UseModuleUseCase) stepSelectHost() (bool, error) {
+func (u *UseModuleUseCase) stepSelectHost() (stepFunc, error) {
 	availableHosts, err := u.handler.GetAvailableHosts(u.context.selectedEnv)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	selectedHost, err := u.prompter.ChooseFromList(availableHosts, "HOSTS")
 	if err != nil {
-		return false, nil
+		return nil, nil
 	}
 	fmt.Println("Connecting to server...")
 
 	sshConfig, err := u.handler.GetSSHConfig(u.context.selectedEnv, selectedHost)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	u.sshConnector.ConfigureSSHConnection(sshConfig)
 	u.context.sshConfig = sshConfig
 
-	return true, nil
+	return u.stepSelectAction, nil
 }
 
-func (u *UseModuleUseCase) stepSelectResource() (bool, error) {
+func (u *UseModuleUseCase) stepSelectAction() (stepFunc, error) {
+	cmdTemplate, err := u.prompter.ChooseFromMap(u.handler.GetAvailableActionTemplates(), "ACTIONS")
+	if err != nil {
+		fmt.Println("Looking for resources...")
+		return nil, nil
+	}
+
+	u.context.action = cmdTemplate
+
+	if strings.Contains(cmdTemplate, "%s") {
+		return u.stepSelectResource, nil
+	} else {
+		return u.stepExecuteAction, nil
+	}
+}
+
+func (u *UseModuleUseCase) stepSelectResource() (stepFunc, error) {
 	resources, err := u.handler.GetAvailableResources(u.context.sshConfig)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	resource, err := u.prompter.ChooseFromList(resources, "RESOURCES")
 	if err != nil {
 		u.context.sshConfig = nil
-		return false, nil
+		return nil, nil
 	}
 	u.context.resource = resource
-	return true, nil
+	return u.stepExecuteAction, nil
 }
 
-func (u *UseModuleUseCase) stepSelectAction() (bool, error) {
-	cmdTemplate, err := u.prompter.ChooseFromMap(u.handler.GetAvailableActionTemplates(), "ACTIONS")
-	if err != nil {
-		u.context.resource = ""
-		fmt.Println("Looking for resources...")
-		return false, nil
-	}
-	u.context.action = cmdTemplate
-	return true, nil
-}
+func (u *UseModuleUseCase) stepExecuteAction() (stepFunc, error) {
+	var remoteCmd = u.context.action
 
-func (u *UseModuleUseCase) stepExecuteAction() (bool, error) {
-	remoteCmd := fmt.Sprintf(u.context.action, u.context.resource)
-	if err := u.sshConnector.RunInteractiveCommand(remoteCmd); err != nil {
-		u.context.action = ""
+	if strings.Contains(remoteCmd, "%s") {
+		remoteCmd = fmt.Sprintf(u.context.action, u.context.resource)
 	}
-	return false, nil
+
+	u.sshConnector.RunInteractiveCommand(remoteCmd)
+	return nil, nil
 }

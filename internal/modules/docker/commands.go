@@ -6,6 +6,8 @@ const (
 	dockerExecCmd     = "docker exec -it %s sh"
 	dockerLogsCmd     = "docker logs %s && read"
 	dockerRestartCmd  = "docker restart %s && read"
+	bashCmd           = "bash"
+	htopCmd           = "htop"
 )
 
 var commandTemplates = map[string]string{
@@ -13,4 +15,6 @@ var commandTemplates = map[string]string{
 	"[docker] exec -ti <resource> sh": dockerExecCmd,
 	"[docker] logs <resource>":        dockerLogsCmd,
 	"[docker] restart <resource>":     dockerRestartCmd,
+	"[bash]   bash":                   bashCmd,
+	"[bash]   htop":                   htopCmd,
 }
