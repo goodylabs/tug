@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/goodylabs/tug/internal/constants"
-	"github.com/goodylabs/tug/internal/utils"
+	"github.com/goodylabs/tug/pkg/utils"
 )
 
 func (d *DockerManager) GetTargetIpFromScript(scriptPath string) (string, error) {

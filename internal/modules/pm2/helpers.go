@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/goodylabs/tug/internal/config"
+	"github.com/goodylabs/tug/pkg/config"
 )
 
 func GetPm2ConfigPath(dir string) (string, error) {

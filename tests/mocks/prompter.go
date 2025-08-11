@@ -2,7 +2,7 @@ package mocks
 
 import (
 	"github.com/goodylabs/tug/internal/ports"
-	"github.com/goodylabs/tug/internal/utils"
+	"github.com/goodylabs/tug/pkg/utils"
 )
 
 type prompterMock struct {

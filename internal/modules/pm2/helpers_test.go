@@ -3,8 +3,8 @@ package pm2_test
 import (
 	"testing"
 
-	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/modules/pm2"
+	"github.com/goodylabs/tug/pkg/config"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -5,8 +5,8 @@ import (
 	"errors"
 	"os"
 
-	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/ports"
+	"github.com/goodylabs/tug/pkg/config"
 )
 
 type Pm2Handler struct {

@@ -1,11 +1,11 @@
-package application_test
+package app_test
 
 import (
 	"os"
 	"testing"
 
-	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/tughelper"
+	"github.com/goodylabs/tug/pkg/config"
 	"github.com/goodylabs/tug/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )

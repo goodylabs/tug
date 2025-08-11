@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/goodylabs/tug/internal"
-	"github.com/goodylabs/tug/internal/application"
+	"github.com/goodylabs/tug/internal/app"
+	"github.com/goodylabs/tug/pkg/dependecies"
 	"github.com/spf13/cobra"
 )
 
@@ -12,15 +12,15 @@ var dockerCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		check, err := cmd.Flags().GetBool("check")
 
-		container := internal.InitDependencyContainer(
-			internal.WithDockerHandler,
+		container := dependecies.InitDependencyContainer(
+			dependecies.WithDockerHandler,
 		)
 		if check {
-			err = container.Invoke(func(checkConnectionUseCase *application.CheckConnectionUseCase) error {
+			err = container.Invoke(func(checkConnectionUseCase *app.CheckConnectionUseCase) error {
 				return checkConnectionUseCase.Execute()
 			})
 		} else {
-			err = container.Invoke(func(useModuleUseCase *application.UseModuleUseCase) error {
+			err = container.Invoke(func(useModuleUseCase *app.UseModuleUseCase) error {
 				return useModuleUseCase.Execute()
 			})
 		}

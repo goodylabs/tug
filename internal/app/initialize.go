@@ -1,12 +1,12 @@
-package application
+package app
 
 import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/tughelper"
+	"github.com/goodylabs/tug/pkg/config"
 )
 
 type InitializeUseCase struct {

@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/tughelper"
+	"github.com/goodylabs/tug/pkg/config"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -4,8 +4,8 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/goodylabs/tug/internal"
-	"github.com/goodylabs/tug/internal/application"
+	"github.com/goodylabs/tug/internal/app"
+	"github.com/goodylabs/tug/pkg/dependecies"
 	"github.com/spf13/cobra"
 )
 
@@ -15,8 +15,8 @@ var initializeCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  `Initialize configuration for tug`,
 	Run: func(cmd *cobra.Command, args []string) {
-		container := internal.InitDependencyContainer()
-		err := container.Invoke(func(initializeUseCase *application.InitializeUseCase) error {
+		container := dependecies.InitDependencyContainer()
+		err := container.Invoke(func(initializeUseCase *app.InitializeUseCase) error {
 			return initializeUseCase.Execute()
 		})
 		if err != nil {

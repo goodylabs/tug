@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"github.com/goodylabs/tug/internal/application"
+	"github.com/goodylabs/tug/internal/app"
 )
 
 // func SetupPm2ManagerWithMocks(prompts []int, sshOutput string, sshErr error) ports.Pm2Manager {
@@ -11,8 +11,8 @@ import (
 // 	)
 // }
 
-func SetupInitializeUseCaseWithMocks(prompts []int) *application.InitializeUseCase {
-	return application.NewInitializeUseCase(
+func SetupInitializeUseCaseWithMocks(prompts []int) *app.InitializeUseCase {
+	return app.NewInitializeUseCase(
 		NewPrompterMock(prompts),
 	)
 }

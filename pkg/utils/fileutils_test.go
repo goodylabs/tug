@@ -4,9 +4,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/goodylabs/tug/internal/config"
 	"github.com/goodylabs/tug/internal/constants"
-	"github.com/goodylabs/tug/internal/utils"
+	"github.com/goodylabs/tug/pkg/config"
+	"github.com/goodylabs/tug/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 

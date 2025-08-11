@@ -1,8 +1,8 @@
-package internal
+package dependecies
 
 import (
 	"github.com/goodylabs/tug/internal/adapters"
-	"github.com/goodylabs/tug/internal/application"
+	"github.com/goodylabs/tug/internal/app"
 	"github.com/goodylabs/tug/internal/modules/docker"
 	"github.com/goodylabs/tug/internal/modules/pm2"
 	"go.uber.org/dig"
@@ -28,9 +28,9 @@ func InitDependencyContainer(opts ...OptFunc) *dig.Container {
 		opt(container)
 	}
 
-	container.Provide(application.NewUseModuleUseCase)
-	container.Provide(application.NewCheckConnectionUseCase)
-	container.Provide(application.NewInitializeUseCase)
+	container.Provide(app.NewUseModuleUseCase)
+	container.Provide(app.NewCheckConnectionUseCase)
+	container.Provide(app.NewInitializeUseCase)
 
 	return container
 }

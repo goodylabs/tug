@@ -3,8 +3,8 @@ package tughelper
 import (
 	"path/filepath"
 
-	"github.com/goodylabs/tug/internal/config"
-	"github.com/goodylabs/tug/internal/utils"
+	"github.com/goodylabs/tug/pkg/config"
+	"github.com/goodylabs/tug/pkg/utils"
 )
 
 func GetAvailableSSHFiles(sshDirPath string) ([]string, error) {
