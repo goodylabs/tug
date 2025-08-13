@@ -55,6 +55,23 @@ func (s *sshConnector) CloseConnection() error {
 	return err
 }
 
+func (s *sshConnector) loadSSHKeysFromDir() ([]ssh.AuthMethod, error) {
+	tugConfig, err := tughelper.GetTugConfig()
+	if err != nil {
+		return []ssh.AuthMethod{}, errors.New("Can not read tug config file, run `tug initialize` to configure tug.")
+	}
+
+	keyData, err := os.ReadFile(tugConfig.SSHKeyPath)
+	if err != nil {
+		return []ssh.AuthMethod{}, err
+	}
+	signer, err := ssh.ParsePrivateKey(keyData)
+	if err != nil {
+		return []ssh.AuthMethod{}, err
+	}
+	return []ssh.AuthMethod{ssh.PublicKeys(signer)}, nil
+}
+
 func (s *sshConnector) RunCommand(cmd string) (string, error) {
 	var ErrSSHConnection = fmt.Errorf("Error establishing SSH connection to the server.")
 	if s.client == nil {
@@ -122,21 +139,4 @@ func (s *sshConnector) RunInteractiveCommand(cmd string) error {
 	}()
 
 	return session.Run(cmd)
-}
-
-func (s *sshConnector) loadSSHKeysFromDir() ([]ssh.AuthMethod, error) {
-	tugConfig, err := tughelper.GetTugConfig()
-	if err != nil {
-		return []ssh.AuthMethod{}, errors.New("Can not read tug config file, run `tug initialize` to configure tug.")
-	}
-
-	keyData, err := os.ReadFile(tugConfig.SSHKeyPath)
-	if err != nil {
-		return []ssh.AuthMethod{}, err
-	}
-	signer, err := ssh.ParsePrivateKey(keyData)
-	if err != nil {
-		return []ssh.AuthMethod{}, err
-	}
-	return []ssh.AuthMethod{ssh.PublicKeys(signer)}, nil
 }

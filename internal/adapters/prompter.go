@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"io"
 	"os"
 	"sort"
 	"strings"
@@ -31,7 +32,6 @@ func (p *prompter) ChooseFromList(options []string, label string) (string, error
 			Value: key,
 		}
 	}
-
 	return p.runPrompter(optionsDisplayValueOpts, label)
 }
 
@@ -40,7 +40,6 @@ func (p *prompter) ChooseFromMap(options map[string]string, label string) (strin
 	for k := range options {
 		keys = append(keys, k)
 	}
-
 	optionsDisplayValueOpts := make([]ports.DisplayValueOpts, len(keys))
 	for i, key := range keys {
 		optionsDisplayValueOpts[i] = ports.DisplayValueOpts{
@@ -49,11 +48,9 @@ func (p *prompter) ChooseFromMap(options map[string]string, label string) (strin
 		}
 	}
 	resultKey, err := p.runPrompter(optionsDisplayValueOpts, label)
-
 	if err != nil {
 		return "", err
 	}
-
 	return options[resultKey], nil
 }
 
@@ -68,6 +65,24 @@ func (p *prompter) hashOptions(options []ports.DisplayValueOpts) string {
 	}
 	hash := sha256.Sum256([]byte(strings.Join(labels, "|")))
 	return hex.EncodeToString(hash[:])
+}
+
+type noBellWriter struct {
+	w io.Writer
+}
+
+func (n noBellWriter) Write(p []byte) (int, error) {
+	filtered := make([]byte, 0, len(p))
+	for _, b := range p {
+		if b != 0x07 {
+			filtered = append(filtered, b)
+		}
+	}
+	return n.w.Write(filtered)
+}
+
+func (n noBellWriter) Close() error {
+	return nil
 }
 
 func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (string, error) {
@@ -101,6 +116,7 @@ func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (
 			return strings.Contains(option.Label, input)
 		},
 		CursorPos: lastIndex,
+		Stdout:    noBellWriter{os.Stdout}, // tu filtrujemy BEL
 	}
 
 	i, _, err := prompt.Run()
