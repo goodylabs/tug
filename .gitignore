@@ -3,5 +3,5 @@ bin/
 .tmp/
 **/.tug/**
 !**/.tug/.gitkeep
-.development/.ssh/*
-!.development/.ssh/.gitkeep
+.development
+
