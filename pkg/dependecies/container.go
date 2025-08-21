@@ -5,6 +5,7 @@ import (
 	"github.com/goodylabs/tug/internal/app"
 	"github.com/goodylabs/tug/internal/modules/docker"
 	"github.com/goodylabs/tug/internal/modules/pm2"
+	"github.com/goodylabs/tug/internal/modules/swarm"
 	"go.uber.org/dig"
 )
 
@@ -16,6 +17,10 @@ func WithDockerHandler(container *dig.Container) {
 
 func WithPm2Handler(container *dig.Container) {
 	container.Provide(pm2.NewPm2Handler)
+}
+
+func WithSwarmHandler(container *dig.Container) {
+	container.Provide(swarm.NewSwarmManager)
 }
 
 func InitDependencyContainer(opts ...OptFunc) *dig.Container {
