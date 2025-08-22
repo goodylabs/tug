@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var version = "default"
+var version = "dev"
 
 var rootCmd = &cobra.Command{
 	Use:   "tug",
