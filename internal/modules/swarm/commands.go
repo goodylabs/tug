@@ -12,9 +12,9 @@ var commandTemplates = map[string]string{
 	"[swarm] force update <service>": "docker service update %s --force",
 	"[swarm] logs -f <service>":      "docker service logs -f %s",
 
-	"[swarm] scale <service> replicas to 0": "docker scale %s=0 && read",
-	"[swarm] scale <service> replicas to 1": "docker scale %s=1 && read",
-	"[swarm] scale <service> replicas to 3": "docker scale %s=3 && read",
+	"[swarm] scale <service> replicas to 0": "docker service scale %s=0 && read",
+	"[swarm] scale <service> replicas to 1": "docker service scale %s=1 && read",
+	"[swarm] scale <service> replicas to 3": "docker service scale %s=3 && read",
 
 	"[bash]  bash": "bash",
 }
