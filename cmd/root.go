@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/franciszekkk/easycli"
 	easycliGithub "github.com/franciszekkk/easycli/providers/github"
@@ -37,7 +38,8 @@ func Execute() {
 		fmt.Println("Error getting user home directory:", err)
 		os.Exit(1)
 	}
-	if err = instance.Run(homeDir); err != nil {
+	tugDir := filepath.Join(homeDir, ".tug")
+	if err = instance.Run(tugDir); err != nil {
 		fmt.Println("Error checking for updates:", err)
 		os.Exit(1)
 	}
