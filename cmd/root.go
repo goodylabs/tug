@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/franciszekkk/easycli"
+	easycliGithub "github.com/franciszekkk/easycli/providers/github"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +27,22 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	err := rootCmd.Execute()
+	instance := easycli.ConfigureGithubApp(&easycliGithub.GithubOpts{
+		User: "goodylabs",
+		Repo: "tug",
+	})
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Println("Error getting user home directory:", err)
+		os.Exit(1)
+	}
+	if err = instance.Run(homeDir); err != nil {
+		fmt.Println("Error checking for updates:", err)
+		os.Exit(1)
+	}
+
+	err = rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}

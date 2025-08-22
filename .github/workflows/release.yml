@@ -23,7 +23,7 @@ jobs:
 
           mkdir -p bin
 
-          version_var="github.com/<user/<repo>/<package>/<variable>"
+          version_var="github.com/goodylabs/tug/cmd.version"
           ldflags="-X '$version_var=$VERSION'"
 
           GOOS=linux GOARCH=amd64 go build -ldflags "$ldflags" -o bin/linux-amd64
