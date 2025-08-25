@@ -70,6 +70,15 @@ func (u *UseModuleUseCase) stepSelectEnv() (stepFunc, error) {
 	return u.stepSelectHost, nil
 }
 
+const helpCmdTemplate = `
+1. Check if you can connect as root manually: ssh %s
+2. If you can, please run the following command to copy your user's SSH keys from root user to app user on host:
+
+grep -vxFf %s /root/.ssh/authorized_keys >> %s
+
+3. Try again to connect with tug.
+`
+
 func (u *UseModuleUseCase) stepSelectHost() (stepFunc, error) {
 	availableHosts, err := u.handler.GetAvailableHosts(u.context.selectedEnv)
 	if err != nil {
@@ -89,13 +98,13 @@ func (u *UseModuleUseCase) stepSelectHost() (stepFunc, error) {
 
 	if err = u.sshConnector.ConfigureSSHConnection(sshConfig); err != nil {
 		userAddr := sshConfig.User + "@" + sshConfig.Host
-		if sshConfig.User != "root" {
-			return nil, fmt.Errorf("Failed to connect to the server with %s", userAddr)
+		if sshConfig.User == "root" {
+			return nil, fmt.Errorf("Failed to connect to the server with %s - error: %s", userAddr, err.Error())
 		}
 		rootAddr := "root" + "@" + sshConfig.Host
 		userAuthKeys := fmt.Sprintf("/home/%s/.ssh/authorized_keys", sshConfig.User)
-		helpCommand := fmt.Sprintf("ssh %s grep -vxFf %s /root/.ssh/authorized_keys >> %s", rootAddr, userAuthKeys, userAuthKeys)
-		return nil, fmt.Errorf("Failed to connect to the server with %s - probably the user doesn't has your ssh key.\nYou can fix it with command: \n\n%s\n", userAddr, helpCommand)
+		helpCommand := fmt.Sprintf(helpCmdTemplate, rootAddr, userAuthKeys, userAuthKeys)
+		return nil, fmt.Errorf("Failed to connect to the server with %s - error: %s\nWhy is that? \n%s\n", userAddr, err.Error(), helpCommand)
 	}
 	u.context.sshConfig = sshConfig
 
