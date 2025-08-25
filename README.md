@@ -9,11 +9,11 @@ TUG to narzędzie cli które pomaga podglądać rzeczy co się dzieje na staging
 1. Uruchom poniższą komendę, aby pobrać i zainstalować najnowszą binarkę TUG:
 
 ```bash
-curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download.sh | bash -s
-
 rc_file=${HOME}/.$(basename "$SHELL")rc
 echo 'export PATH="$HOME/.tug/bin:$PATH"' >> $rc_file
 source $rc_file
+
+curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download.sh | bash -s
 ```
 
 2. Zkonfiguruj własne ustawienia w TUG:
