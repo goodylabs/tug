@@ -30,7 +30,7 @@ case "$arch" in
         ;;
 esac
 
-artifact_url=$(curl -s "$releaseUrl" | jq -r ".assets[] | select(.name | test(\"tug-${os_type}-${arch}\")) | .browser_download_url")
+artifact_url=$(curl -s "$releaseUrl" | jq -r ".assets[] | select(.name | test(\"${os_type}-${arch}\")) | .browser_download_url")
 
 if [[ -z "$artifact_url" ]]; then
     echo "No compatible binary found for ${os_type}-${arch}"
