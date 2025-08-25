@@ -87,11 +87,14 @@ func (u *UseModuleUseCase) stepSelectHost() (stepFunc, error) {
 		return nil, err
 	}
 
-	rootAddr := "root" + "@" + sshConfig.Host
-	userAddr := sshConfig.User + "@" + sshConfig.Host
-	userAuthKeys := fmt.Sprintf("/home/%s/.ssh/authorized_keys", sshConfig.User)
-	helpCommand := fmt.Sprintf("ssh %s grep -vxFf %s /root/.ssh/authorized_keys >> %s", rootAddr, userAuthKeys, userAuthKeys)
 	if err = u.sshConnector.ConfigureSSHConnection(sshConfig); err != nil {
+		userAddr := sshConfig.User + "@" + sshConfig.Host
+		if sshConfig.User != "root" {
+			return nil, fmt.Errorf("Failed to connect to the server with %s", userAddr)
+		}
+		rootAddr := "root" + "@" + sshConfig.Host
+		userAuthKeys := fmt.Sprintf("/home/%s/.ssh/authorized_keys", sshConfig.User)
+		helpCommand := fmt.Sprintf("ssh %s grep -vxFf %s /root/.ssh/authorized_keys >> %s", rootAddr, userAuthKeys, userAuthKeys)
 		return nil, fmt.Errorf("Failed to connect to the server with %s - probably the user doesn't has your ssh key.\nYou can fix it with command: \n\n%s\n", userAddr, helpCommand)
 	}
 	u.context.sshConfig = sshConfig
