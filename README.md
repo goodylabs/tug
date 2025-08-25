@@ -12,12 +12,14 @@ TUG to narzędzie cli które pomaga podglądać rzeczy co się dzieje na staging
 curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download.sh | bash -s
 
 rc_file=${HOME}/.$(basename "$SHELL")rc
-
 echo 'export PATH="$HOME/.tug/bin:$PATH"' >> $rc_file
-
 source $rc_file
+```
 
-tug initialize
+2. Zkonfiguruj własne ustawienia w TUG:
+
+```bash
+tug configure
 ```
 
 ## Podstawowe komendy

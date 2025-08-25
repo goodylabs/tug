@@ -9,15 +9,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// initializeCmd represents the initialize command
-var initializeCmd = &cobra.Command{
-	Use:   "initialize",
-	Short: "A brief description of your command",
-	Long:  `Initialize configuration for tug`,
+// configureCmd represents the configure command
+var configureCmd = &cobra.Command{
+	Use:   "configure",
+	Short: "Initialize configuration for tug",
 	Run: func(cmd *cobra.Command, args []string) {
 		container := dependecies.InitDependencyContainer()
-		err := container.Invoke(func(initializeUseCase *app.InitializeUseCase) error {
-			return initializeUseCase.Execute()
+		err := container.Invoke(func(configureUseCase *app.InitializeUseCase) error {
+			return configureUseCase.Execute()
 		})
 		if err != nil {
 			cmd.PrintErrf("%v\n", err)
@@ -26,15 +25,5 @@ var initializeCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(initializeCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// initializeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// initializeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(configureCmd)
 }
