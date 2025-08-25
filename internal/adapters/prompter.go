@@ -3,6 +3,7 @@ package adapters
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"io"
 	"os"
 	"sort"
@@ -113,6 +114,7 @@ func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (
 		Stdout:    noBellWriter{os.Stdout}, // tu filtrujemy BEL
 	}
 
+	fmt.Print("\033[H\033[2J")
 	i, _, err := prompt.Run()
 	if err != nil {
 		return "", err
