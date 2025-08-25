@@ -3,7 +3,7 @@ module github.com/goodylabs/tug
 go 1.24.5
 
 require (
-	github.com/franciszekkk/easycli v0.0.0-20250822155638-58894bab276c
+	github.com/goodylabs/releaser v0.0.0-20250825074416-52f8a0fdc96f
 	github.com/joho/godotenv v1.5.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/spf13/cobra v1.9.1

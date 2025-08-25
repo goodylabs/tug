@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/franciszekkk/easycli"
-	easycliGithub "github.com/franciszekkk/easycli/providers/github"
+	"github.com/goodylabs/releaser"
+	releaserGithub "github.com/goodylabs/releaser/providers/github"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	instance := easycli.ConfigureGithubApp(&easycliGithub.GithubOpts{
+	instance := releaser.ConfigureGithubApp(&releaserGithub.GithubOpts{
 		User: "goodylabs",
 		Repo: "tug",
 	})
