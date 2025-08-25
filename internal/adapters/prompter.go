@@ -3,7 +3,6 @@ package adapters
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"io"
 	"os"
 	"sort"
@@ -54,10 +53,6 @@ func (p *prompter) ChooseFromMap(options map[string]string, label string) (strin
 	return options[resultKey], nil
 }
 
-func (p *prompter) clear() {
-	fmt.Print("\033[H\033[2J")
-}
-
 func (p *prompter) hashOptions(options []ports.DisplayValueOpts) string {
 	labels := make([]string, len(options))
 	for i, opt := range options {
@@ -86,7 +81,6 @@ func (n noBellWriter) Close() error {
 }
 
 func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (string, error) {
-	p.clear()
 
 	sort.Slice(options, func(i, j int) bool {
 		return options[i].Label < options[j].Label
@@ -120,7 +114,6 @@ func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (
 	}
 
 	i, _, err := prompt.Run()
-	p.clear()
 	if err != nil {
 		return "", err
 	}
@@ -130,6 +123,5 @@ func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (
 }
 
 func (p *prompter) ChooseFromListWithDisplayValue(options []ports.DisplayValueOpts, label string) (string, error) {
-	p.clear()
 	return p.runPrompter(options, label)
 }
