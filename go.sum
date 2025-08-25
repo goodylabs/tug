@@ -57,6 +57,12 @@ github.com/goodylabs/releaser v0.0.0-20250825074416-52f8a0fdc96f h1:TL+14h9MdJQ9
 github.com/goodylabs/releaser v0.0.0-20250825074416-52f8a0fdc96f/go.mod h1:4xXNdRj98+MmjjRuO1Ux4Al+y/iUFGBYqgCIhLr+RPA=
 github.com/goodylabs/releaser v0.0.2 h1:OC8hf1CNXryHz29XM/3tjUyC2DDi4fMbBNbH3tr3pN8=
 github.com/goodylabs/releaser v0.0.2/go.mod h1:4xXNdRj98+MmjjRuO1Ux4Al+y/iUFGBYqgCIhLr+RPA=
+github.com/goodylabs/releaser v0.0.4 h1:4YbrD2ISfdoxnRov9U2L9bhoqi7nULKn9OHumh9vi9A=
+github.com/goodylabs/releaser v0.0.4/go.mod h1:4xXNdRj98+MmjjRuO1Ux4Al+y/iUFGBYqgCIhLr+RPA=
+github.com/goodylabs/releaser v0.0.5 h1:1PV+DRPksaOs50NVdevjS0sH64M2/3/gV4hHDjNjWhQ=
+github.com/goodylabs/releaser v0.0.5/go.mod h1:4xXNdRj98+MmjjRuO1Ux4Al+y/iUFGBYqgCIhLr+RPA=
+github.com/goodylabs/releaser v0.0.6 h1:uIHm0gQ9Rg6/VIFbPwPNbGiMsmMtL1MxMc1kRCFQ9Xc=
+github.com/goodylabs/releaser v0.0.6/go.mod h1:4xXNdRj98+MmjjRuO1Ux4Al+y/iUFGBYqgCIhLr+RPA=
 github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
 github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=

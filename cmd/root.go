@@ -3,10 +3,8 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
-	"github.com/goodylabs/releaser"
-	releaserGithub "github.com/goodylabs/releaser/providers/github"
+	"github.com/goodylabs/tug/pkg/config"
 	"github.com/spf13/cobra"
 )
 
@@ -28,20 +26,12 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	instance := releaser.ConfigureGithubApp(&releaserGithub.GithubOpts{
-		User: "goodylabs",
-		Repo: "tug",
-	})
-
-	homeDir, err := os.UserHomeDir()
+	updated, err := config.GetReleaser().Run()
 	if err != nil {
-		fmt.Println("Error getting user home directory:", err)
-		os.Exit(1)
-	}
-	tugDir := filepath.Join(homeDir, ".tug")
-	if err = instance.Run(tugDir); err != nil {
 		fmt.Println("Error checking for updates:", err)
-		os.Exit(1)
+	} else if updated {
+		fmt.Println("Application has been updated.")
+		os.Exit(0)
 	}
 
 	err = rootCmd.Execute()
