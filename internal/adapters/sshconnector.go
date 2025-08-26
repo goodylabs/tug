@@ -58,17 +58,33 @@ func (s *sshConnector) CloseConnection() error {
 func (s *sshConnector) loadSSHKeysFromDir() ([]ssh.AuthMethod, error) {
 	tugConfig, err := tughelper.GetTugConfig()
 	if err != nil {
-		return []ssh.AuthMethod{}, errors.New("Can not read tug config file, run `tug initialize` to configure tug.")
+		return nil, errors.New("Can not read tug config file, run `tug initialize` to configure tug.")
 	}
 
 	keyData, err := os.ReadFile(tugConfig.SSHKeyPath)
 	if err != nil {
-		return []ssh.AuthMethod{}, err
+		return nil, err
 	}
+
 	signer, err := ssh.ParsePrivateKey(keyData)
 	if err != nil {
-		return []ssh.AuthMethod{}, err
+		if _, ok := err.(*ssh.PassphraseMissingError); ok {
+			fmt.Print("Enter passphrase for SSH key: ")
+			passphrase, perr := term.ReadPassword(int(os.Stdin.Fd()))
+			fmt.Println()
+			if perr != nil {
+				return nil, perr
+			}
+
+			signer, err = ssh.ParsePrivateKeyWithPassphrase(keyData, passphrase)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
 	}
+
 	return []ssh.AuthMethod{ssh.PublicKeys(signer)}, nil
 }
 
