@@ -6,7 +6,7 @@ const continueMsg = "echo 'Done, press Enter to continue...' && read"
 
 var commandTemplates = map[string]string{
 	"[docker]  logs -f          <resource>":        "docker logs -f %s",
-	"[docker]  exec -u root -ti <resource> sh":     "docker exec -u root -it %s sh",
+	"[docker]  exec -u root -ti <resource>   sh":   "docker exec -u root -it %s sh",
 	"[docker]  logs             <resource> | less": "docker logs %s | less",
 	"[docker]  restart          <resource>":        "docker restart %s && " + continueMsg,
 	"[docker]  stats":                              "docker stats",
