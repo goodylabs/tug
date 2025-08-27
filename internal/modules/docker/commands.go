@@ -16,5 +16,4 @@ var commandTemplates = map[string]string{
 	"[bash]    htop":                               "htop",
 	"[django]  python manage.py shell":             "docker exec -u root -it %s python manage.py shell",
 	"[traefik] show reverse-proxy config":          "docker exec %s sh -c 'apk add --no-cache --no-progress -q curl && curl localhost:8080/api/rawdata' | jq && " + continueMsg,
-	"[docker]  show reverse-proxy config":          "docker exec %s sh -c 'apk add --no-cache --no-progress -q curl && curl localhost:8080/api/rawdata' | jq && " + continueMsg,
 }
