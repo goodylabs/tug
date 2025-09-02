@@ -61,6 +61,7 @@ func (d *DockerManager) LoadConfigFromFile() error {
 
 	return nil
 }
+
 func (d *DockerManager) GetAvailableEnvs() ([]string, error) {
 	if d.config == nil {
 		return []string{}, errors.New("Can not get available environments - config is not loaded")
@@ -72,6 +73,7 @@ func (d *DockerManager) GetAvailableEnvs() ([]string, error) {
 	}
 	return envs, nil
 }
+
 func (d *DockerManager) GetAvailableHosts(env string) ([]string, error) {
 	if d.config == nil {
 		return []string{}, errors.New("Can not get available hosts - config is not loaded")
@@ -79,6 +81,7 @@ func (d *DockerManager) GetAvailableHosts(env string) ([]string, error) {
 
 	return d.config.Envs[env].Hosts, nil
 }
+
 func (d *DockerManager) GetSSHConfig(env, host string) (*ports.SSHConfig, error) {
 	return &ports.SSHConfig{
 		Host: host,
