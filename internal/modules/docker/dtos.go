@@ -1,15 +1,5 @@
 package docker
 
-type dockerConfigEnv struct {
-	Name  string
-	User  string
-	Hosts []string
-}
-
-type dockerConfig struct {
-	Envs map[string]dockerConfigEnv
-}
-
 type containerDTO struct {
 	Command      string `json:"Command"`
 	CreatedAt    string `json:"CreatedAt"`

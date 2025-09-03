@@ -15,6 +15,19 @@ var (
 	PM2_CONFIG_PATH string
 )
 
+func GetBaseDir() string {
+	if BASE_DIR == "" {
+		tugEnv := os.Getenv("TUG_ENV")
+		if tugEnv == "development" || tugEnv == "testing" {
+			projectRoot := findProjectRoot()
+			BASE_DIR = filepath.Join(projectRoot, "."+tugEnv)
+		} else {
+			BASE_DIR = getEnvOrError("PWD")
+		}
+	}
+	return BASE_DIR
+}
+
 func init() {
 	godotenv.Load(".env")
 	tugEnv := os.Getenv("TUG_ENV")

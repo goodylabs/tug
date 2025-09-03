@@ -4,19 +4,27 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/goodylabs/tug/internal/constants"
+	"github.com/goodylabs/tug/internal/modules/docker/services"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/pkg/config"
-	"github.com/goodylabs/tug/pkg/utils"
 )
+
+const (
+	devopsDir = "devops"
+)
+
+type envCfg struct {
+	Name  string
+	User  string
+	Hosts []string
+}
 
 type DockerManager struct {
 	sshConnector ports.SSHConnector
-	config       *dockerConfig
+	config       *map[string]envCfg
 }
 
 func NewDockerManager(sshConnector ports.SSHConnector) ports.TechnologyHandler {
@@ -26,36 +34,42 @@ func NewDockerManager(sshConnector ports.SSHConnector) ports.TechnologyHandler {
 }
 
 func (d *DockerManager) LoadConfigFromFile() error {
-	devopsDirPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR)
-	environments, err := utils.ListDirsOnPath(devopsDirPath)
+
+	baseDir := config.GetBaseDir()
+	devopsDirPath := filepath.Join(baseDir, devopsDir)
+
+	envs, err := services.ListEnvs(devopsDirPath)
 	if err != nil {
 		return err
 	}
 
-	d.config = &dockerConfig{
-		Envs: make(map[string]dockerConfigEnv),
+	for _, env := range envs {
+
+		scriptPath := filepath.Join(devopsDirPath, env, "deploy.sh")
+
+		var hosts []string
+		if targetIp := services.GetSingleIpFromShellFile(scriptPath, TARGET_IP_VAR); targetIp != "" {
+			hosts = []string{targetIp}
+		}
+
+		if ipAddress := services.GetSingleIpFromShellFile(scriptPath, IP_ADDRESS_VAR); ipAddress != "" {
+			hosts = []string{ipAddress}
+		}
+
+		if multiIps := services.GetMultipleIpsFromShellScript(scriptPath, IP_ADDRESSES_VAR); len(multiIps) != 0 {
+			hosts = multiIps
+		}
+
+		if len(hosts) == 0 {
+			(*d.config)[env] = envCfg{
+				Name:  env,
+				User:  "root",
+				Hosts: hosts,
+			}
+		}
 	}
 
-	var path string
-	for _, env := range environments {
-		path = filepath.Join(devopsDirPath, env, constants.DOCKER_CONFIG_FILE)
-		if _, err := os.Stat(path); err != nil {
-			continue
-		}
-
-		targetIp, err := d.GetTargetIpFromScript(filepath.Join(devopsDirPath, env, constants.DOCKER_CONFIG_FILE))
-		if err != nil {
-			continue
-		}
-
-		d.config.Envs[env] = dockerConfigEnv{
-			Name:  env,
-			User:  "root",
-			Hosts: []string{targetIp},
-		}
-	}
-
-	if len(d.config.Envs) == 0 {
+	if len(*d.config) == 0 {
 		return fmt.Errorf("no valid docker configuration found in %s", devopsDirPath)
 	}
 
@@ -67,8 +81,8 @@ func (d *DockerManager) GetAvailableEnvs() ([]string, error) {
 		return []string{}, errors.New("Can not get available environments - config is not loaded")
 	}
 
-	envs := make([]string, 0, len(d.config.Envs))
-	for env := range d.config.Envs {
+	envs := make([]string, 0, len((*d.config)))
+	for env := range *d.config {
 		envs = append(envs, env)
 	}
 	return envs, nil
@@ -79,13 +93,13 @@ func (d *DockerManager) GetAvailableHosts(env string) ([]string, error) {
 		return []string{}, errors.New("Can not get available hosts - config is not loaded")
 	}
 
-	return d.config.Envs[env].Hosts, nil
+	return (*d.config)[env].Hosts, nil
 }
 
 func (d *DockerManager) GetSSHConfig(env, host string) (*ports.SSHConfig, error) {
 	return &ports.SSHConfig{
 		Host: host,
-		User: d.config.Envs[env].User,
+		User: (*d.config)[env].User,
 		Port: 22,
 	}, nil
 }
