@@ -1,7 +1,6 @@
 package adapters
 
 import (
-	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -58,7 +57,7 @@ func (s *sshConnector) CloseConnection() error {
 func (s *sshConnector) loadSSHKeysFromDir() ([]ssh.AuthMethod, error) {
 	tugConfig, err := tughelper.GetTugConfig()
 	if err != nil {
-		return nil, errors.New("Can not read tug config file, run `tug initialize` to configure tug.")
+		return nil, fmt.Errorf("Can not read tug config file, run `tug configure` to configure tug. Error: %s", err)
 	}
 
 	keyData, err := os.ReadFile(tugConfig.SSHKeyPath)

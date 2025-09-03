@@ -41,5 +41,6 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.CompletionOptions.HiddenDefaultCmd = true
 	rootCmd.PersistentFlags().BoolP("version", "v", false, "Print version information")
 }
