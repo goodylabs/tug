@@ -4,50 +4,45 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/joho/godotenv"
 )
 
 var (
-	BASE_DIR        string
-	HOME_DIR        string
-	TUG_CONFIG_PATH string
-	PM2_CONFIG_PATH string
+	baseDir       string
+	homeDir       string
+	tugConfigPath string
 )
 
 func GetBaseDir() string {
-	if BASE_DIR == "" {
+	if baseDir == "" {
 		tugEnv := os.Getenv("TUG_ENV")
 		if tugEnv == "development" || tugEnv == "testing" {
 			projectRoot := findProjectRoot()
-			BASE_DIR = filepath.Join(projectRoot, "."+tugEnv)
+			baseDir = filepath.Join(projectRoot, "."+tugEnv)
 		} else {
-			BASE_DIR = getEnvOrError("PWD")
+			baseDir = getEnvOrError("PWD")
 		}
 	}
-	return BASE_DIR
+	return baseDir
 }
 
-func init() {
-	godotenv.Load(".env")
-	tugEnv := os.Getenv("TUG_ENV")
-
-	switch tugEnv {
-	case "development":
-		projectRoot := findProjectRoot()
-		BASE_DIR = filepath.Join(projectRoot, ".development")
-		HOME_DIR = getEnvOrError("HOME")
-	case "testing":
-		projectRoot := findProjectRoot()
-		BASE_DIR = filepath.Join(projectRoot, ".testing")
-		HOME_DIR = filepath.Join(projectRoot, ".testing")
-	default:
-		BASE_DIR = getEnvOrError("PWD")
-		HOME_DIR = getEnvOrError("HOME")
+func GetHomeDir() string {
+	if homeDir == "" {
+		tugEnv := os.Getenv("TUG_ENV")
+		if tugEnv == "development" || tugEnv == "testing" {
+			projectRoot := findProjectRoot()
+			homeDir = filepath.Join(projectRoot, "."+tugEnv)
+		} else {
+			homeDir = getEnvOrError("HOME")
+		}
 	}
+	return homeDir
+}
 
-	TUG_CONFIG_PATH = filepath.Join(HOME_DIR, ".tug", "tugconfig.json")
-	PM2_CONFIG_PATH = filepath.Join(BASE_DIR, "ecosystem.config.js")
+func GetTugConfigPath() string {
+	if tugConfigPath == "" {
+		filepath.Join(GetBaseDir(), "ecosystem.config.js")
+	}
+	return tugConfigPath
 }
 
 func getEnvOrError(envName string) string {

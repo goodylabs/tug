@@ -20,7 +20,7 @@ Local PM2 version: 6.0.8
 
 func TestGetPm2ConfigPath(t *testing.T) {
 	t.Run("ecosystem.config.js exists", func(t *testing.T) {
-		path, err := pm2.GetPm2ConfigPath(config.BASE_DIR)
+		path, err := pm2.GetPm2ConfigPath(config.GetBaseDir())
 		assert.Contains(t, path, "ecosystem.config.js")
 		assert.NoError(t, err)
 	})

@@ -33,7 +33,7 @@ func TestGetSingleIpFromShellFile(t *testing.T) {
 	var devopsDirPath = filepath.Join(config.GetBaseDir(), "devops")
 
 	t.Run("IP_ADDRESS variable", func(t *testing.T) {
-		scriptPath := filepath.Join(devopsDirPath, "localhost", "deploy.sh")
+		scriptPath := filepath.Join(devopsDirPath, "localhost", docker.DEPLOY_FILE)
 
 		ip := services.GetSingleIpFromShellFile(scriptPath, docker.IP_ADDRESS_VAR)
 
@@ -41,7 +41,7 @@ func TestGetSingleIpFromShellFile(t *testing.T) {
 	})
 
 	t.Run("TARGET_IP variable", func(t *testing.T) {
-		scriptPath := filepath.Join(devopsDirPath, "production", "deploy.sh")
+		scriptPath := filepath.Join(devopsDirPath, "production", docker.DEPLOY_FILE)
 
 		ip := services.GetSingleIpFromShellFile(scriptPath, docker.TARGET_IP_VAR)
 
@@ -49,7 +49,7 @@ func TestGetSingleIpFromShellFile(t *testing.T) {
 	})
 
 	t.Run("empty line on non-existing variable", func(t *testing.T) {
-		scriptPath := filepath.Join(devopsDirPath, "production", "deploy.sh")
+		scriptPath := filepath.Join(devopsDirPath, "production", docker.DEPLOY_FILE)
 
 		ip := services.GetSingleIpFromShellFile(scriptPath, "404")
 
@@ -62,7 +62,7 @@ func TestGetMultipleIpsFromShellFile(t *testing.T) {
 	var devopsDirPath = filepath.Join(config.GetBaseDir(), "devops")
 
 	t.Run("IP_ADDRESS variable", func(t *testing.T) {
-		scriptPath := filepath.Join(devopsDirPath, "production_v2", "deploy.sh")
+		scriptPath := filepath.Join(devopsDirPath, "production_v2", docker.DEPLOY_FILE)
 
 		ip := services.GetMultipleIpsFromShellScript(scriptPath, docker.IP_ADDRESSES_VAR)
 
@@ -78,7 +78,7 @@ func TestGetMultipleIpsFromShellFile(t *testing.T) {
 	})
 
 	t.Run("empty line on non-existing file", func(t *testing.T) {
-		scriptPath := filepath.Join(devopsDirPath, "production", "deploy.sh")
+		scriptPath := filepath.Join(devopsDirPath, "production", docker.DEPLOY_FILE)
 
 		ip := services.GetMultipleIpsFromShellScript(scriptPath, "404")
 

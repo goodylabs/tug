@@ -17,7 +17,7 @@ type tugHelperTestCase struct {
 }
 
 func TestSetGetTugConfig(t *testing.T) {
-	os.Remove(config.TUG_CONFIG_PATH)
+	os.Remove(config.GetTugConfigPath())
 
 	_, err := tughelper.GetTugConfig()
 	assert.Error(t, err)
@@ -36,7 +36,7 @@ func TestSetGetTugConfig(t *testing.T) {
 }
 
 func TestGetAvailableSSHFilesOK(t *testing.T) {
-	sshDirPath := filepath.Join(config.BASE_DIR, ".ssh")
+	sshDirPath := filepath.Join(config.GetBaseDir(), ".ssh")
 	sshFiles, err := tughelper.GetAvailableSSHFiles(sshDirPath)
 	assert.NoError(t, err, "Expected no error, got: %v", err)
 	assert.True(t, len(sshFiles) == 2)

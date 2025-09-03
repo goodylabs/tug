@@ -20,7 +20,7 @@ func NewInitializeUseCase(prompter ports.Prompter) *InitializeUseCase {
 }
 
 func (i *InitializeUseCase) Execute() error {
-	sshDirPath := filepath.Join(config.HOME_DIR, ".ssh")
+	sshDirPath := filepath.Join(config.GetHomeDir(), ".ssh")
 
 	sshFiles, err := tughelper.GetAvailableSSHFiles(sshDirPath)
 	if err != nil {
@@ -39,6 +39,6 @@ func (i *InitializeUseCase) Execute() error {
 		return err
 	}
 
-	fmt.Println("Tug configuration initialized successfully!")
+	fmt.Println("Tug configuration configured successfully!")
 	return nil
 }

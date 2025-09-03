@@ -18,7 +18,7 @@ func GetPm2ConfigPath(dir string) (string, error) {
 			return path, nil
 		}
 	}
-	return "", fmt.Errorf("ecosystem.config.cjs/js file not found in %s", config.BASE_DIR)
+	return "", fmt.Errorf("ecosystem.config.cjs/js file not found in %s", config.GetBaseDir())
 }
 
 func ConvertJsFileToJson(path string) error {

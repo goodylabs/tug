@@ -26,7 +26,7 @@ func TestInitializeUseCaseOk(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		os.Remove(config.TUG_CONFIG_PATH)
+		os.Remove(config.GetTugConfigPath())
 
 		useCase := mocks.SetupInitializeUseCaseWithMocks(test.promptChoices)
 		err := useCase.Execute()

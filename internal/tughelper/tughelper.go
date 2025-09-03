@@ -30,10 +30,10 @@ func GetAvailableSSHFiles(sshDirPath string) ([]string, error) {
 
 func GetTugConfig() (*TugConfig, error) {
 	var tugConfig *TugConfig
-	err := utils.ReadJSON(config.TUG_CONFIG_PATH, &tugConfig)
+	err := utils.ReadJSON(config.GetTugConfigPath(), &tugConfig)
 	return tugConfig, err
 }
 
 func SetTugConfig(tugConfig *TugConfig) error {
-	return utils.WriteJSON(config.TUG_CONFIG_PATH, &tugConfig)
+	return utils.WriteJSON(config.GetTugConfigPath(), &tugConfig)
 }

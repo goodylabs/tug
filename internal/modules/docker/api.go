@@ -38,9 +38,13 @@ func (d *DockerManager) LoadConfigFromFile() error {
 		return err
 	}
 
+	if len(envs) == 0 {
+		return fmt.Errorf("no docker envs found on path %s", devopsDirPath)
+	}
+
 	for _, env := range envs {
 
-		scriptPath := filepath.Join(devopsDirPath, env, "deploy.sh")
+		scriptPath := filepath.Join(devopsDirPath, env, DEPLOY_FILE)
 
 		var hosts []string
 		if targetIp := services.GetSingleIpFromShellFile(scriptPath, TARGET_IP_VAR); targetIp != "" {
@@ -55,7 +59,7 @@ func (d *DockerManager) LoadConfigFromFile() error {
 			hosts = multiIps
 		}
 
-		if len(hosts) == 0 {
+		if len(hosts) != 0 {
 			d.config[env] = envCfg{
 				Name:  env,
 				User:  "root",

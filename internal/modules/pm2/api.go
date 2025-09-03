@@ -25,7 +25,7 @@ func (p *Pm2Handler) LoadConfigFromFile() error {
 		return errors.New("Can not load config - it is already loaded")
 	}
 
-	configPath, err := GetPm2ConfigPath(config.BASE_DIR)
+	configPath, err := GetPm2ConfigPath(config.GetBaseDir())
 	if err != nil {
 		return err
 	}

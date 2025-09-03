@@ -26,7 +26,7 @@ func NewSwarmManager(sshConnector ports.SSHConnector) ports.TechnologyHandler {
 }
 
 func (s *SwarmManager) LoadConfigFromFile() error {
-	devopsDirPath := filepath.Join(config.BASE_DIR, constants.DEVOPS_DIR)
+	devopsDirPath := filepath.Join(config.GetBaseDir(), constants.DEVOPS_DIR)
 	environments, err := utils.ListDirsOnPath(devopsDirPath)
 	if err != nil {
 		return err
