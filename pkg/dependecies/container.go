@@ -35,7 +35,7 @@ func InitDependencyContainer(opts ...OptFunc) *dig.Container {
 
 	container.Provide(app.NewUseModuleUseCase)
 	container.Provide(app.NewCheckConnectionUseCase)
-	container.Provide(app.NewInitializeUseCase)
+	container.Provide(app.NewConfigureUseCase)
 
 	return container
 }

@@ -24,7 +24,7 @@ func TestListEnvs(t *testing.T) {
 	t.Run("non existing path", func(t *testing.T) {
 		_, err := services.ListEnvs("404")
 
-		assert.ErrorContains(t, err, "open 404: no such file")
+		assert.ErrorContains(t, err, "Can not read config from file, err: open 404")
 	})
 }
 

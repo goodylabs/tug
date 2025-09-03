@@ -11,8 +11,8 @@ import (
 // 	)
 // }
 
-func SetupInitializeUseCaseWithMocks(prompts []int) *app.InitializeUseCase {
-	return app.NewInitializeUseCase(
+func SetupConfigureUseCaseWithMocks(prompts []int) *app.ConfigureUseCase {
+	return app.NewConfigureUseCase(
 		NewPrompterMock(prompts),
 	)
 }

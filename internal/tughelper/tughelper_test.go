@@ -17,7 +17,7 @@ type tugHelperTestCase struct {
 }
 
 func TestSetGetTugConfig(t *testing.T) {
-	os.Remove(config.GetTugConfigPath())
+	os.Remove(tughelper.GetTugConfigPath())
 
 	_, err := tughelper.GetTugConfig()
 	assert.Error(t, err)

@@ -7,9 +7,8 @@ import (
 )
 
 var (
-	baseDir       string
-	homeDir       string
-	tugConfigPath string
+	baseDir string
+	homeDir string
 )
 
 func GetBaseDir() string {
@@ -28,7 +27,7 @@ func GetBaseDir() string {
 func GetHomeDir() string {
 	if homeDir == "" {
 		tugEnv := os.Getenv("TUG_ENV")
-		if tugEnv == "development" || tugEnv == "testing" {
+		if tugEnv == "testing" {
 			projectRoot := findProjectRoot()
 			homeDir = filepath.Join(projectRoot, "."+tugEnv)
 		} else {
@@ -36,13 +35,6 @@ func GetHomeDir() string {
 		}
 	}
 	return homeDir
-}
-
-func GetTugConfigPath() string {
-	if tugConfigPath == "" {
-		filepath.Join(GetBaseDir(), "ecosystem.config.js")
-	}
-	return tugConfigPath
 }
 
 func getEnvOrError(envName string) string {

@@ -2,6 +2,7 @@ package services
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strings"
 
@@ -9,7 +10,11 @@ import (
 )
 
 func ListEnvs(devopsDirPath string) ([]string, error) {
-	return utils.ListDirsOnPath(devopsDirPath)
+	envs, err := utils.ListDirsOnPath(devopsDirPath)
+	if err != nil {
+		return []string{}, fmt.Errorf("Can not read config from file, err: %w", err)
+	}
+	return envs, nil
 }
 
 func getShellVariableValue(scriptPath, variable string) (string, error) {

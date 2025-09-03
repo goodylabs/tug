@@ -12,10 +12,10 @@ import (
 // configureCmd represents the configure command
 var configureCmd = &cobra.Command{
 	Use:   "configure",
-	Short: "Initialize configuration for tug",
+	Short: "Configure tug",
 	Run: func(cmd *cobra.Command, args []string) {
 		container := dependecies.InitDependencyContainer()
-		err := container.Invoke(func(configureUseCase *app.InitializeUseCase) error {
+		err := container.Invoke(func(configureUseCase *app.ConfigureUseCase) error {
 			return configureUseCase.Execute()
 		})
 		if err != nil {
