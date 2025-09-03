@@ -19,7 +19,7 @@ type DockerManager struct {
 	config       *dockerConfig
 }
 
-func NewDockerManager(prompter ports.Prompter, sshConnector ports.SSHConnector) ports.TechnologyHandler {
+func NewDockerManager(sshConnector ports.SSHConnector) ports.TechnologyHandler {
 	return &DockerManager{
 		sshConnector: sshConnector,
 	}

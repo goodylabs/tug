@@ -19,7 +19,7 @@ type SwarmManager struct {
 	config       *dockerConfig
 }
 
-func NewSwarmManager(prompter ports.Prompter, sshConnector ports.SSHConnector) ports.TechnologyHandler {
+func NewSwarmManager(sshConnector ports.SSHConnector) ports.TechnologyHandler {
 	return &SwarmManager{
 		sshConnector: sshConnector,
 	}
