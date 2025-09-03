@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/goodylabs/tug/internal/tughelper"
-	"github.com/goodylabs/tug/pkg/config"
 	"github.com/goodylabs/tug/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )
@@ -26,7 +25,7 @@ func TestConfigureUseCaseOk(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		os.Remove(config.GetTugConfigPath())
+		os.Remove(tughelper.GetTugConfigPath())
 
 		useCase := mocks.SetupConfigureUseCaseWithMocks(test.promptChoices)
 		err := useCase.Execute()
