@@ -9,18 +9,18 @@ import (
 	"github.com/goodylabs/tug/pkg/config"
 )
 
-type InitializeUseCase struct {
+type ConfigureUseCase struct {
 	prompter ports.Prompter
 }
 
-func NewInitializeUseCase(prompter ports.Prompter) *InitializeUseCase {
-	return &InitializeUseCase{
+func NewConfigureUseCase(prompter ports.Prompter) *ConfigureUseCase {
+	return &ConfigureUseCase{
 		prompter: prompter,
 	}
 }
 
-func (i *InitializeUseCase) Execute() error {
-	sshDirPath := filepath.Join(config.HOME_DIR, ".ssh")
+func (i *ConfigureUseCase) Execute() error {
+	sshDirPath := filepath.Join(config.GetHomeDir(), ".ssh")
 
 	sshFiles, err := tughelper.GetAvailableSSHFiles(sshDirPath)
 	if err != nil {
@@ -39,6 +39,6 @@ func (i *InitializeUseCase) Execute() error {
 		return err
 	}
 
-	fmt.Println("Tug configuration initialized successfully!")
+	fmt.Println("Tug configuration configured successfully!")
 	return nil
 }

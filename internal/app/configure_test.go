@@ -5,12 +5,11 @@ import (
 	"testing"
 
 	"github.com/goodylabs/tug/internal/tughelper"
-	"github.com/goodylabs/tug/pkg/config"
 	"github.com/goodylabs/tug/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestInitializeUseCaseOk(t *testing.T) {
+func TestConfigureUseCaseOk(t *testing.T) {
 	testCases := []struct {
 		promptChoices []int
 		expected      string
@@ -26,9 +25,9 @@ func TestInitializeUseCaseOk(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		os.Remove(config.TUG_CONFIG_PATH)
+		os.Remove(tughelper.GetTugConfigPath())
 
-		useCase := mocks.SetupInitializeUseCaseWithMocks(test.promptChoices)
+		useCase := mocks.SetupConfigureUseCaseWithMocks(test.promptChoices)
 		err := useCase.Execute()
 		assert.NoError(t, err)
 
