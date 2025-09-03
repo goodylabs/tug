@@ -3,7 +3,7 @@ package services_test
 import (
 	"testing"
 
-	"github.com/goodylabs/tug/internal/modules/docker/services"
+	"github.com/goodylabs/tug/internal/modules/docker/docker/services"
 	"github.com/stretchr/testify/assert"
 )
 

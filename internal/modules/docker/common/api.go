@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/goodylabs/tug/internal/modules/dockercommon/services"
+	"github.com/goodylabs/tug/internal/modules/docker/common/services"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/pkg/config"
 )

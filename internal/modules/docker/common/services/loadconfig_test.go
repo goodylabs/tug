@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/goodylabs/tug/internal/modules/dockercommon"
-	"github.com/goodylabs/tug/internal/modules/dockercommon/services"
+	dockercommon "github.com/goodylabs/tug/internal/modules/docker/common"
+	"github.com/goodylabs/tug/internal/modules/docker/common/services"
 	"github.com/goodylabs/tug/pkg/config"
 	"github.com/stretchr/testify/assert"
 )

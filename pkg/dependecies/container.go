@@ -3,9 +3,9 @@ package dependecies
 import (
 	"github.com/goodylabs/tug/internal/adapters"
 	"github.com/goodylabs/tug/internal/app"
-	"github.com/goodylabs/tug/internal/modules/docker"
+	"github.com/goodylabs/tug/internal/modules/docker/docker"
+	"github.com/goodylabs/tug/internal/modules/docker/swarm"
 	"github.com/goodylabs/tug/internal/modules/pm2"
-	"github.com/goodylabs/tug/internal/modules/swarm"
 	"go.uber.org/dig"
 )
 

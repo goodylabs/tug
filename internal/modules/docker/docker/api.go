@@ -3,8 +3,8 @@ package docker
 import (
 	"errors"
 
-	"github.com/goodylabs/tug/internal/modules/docker/services"
-	"github.com/goodylabs/tug/internal/modules/dockercommon"
+	dockercommon "github.com/goodylabs/tug/internal/modules/docker/common"
+	"github.com/goodylabs/tug/internal/modules/docker/docker/services"
 	"github.com/goodylabs/tug/internal/ports"
 )
 

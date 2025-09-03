@@ -1,9 +1,9 @@
-package services_test
+package services
 
 import (
 	"testing"
 
-	"github.com/goodylabs/tug/internal/modules/docker/services"
+	"github.com/goodylabs/tug/internal/modules/docker/docker/services"
 	"github.com/stretchr/testify/assert"
 )
 
