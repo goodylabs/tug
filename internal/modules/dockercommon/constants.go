@@ -1,4 +1,4 @@
-package docker
+package dockercommon
 
 const (
 	TARGET_IP_VAR    = "TARGET_IP"
