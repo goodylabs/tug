@@ -10,10 +10,6 @@ import (
 	"github.com/goodylabs/tug/pkg/config"
 )
 
-const (
-	devopsDir = "devops"
-)
-
 type envCfg struct {
 	Name  string
 	User  string
@@ -34,7 +30,7 @@ func NewDockerManager(sshConnector ports.SSHConnector) ports.TechnologyHandler {
 func (d *DockerManager) LoadConfigFromFile() error {
 
 	baseDir := config.GetBaseDir()
-	devopsDirPath := filepath.Join(baseDir, devopsDir)
+	devopsDirPath := filepath.Join(baseDir, DEVOPS_DIR)
 
 	envs, err := services.ListEnvs(devopsDirPath)
 	if err != nil {
@@ -95,6 +91,10 @@ func (d *DockerManager) GetAvailableHosts(env string) ([]string, error) {
 }
 
 func (d *DockerManager) GetSSHConfig(env, host string) (*ports.SSHConfig, error) {
+	if d.config == nil {
+		return nil, errors.New("Can not get ssh config - config is not loaded")
+	}
+
 	return &ports.SSHConfig{
 		Host: host,
 		User: (*d.config)[env].User,
@@ -103,6 +103,11 @@ func (d *DockerManager) GetSSHConfig(env, host string) (*ports.SSHConfig, error)
 }
 
 func (d *DockerManager) GetAvailableResources(*ports.SSHConfig) ([]string, error) {
+	if d.config == nil {
+		return []string{}, errors.New("Can not get available resources - config is not loaded")
+	}
+
+	dockerListCmd := "docker ps --format json"
 	output, err := d.sshConnector.RunCommand(dockerListCmd)
 	if err != nil {
 		return nil, err
@@ -112,5 +117,5 @@ func (d *DockerManager) GetAvailableResources(*ports.SSHConfig) ([]string, error
 }
 
 func (d *DockerManager) GetAvailableActionTemplates() map[string]string {
-	return commandTemplates
+	return services.GetActionTemplates()
 }
