@@ -18,12 +18,13 @@ type envCfg struct {
 
 type DockerManager struct {
 	sshConnector ports.SSHConnector
-	config       *map[string]envCfg
+	config       map[string]envCfg
 }
 
 func NewDockerManager(sshConnector ports.SSHConnector) ports.TechnologyHandler {
 	return &DockerManager{
 		sshConnector: sshConnector,
+		config:       make(map[string]envCfg),
 	}
 }
 
@@ -55,7 +56,7 @@ func (d *DockerManager) LoadConfigFromFile() error {
 		}
 
 		if len(hosts) == 0 {
-			(*d.config)[env] = envCfg{
+			d.config[env] = envCfg{
 				Name:  env,
 				User:  "root",
 				Hosts: hosts,
@@ -63,7 +64,7 @@ func (d *DockerManager) LoadConfigFromFile() error {
 		}
 	}
 
-	if len(*d.config) == 0 {
+	if len(d.config) == 0 {
 		return fmt.Errorf("no valid docker configuration found in %s", devopsDirPath)
 	}
 
@@ -76,7 +77,7 @@ func (d *DockerManager) GetAvailableEnvs() ([]string, error) {
 	}
 
 	var envs []string
-	for env := range *d.config {
+	for env := range d.config {
 		envs = append(envs, env)
 	}
 	return envs, nil
@@ -87,7 +88,7 @@ func (d *DockerManager) GetAvailableHosts(env string) ([]string, error) {
 		return []string{}, errors.New("Can not get available hosts - config is not loaded")
 	}
 
-	return (*d.config)[env].Hosts, nil
+	return d.config[env].Hosts, nil
 }
 
 func (d *DockerManager) GetSSHConfig(env, host string) (*ports.SSHConfig, error) {
@@ -97,7 +98,7 @@ func (d *DockerManager) GetSSHConfig(env, host string) (*ports.SSHConfig, error)
 
 	return &ports.SSHConfig{
 		Host: host,
-		User: (*d.config)[env].User,
+		User: d.config[env].User,
 		Port: 22,
 	}, nil
 }
