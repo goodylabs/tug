@@ -1,11 +1,9 @@
 package docker
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"path/filepath"
-	"strings"
 
 	"github.com/goodylabs/tug/internal/modules/docker/services"
 	"github.com/goodylabs/tug/internal/ports"
@@ -81,7 +79,7 @@ func (d *DockerManager) GetAvailableEnvs() ([]string, error) {
 		return []string{}, errors.New("Can not get available environments - config is not loaded")
 	}
 
-	envs := make([]string, 0, len((*d.config)))
+	var envs []string
 	for env := range *d.config {
 		envs = append(envs, env)
 	}
@@ -105,29 +103,14 @@ func (d *DockerManager) GetSSHConfig(env, host string) (*ports.SSHConfig, error)
 }
 
 func (d *DockerManager) GetAvailableResources(*ports.SSHConfig) ([]string, error) {
-	var containers []containerDTO
-
 	output, err := d.sshConnector.RunCommand(dockerListCmd)
 	if err != nil {
 		return nil, err
 	}
 
-	lines := strings.SplitSeq(strings.TrimSpace(output), "\n")
-	for line := range lines {
-		var container containerDTO
-		if err := json.Unmarshal([]byte(line), &container); err != nil {
-			continue
-		}
-		containers = append(containers, container)
-	}
-
-	containerNames := make([]string, len(containers))
-	for i, c := range containers {
-		containerNames[i] = c.Name
-	}
-
-	return containerNames, nil
+	return services.GetResourcesFromJsonOutput(output)
 }
+
 func (d *DockerManager) GetAvailableActionTemplates() map[string]string {
 	return commandTemplates
 }
