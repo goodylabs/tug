@@ -1,0 +1,17 @@
+common:
+  source_code_url: 'gitlab.goodylabs.com:goodylabs/tug.git'
+  project_root: 'tug'
+  project_user: 'app'
+  venv_dir: 'venv'
+  keep_releases: 3
+  system_packages: 'libpq-dev python3-dev memcached libmemcached-tools libjpeg62-dev zlib1g-dev libcairo2 libcairo2-dev'
+  env_file: './.env.production'
+  service_file: './deploy/cms/production/gunicorn.service'
+  branch: 'master'
+servers:
+  - host: 'c_p_ipv4_nr_1'
+    run_migrations: 'true'
+    collect_static_files: 'true'
+  - host: 'c_p_ipv4_nr_2'
+  - host: 'c_p_ipv4_nr_3'
+  - host: 'c_p_ipv4_nr_4'

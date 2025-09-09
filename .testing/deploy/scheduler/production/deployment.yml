@@ -1,0 +1,12 @@
+common:
+  source_code_url: 'gitlab.goodylabs.com:goodylabs/tug.git'
+  project_root: 'tug'
+  project_user: 'appeduler'
+  venv_dir: 'venv'
+  keep_releases: 5
+  system_packages: 'libpq-dev python3-dev memcached libmemcached-tools libjpeg62-dev zlib1g-dev libcairo2 libcairo2-dev'
+  env_file: './.env.production'
+  service_file: './deploy/scheduler/production/scheduler.service'
+  branch: 'master'
+servers:
+  - host: 's_p_ipv4_nr_1'

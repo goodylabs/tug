@@ -1,0 +1,12 @@
+common:
+  source_code_url: 'gitlab.goodylabs.com:goodylabs/tug.git'
+  project_root: 'app'
+  project_user: 'tugeduler'
+  venv_dir: 'venv'
+  keep_releases: 5
+  system_packages: 'libpq-dev python3-dev memcached libmemcached-tools libjpeg62-dev zlib1g-dev libcairo2 libcairo2-dev'
+  env_file: './.env.staging'
+  service_file: './deploy/scheduler/staging/scheduler.service'
+  branch: 'develop'
+servers:
+  - host: 's_s_ipv4_nr_1'

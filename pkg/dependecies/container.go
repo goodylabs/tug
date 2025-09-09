@@ -6,6 +6,7 @@ import (
 	"github.com/goodylabs/tug/internal/modules/docker/docker"
 	"github.com/goodylabs/tug/internal/modules/docker/swarm"
 	"github.com/goodylabs/tug/internal/modules/pm2"
+	"github.com/goodylabs/tug/internal/modules/pystrano"
 	"go.uber.org/dig"
 )
 
@@ -21,6 +22,10 @@ func WithPm2Handler(container *dig.Container) {
 
 func WithSwarmHandler(container *dig.Container) {
 	container.Provide(swarm.NewSwarmManager)
+}
+
+func WithPystranoHandler(container *dig.Container) {
+	container.Provide(pystrano.NewPystranoManager)
 }
 
 func InitDependencyContainer(opts ...OptFunc) *dig.Container {
