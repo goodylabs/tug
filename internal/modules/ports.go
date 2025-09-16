@@ -16,5 +16,5 @@ type TechnologyHandler interface {
 type TechCmdTemplate struct {
 	Display  string
 	Template string
-	Resource string
+	Filter   string
 }
