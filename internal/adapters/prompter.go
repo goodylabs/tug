@@ -25,9 +25,9 @@ func NewPrompter() ports.Prompter {
 }
 
 func (p *prompter) ChooseFromList(options []string, label string) (string, error) {
-	optionsPromptOptions := make([]ports.PromptOptions, len(options))
+	optionsPromptOptions := make([]ports.PromptOption, len(options))
 	for i, key := range options {
-		optionsPromptOptions[i] = ports.PromptOptions{
+		optionsPromptOptions[i] = ports.PromptOption{
 			Label: key,
 			Value: key,
 		}
@@ -35,26 +35,7 @@ func (p *prompter) ChooseFromList(options []string, label string) (string, error
 	return p.runPrompter(optionsPromptOptions, label)
 }
 
-func (p *prompter) ChooseFromMap(options map[string]string, label string) (string, error) {
-	keys := make([]string, 0, len(options))
-	for k := range options {
-		keys = append(keys, k)
-	}
-	optionsPromptOptions := make([]ports.PromptOptions, len(keys))
-	for i, key := range keys {
-		optionsPromptOptions[i] = ports.PromptOptions{
-			Label: key,
-			Value: key,
-		}
-	}
-	resultKey, err := p.runPrompter(optionsPromptOptions, label)
-	if err != nil {
-		return "", err
-	}
-	return options[resultKey], nil
-}
-
-func (p *prompter) hashOptions(options []ports.PromptOptions) string {
+func (p *prompter) hashOptions(options []ports.PromptOption) string {
 	labels := make([]string, len(options))
 	for i, opt := range options {
 		labels[i] = opt.Label
@@ -81,7 +62,7 @@ func (n noBellWriter) Close() error {
 	return nil
 }
 
-func (p *prompter) runPrompter(options []ports.PromptOptions, label string) (string, error) {
+func (p *prompter) runPrompter(options []ports.PromptOption, label string) (string, error) {
 
 	sort.Slice(options, func(i, j int) bool {
 		return options[i].Label < options[j].Label
@@ -124,6 +105,6 @@ func (p *prompter) runPrompter(options []ports.PromptOptions, label string) (str
 	return options[i].Value, nil
 }
 
-func (p *prompter) ChooseFromListWithDisplayValue(options []ports.PromptOptions, label string) (string, error) {
+func (p *prompter) ChooseFromListWithDisplayValue(options []ports.PromptOption, label string) (string, error) {
 	return p.runPrompter(options, label)
 }

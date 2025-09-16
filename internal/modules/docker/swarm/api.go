@@ -33,6 +33,6 @@ func (d *SwarmManager) GetAvailableResources(*ports.SSHConfig) ([]string, error)
 	return services.GetResourcesFromJsonOutput(output)
 }
 
-func (d *SwarmManager) GetAvailableActionTemplates() map[string]string {
+func (d *SwarmManager) GetAvailableActionTemplates() []modules.TechCmdTemplate {
 	return services.GetActionTemplates()
 }

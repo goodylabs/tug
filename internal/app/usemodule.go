@@ -113,7 +113,17 @@ func (u *UseModuleUseCase) stepSelectHost() (stepFunc, error) {
 }
 
 func (u *UseModuleUseCase) stepSelectAction() (stepFunc, error) {
-	cmdTemplate, err := u.prompter.ChooseFromMap(u.handler.GetAvailableActionTemplates(), "ACTIONS")
+	cmdTemplates := u.handler.GetAvailableActionTemplates()
+
+	var promptOptions []ports.PromptOption
+	for _, ct := range cmdTemplates {
+		promptOptions = append(promptOptions, ports.PromptOption{
+			Label: ct.Display,
+			Value: ct.Template,
+		})
+	}
+
+	cmdTemplate, err := u.prompter.ChooseFromListWithDisplayValue(promptOptions, "ACTIONS")
 	if err != nil {
 		fmt.Println("Looking for resources...")
 		return nil, nil

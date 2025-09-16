@@ -92,24 +92,6 @@ func (p *PystranoManager) GetAvailableResources(sshConfig *ports.SSHConfig) ([]s
 	return []string{}, fmt.Errorf("func GetAvailableResources not implemented")
 }
 
-func (p *PystranoManager) GetAvailableActionTemplates() map[string]string {
+func (p *PystranoManager) GetAvailableActionTemplates() []modules.TechCmdTemplate {
 	return services.GetActionTemplates()
 }
-
-// func (d *PystranoManager) GetAvailableResources(*ports.SSHConfig) ([]string, error) {
-// 	if d.Config == nil {
-// 		return []string{}, errors.New("Can not get available resources - config is not loaded")
-// 	}
-
-// 	pystranoListCmd := "pystrano ps --format json"
-// 	output, err := d.SSHConnector.RunCommand(pystranoListCmd)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return services.GetResourcesFromJsonOutput(output)
-// }
-
-// func (d *PystranoManager) GetAvailableActionTemplates() map[string]string {
-// 	return services.GetActionTemplates()
-// }

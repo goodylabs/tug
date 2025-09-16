@@ -1,14 +1,13 @@
 package ports
 
-type PromptOptions struct {
+type PromptOption struct {
 	Value string
 	Label string
 }
 
 type Prompter interface {
 	ChooseFromList([]string, string) (string, error)
-	ChooseFromMap(map[string]string, string) (string, error)
-	ChooseFromListWithDisplayValue([]PromptOptions, string) (string, error)
+	ChooseFromListWithDisplayValue([]PromptOption, string) (string, error)
 }
 
 type SSHConfig struct {

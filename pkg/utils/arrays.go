@@ -18,3 +18,13 @@ func FilterExclude(items []string, exclude string) []string {
 	}
 	return result
 }
+
+func FilterInclude(items []string, exclude string) []string {
+	var result []string
+	for _, item := range items {
+		if strings.Contains(item, exclude) {
+			result = append(result, item)
+		}
+	}
+	return result
+}

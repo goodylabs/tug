@@ -1,6 +1,8 @@
 package modules
 
-import "github.com/goodylabs/tug/internal/ports"
+import (
+	"github.com/goodylabs/tug/internal/ports"
+)
 
 type TechnologyHandler interface {
 	LoadConfigFromFile() error
@@ -8,11 +10,11 @@ type TechnologyHandler interface {
 	GetAvailableHosts(env string) ([]string, error)
 	GetSSHConfig(env, host string) (*ports.SSHConfig, error)
 	GetAvailableResources(sshConfig *ports.SSHConfig) ([]string, error)
-	GetAvailableActionTemplates() map[string]string
+	GetAvailableActionTemplates() []TechCmdTemplate
 }
 
 type TechCmdTemplate struct {
-	display  string
-	template string
-	resource string
+	Display  string
+	Template string
+	Resource string
 }

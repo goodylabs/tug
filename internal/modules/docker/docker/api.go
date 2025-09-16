@@ -33,6 +33,6 @@ func (d *DockerManager) GetAvailableResources(*ports.SSHConfig) ([]string, error
 	return services.GetResourcesFromJsonOutput(output)
 }
 
-func (d *DockerManager) GetAvailableActionTemplates() map[string]string {
+func (d *DockerManager) GetAvailableActionTemplates() []modules.TechCmdTemplate {
 	return services.GetActionTemplates()
 }

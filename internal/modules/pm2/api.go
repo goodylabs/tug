@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/goodylabs/tug/internal/modules"
+	"github.com/goodylabs/tug/internal/modules/pm2/services"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/pkg/config"
 )
@@ -89,6 +90,7 @@ func (p *Pm2Handler) GetSSHConfig(env, host string) (*ports.SSHConfig, error) {
 }
 
 func (p *Pm2Handler) GetAvailableResources(sshConfig *ports.SSHConfig) ([]string, error) {
+	jlistCmd := `source ~/.nvm/nvm.sh; pm2 jlist | sed -n '/^\[/,$p'`
 	output, err := p.sshConnector.RunCommand(jlistCmd)
 	if err != nil {
 		return nil, err
@@ -107,6 +109,6 @@ func (p *Pm2Handler) GetAvailableResources(sshConfig *ports.SSHConfig) ([]string
 	return resources, nil
 }
 
-func (p *Pm2Handler) GetAvailableActionTemplates() map[string]string {
-	return commandTemplates
+func (p *Pm2Handler) GetAvailableActionTemplates() []modules.TechCmdTemplate {
+	return services.GetActionTemplates()
 }
