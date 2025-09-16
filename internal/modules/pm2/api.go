@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/goodylabs/tug/internal/modules"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/pkg/config"
 )
@@ -14,7 +15,7 @@ type Pm2Handler struct {
 	sshConnector ports.SSHConnector
 }
 
-func NewPm2Handler(sshConnector ports.SSHConnector) ports.TechnologyHandler {
+func NewPm2Handler(sshConnector ports.SSHConnector) modules.TechnologyHandler {
 	return &Pm2Handler{
 		sshConnector: sshConnector,
 	}

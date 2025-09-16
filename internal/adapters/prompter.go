@@ -25,14 +25,14 @@ func NewPrompter() ports.Prompter {
 }
 
 func (p *prompter) ChooseFromList(options []string, label string) (string, error) {
-	optionsDisplayValueOpts := make([]ports.DisplayValueOpts, len(options))
+	optionsPromptOptions := make([]ports.PromptOptions, len(options))
 	for i, key := range options {
-		optionsDisplayValueOpts[i] = ports.DisplayValueOpts{
+		optionsPromptOptions[i] = ports.PromptOptions{
 			Label: key,
 			Value: key,
 		}
 	}
-	return p.runPrompter(optionsDisplayValueOpts, label)
+	return p.runPrompter(optionsPromptOptions, label)
 }
 
 func (p *prompter) ChooseFromMap(options map[string]string, label string) (string, error) {
@@ -40,21 +40,21 @@ func (p *prompter) ChooseFromMap(options map[string]string, label string) (strin
 	for k := range options {
 		keys = append(keys, k)
 	}
-	optionsDisplayValueOpts := make([]ports.DisplayValueOpts, len(keys))
+	optionsPromptOptions := make([]ports.PromptOptions, len(keys))
 	for i, key := range keys {
-		optionsDisplayValueOpts[i] = ports.DisplayValueOpts{
+		optionsPromptOptions[i] = ports.PromptOptions{
 			Label: key,
 			Value: key,
 		}
 	}
-	resultKey, err := p.runPrompter(optionsDisplayValueOpts, label)
+	resultKey, err := p.runPrompter(optionsPromptOptions, label)
 	if err != nil {
 		return "", err
 	}
 	return options[resultKey], nil
 }
 
-func (p *prompter) hashOptions(options []ports.DisplayValueOpts) string {
+func (p *prompter) hashOptions(options []ports.PromptOptions) string {
 	labels := make([]string, len(options))
 	for i, opt := range options {
 		labels[i] = opt.Label
@@ -81,7 +81,7 @@ func (n noBellWriter) Close() error {
 	return nil
 }
 
-func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (string, error) {
+func (p *prompter) runPrompter(options []ports.PromptOptions, label string) (string, error) {
 
 	sort.Slice(options, func(i, j int) bool {
 		return options[i].Label < options[j].Label
@@ -124,6 +124,6 @@ func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (
 	return options[i].Value, nil
 }
 
-func (p *prompter) ChooseFromListWithDisplayValue(options []ports.DisplayValueOpts, label string) (string, error) {
+func (p *prompter) ChooseFromListWithDisplayValue(options []ports.PromptOptions, label string) (string, error) {
 	return p.runPrompter(options, label)
 }

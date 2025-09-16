@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/goodylabs/tug/internal/modules"
 	"github.com/goodylabs/tug/internal/ports"
 )
 
 type stepFunc func() (stepFunc, error)
 
 type UseModuleUseCase struct {
-	handler      ports.TechnologyHandler
+	handler      modules.TechnologyHandler
 	sshConnector ports.SSHConnector
 	prompter     ports.Prompter
 	context      struct {
@@ -22,7 +23,7 @@ type UseModuleUseCase struct {
 	stack []stepFunc
 }
 
-func NewUseModuleUseCase(handler ports.TechnologyHandler, sshConnector ports.SSHConnector, prompter ports.Prompter) *UseModuleUseCase {
+func NewUseModuleUseCase(handler modules.TechnologyHandler, sshConnector ports.SSHConnector, prompter ports.Prompter) *UseModuleUseCase {
 	return &UseModuleUseCase{
 		handler:      handler,
 		sshConnector: sshConnector,

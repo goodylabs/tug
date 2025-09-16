@@ -3,6 +3,7 @@ package docker
 import (
 	"errors"
 
+	"github.com/goodylabs/tug/internal/modules"
 	dockercommon "github.com/goodylabs/tug/internal/modules/docker/common"
 	"github.com/goodylabs/tug/internal/modules/docker/docker/services"
 	"github.com/goodylabs/tug/internal/ports"
@@ -12,7 +13,7 @@ type DockerManager struct {
 	*dockercommon.DockerCommon
 }
 
-func NewDockerManager(sshConnector ports.SSHConnector) ports.TechnologyHandler {
+func NewDockerManager(sshConnector ports.SSHConnector) modules.TechnologyHandler {
 	return &DockerManager{
 		DockerCommon: dockercommon.NewDockerCommon(sshConnector),
 	}

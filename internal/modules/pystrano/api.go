@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/goodylabs/tug/internal/modules"
 	"github.com/goodylabs/tug/internal/modules/pystrano/services"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/pkg/config"
@@ -16,7 +17,7 @@ type PystranoManager struct {
 	config       envCfg
 }
 
-func NewPystranoManager(sshConnector ports.SSHConnector) ports.TechnologyHandler {
+func NewPystranoManager(sshConnector ports.SSHConnector) modules.TechnologyHandler {
 	return &PystranoManager{
 		sshconnector: sshConnector,
 		config:       make(envCfg),

@@ -3,6 +3,7 @@ package swarm
 import (
 	"errors"
 
+	"github.com/goodylabs/tug/internal/modules"
 	dockercommon "github.com/goodylabs/tug/internal/modules/docker/common"
 	"github.com/goodylabs/tug/internal/modules/docker/swarm/services"
 	"github.com/goodylabs/tug/internal/ports"
@@ -12,7 +13,7 @@ type SwarmManager struct {
 	*dockercommon.DockerCommon
 }
 
-func NewSwarmManager(sshConnector ports.SSHConnector) ports.TechnologyHandler {
+func NewSwarmManager(sshConnector ports.SSHConnector) modules.TechnologyHandler {
 	return &SwarmManager{
 		DockerCommon: dockercommon.NewDockerCommon(sshConnector),
 	}

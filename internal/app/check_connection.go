@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/goodylabs/tug/internal/modules"
 	"github.com/goodylabs/tug/internal/ports"
 )
 
 type CheckConnectionUseCase struct {
-	handler      ports.TechnologyHandler
+	handler      modules.TechnologyHandler
 	sshConnector ports.SSHConnector
 }
 
-func NewCheckConnectionUseCase(handler ports.TechnologyHandler, sshConnector ports.SSHConnector) *CheckConnectionUseCase {
+func NewCheckConnectionUseCase(handler modules.TechnologyHandler, sshConnector ports.SSHConnector) *CheckConnectionUseCase {
 	return &CheckConnectionUseCase{
 		handler:      handler,
 		sshConnector: sshConnector,
