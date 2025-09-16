@@ -21,7 +21,7 @@ var specificCmds = []modules.TechCmdTemplate{
 	{
 		Display:  "traefik --  show reverse-proxy config",
 		Template: "docker exec %s sh -c 'apk add --no-cache --no-progress -q curl && curl localhost:8080/api/rawdata' | jq && " + continueMsg,
-		Filter:   "traefik --",
+		Filter:   "traefik* --",
 	},
 }
 
