@@ -1,4 +1,4 @@
-# TUG (PL)
+# TUG
 
 ![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/assets/images/tug-cli-logo-256x256.png)
 
