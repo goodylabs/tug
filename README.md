@@ -37,6 +37,4 @@ tug configure
 
 # Commands
 
-```bash
 ![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/assets/images/tug-help.png)
-```
