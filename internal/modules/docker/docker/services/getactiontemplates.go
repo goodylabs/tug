@@ -14,6 +14,7 @@ func GetActionTemplates() map[string]string {
 		"docker   --  inspect          <resource>":        "docker inspect %s | jq && read",
 		"bash     --  bash":                               "bash",
 		"django   --  python manage.py shell":             "docker exec -u root -it %s python manage.py shell",
+		"django   --  python manage.py shell_plus":        "docker exec -u root -it %s python manage.py shell_plus",
 		"traefik  --  show config routers":                "docker exec %s sh -c 'apk add --no-cache --no-progress -q curl && curl localhost:8080/api/rawdata' | jq '.routers' && " + continueMsg,
 		"traefik  --  show config services":               "docker exec %s sh -c 'apk add --no-cache --no-progress -q curl && curl localhost:8080/api/rawdata' | jq '.services' && " + continueMsg,
 	}
