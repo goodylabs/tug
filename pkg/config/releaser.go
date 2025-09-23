@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/goodylabs/releaser"
-	releaserGithub "github.com/goodylabs/releaser/providers/github"
+	releaserApi "github.com/goodylabs/releaser/api"
+	releaser "github.com/goodylabs/releaser/releaser"
 )
 
 var releaserInstance *releaser.ReleaserInstance
@@ -20,12 +20,12 @@ func GetReleaser() *releaser.ReleaserInstance {
 			os.Exit(1)
 		}
 
-		releaserInstance = releaser.ConfigureGithubApp(
-			tugDir,
-			&releaserGithub.GithubOpts{
-				User: "goodylabs",
-				Repo: "tug",
-			})
+		opts := &releaserApi.GithubAppOpts{
+			User: "goodylabs",
+			Repo: "tug",
+		}
+
+		releaserInstance = releaserApi.ConfigureGithubApp(tugDir, opts)
 	}
 	return releaserInstance
 }
