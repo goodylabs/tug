@@ -15,6 +15,7 @@ func GetActionTemplates() map[string]string {
 		"swarm  --  scale   <service>   replicas to 1":  "docker service scale %s=1 && " + continueMsg,
 		"swarm  --  scale   <service>   replicas to 3":  "docker service scale %s=3 && " + continueMsg,
 		"bash   --  bash":                               "bash",
+		"bash   --  htop":                               "htop",
 		// "[swarm] remove  <service>":                  "docker service remove %s && " + continueMsg,
 	}
 }
