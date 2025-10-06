@@ -7,7 +7,7 @@ func GetActionTemplates() map[string]string {
 		"swarm  --  ls":                                 "watch docker service ls",
 		"swarm  --  ps      <service>":                  "watch docker service ps %s --no-trunc",
 		"swarm  --  ps      <service>   (only running)": `watch 'docker service ps --filter desired-state=running --format "{{.ID}} {{.Name}} - {{.Node}} | {{.Image}}" %s'`,
-		"swarm  --  inspect <service>":                  "docker service inspect %s | jq && read",
+		"swarm  --  inspect <service>":                  "docker service inspect %s | jq | less",
 		"swarm  --  update  <service>":                  "docker service update %s --force && " + continueMsg,
 		"swarm  --  logs -f <service>":                  "docker service logs -f %s",
 		"swarm  --  logs    <service> | less":           "docker service logs %s | less",
