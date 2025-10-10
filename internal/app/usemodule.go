@@ -15,10 +15,11 @@ type UseModuleUseCase struct {
 	sshConnector ports.SSHConnector
 	prompter     ports.Prompter
 	context      struct {
-		selectedEnv string
-		sshConfig   *ports.SSHConfig
-		action      string
-		resource    string
+		selectedEnv    string
+		sshConfig      *ports.SSHConfig
+		action         string
+		resource       string
+		remoteHostname string
 	}
 	stack []stepFunc
 }
@@ -111,6 +112,9 @@ func (u *UseModuleUseCase) stepSelectHost() (stepFunc, error) {
 
 	u.context.sshConfig = sshConfig
 
+	remoteHostname := u.getRemoteHostname()
+	u.context.remoteHostname = utils.NormalizeSpaces(remoteHostname)
+
 	return u.stepSelectAction, nil
 }
 
@@ -125,8 +129,7 @@ func (u *UseModuleUseCase) getRemoteHostname() string {
 func (u *UseModuleUseCase) stepSelectAction() (stepFunc, error) {
 	actionTemplates := u.handler.GetAvailableActionTemplates()
 
-	remoteHostname := u.getRemoteHostname()
-	promptLabel := fmt.Sprintf("[ %s ] Choose an action:", utils.NormalizeSpaces(remoteHostname))
+	promptLabel := fmt.Sprintf("[ %s ] Choose an action:", u.context.remoteHostname)
 	fmt.Println(promptLabel)
 	cmdTemplate, err := u.prompter.ChooseFromMap(actionTemplates, promptLabel)
 	if err != nil {
@@ -149,8 +152,7 @@ func (u *UseModuleUseCase) stepSelectResource() (stepFunc, error) {
 		return nil, err
 	}
 
-	actionName := utils.NormalizeSpaces(u.context.action)
-	promptLabel := fmt.Sprintf("[ %s ] Choose a resource:", actionName)
+	promptLabel := fmt.Sprintf("[ %s ] Choose a resource:", u.context.remoteHostname)
 	resource, err := u.prompter.ChooseFromList(resources, promptLabel)
 	if err != nil {
 		u.context.sshConfig = nil
