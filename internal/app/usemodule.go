@@ -61,8 +61,7 @@ func (u *UseModuleUseCase) stepSelectEnv() (stepFunc, error) {
 		return nil, err
 	}
 
-	promptLabel := "Chose environment:"
-	selectedEnv, err := u.prompter.ChooseFromList(availableEnvs, promptLabel)
+	selectedEnv, err := u.prompter.ChooseFromList(availableEnvs, "Choose an environment:")
 	if err != nil {
 		return nil, nil
 	}
@@ -87,7 +86,7 @@ func (u *UseModuleUseCase) stepSelectHost() (stepFunc, error) {
 		return nil, err
 	}
 
-	promptLabel := fmt.Sprintf("[ %s ] Choose host:", u.context.selectedEnv)
+	promptLabel := fmt.Sprintf("[ %s ] Choose a host:", u.context.selectedEnv)
 	selectedHost, err := u.prompter.ChooseFromList(availableHosts, promptLabel)
 	if err != nil {
 		return nil, nil
@@ -127,7 +126,8 @@ func (u *UseModuleUseCase) stepSelectAction() (stepFunc, error) {
 	actionTemplates := u.handler.GetAvailableActionTemplates()
 
 	remoteHostname := u.getRemoteHostname()
-	promptLabel := fmt.Sprintf("[ %s ] Choose action:", remoteHostname)
+	promptLabel := fmt.Sprintf("[ %s ] Choose an action:", utils.NormalizeSpaces(remoteHostname))
+	fmt.Println(promptLabel)
 	cmdTemplate, err := u.prompter.ChooseFromMap(actionTemplates, promptLabel)
 	if err != nil {
 		fmt.Println("Moving back to host selection...")
@@ -150,7 +150,7 @@ func (u *UseModuleUseCase) stepSelectResource() (stepFunc, error) {
 	}
 
 	actionName := utils.NormalizeSpaces(u.context.action)
-	promptLabel := fmt.Sprintf("[ %s ] Choose resource:", actionName)
+	promptLabel := fmt.Sprintf("[ %s ] Choose a resource:", actionName)
 	resource, err := u.prompter.ChooseFromList(resources, promptLabel)
 	if err != nil {
 		u.context.sshConfig = nil
