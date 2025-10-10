@@ -111,10 +111,11 @@ func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (
 			return strings.Contains(option.Label, input)
 		},
 		CursorPos: lastIndex,
-		Stdout:    noBellWriter{os.Stdout}, // tu filtrujemy BEL
+		Stdout:    noBellWriter{os.Stdout},
 	}
 
 	fmt.Print("\033[H\033[2J")
+
 	i, _, err := prompt.Run()
 	if err != nil {
 		return "", err

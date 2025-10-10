@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/goodylabs/tug/internal/ports"
+	"github.com/goodylabs/tug/pkg/utils"
 )
 
 type stepFunc func() (stepFunc, error)
@@ -60,7 +61,8 @@ func (u *UseModuleUseCase) stepSelectEnv() (stepFunc, error) {
 		return nil, err
 	}
 
-	selectedEnv, err := u.prompter.ChooseFromList(availableEnvs, "ENVIRONMENTS")
+	promptLabel := "Chose environment:"
+	selectedEnv, err := u.prompter.ChooseFromList(availableEnvs, promptLabel)
 	if err != nil {
 		return nil, nil
 	}
@@ -85,7 +87,8 @@ func (u *UseModuleUseCase) stepSelectHost() (stepFunc, error) {
 		return nil, err
 	}
 
-	selectedHost, err := u.prompter.ChooseFromList(availableHosts, "HOSTS")
+	promptLabel := fmt.Sprintf("[ %s ] Choose host:", u.context.selectedEnv)
+	selectedHost, err := u.prompter.ChooseFromList(availableHosts, promptLabel)
 	if err != nil {
 		return nil, nil
 	}
@@ -106,15 +109,28 @@ func (u *UseModuleUseCase) stepSelectHost() (stepFunc, error) {
 		helpCommand := fmt.Sprintf(helpCmdTemplate, rootAddr, userAuthKeys, userAuthKeys)
 		return nil, fmt.Errorf("Failed to connect to the server with %s - error: %s\nWhy is that? \n%s\n", userAddr, err.Error(), helpCommand)
 	}
+
 	u.context.sshConfig = sshConfig
 
 	return u.stepSelectAction, nil
 }
 
-func (u *UseModuleUseCase) stepSelectAction() (stepFunc, error) {
-	cmdTemplate, err := u.prompter.ChooseFromMap(u.handler.GetAvailableActionTemplates(), "ACTIONS")
+func (u *UseModuleUseCase) getRemoteHostname() string {
+	output, err := u.sshConnector.RunCommand("hostname")
 	if err != nil {
-		fmt.Println("Looking for resources...")
+		return "failed_to_display_hostname"
+	}
+	return output
+}
+
+func (u *UseModuleUseCase) stepSelectAction() (stepFunc, error) {
+	actionTemplates := u.handler.GetAvailableActionTemplates()
+
+	remoteHostname := u.getRemoteHostname()
+	promptLabel := fmt.Sprintf("[ %s ] Choose action:", remoteHostname)
+	cmdTemplate, err := u.prompter.ChooseFromMap(actionTemplates, promptLabel)
+	if err != nil {
+		fmt.Println("Moving back to host selection...")
 		return nil, nil
 	}
 
@@ -133,7 +149,9 @@ func (u *UseModuleUseCase) stepSelectResource() (stepFunc, error) {
 		return nil, err
 	}
 
-	resource, err := u.prompter.ChooseFromList(resources, "RESOURCES")
+	actionName := utils.NormalizeSpaces(u.context.action)
+	promptLabel := fmt.Sprintf("[ %s ] Choose resource:", actionName)
+	resource, err := u.prompter.ChooseFromList(resources, promptLabel)
 	if err != nil {
 		u.context.sshConfig = nil
 		return nil, nil
