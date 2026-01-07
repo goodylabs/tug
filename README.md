@@ -6,7 +6,7 @@ TUG is a CLI tool that helps you monitor and manage remote environments for a gi
 
 ## Installation
 
-1. Install jq:
+### 1. Install jq
 
 ```bash
 brew install jq      # macOS
@@ -15,7 +15,9 @@ sudo pacman -S jq    # Arch Linux
 sudo dnf install jq  # Red Hat/CentOS
 ```
 
-2. Prepare your environment:
+### 2. Prepare your environment
+
+bash/zsh
 
 ```bash
 rc_file=${HOME}/.$(basename "$SHELL")rc
@@ -23,18 +25,26 @@ echo 'export PATH="$HOME/.tug/bin:$PATH"' >> $rc_file
 source $rc_file
 ```
 
-3. Install TUG:
+fish
+
+```bash
+set rc_file $HOME/.(basename $SHELL)rc
+echo 'set -gx PATH $HOME/.tug/bin $PATH' >> $rc_file
+source $rc_file
+```
+
+### 3. Install TUG
 
 ```bash
 curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download.sh | bash -s
 ```
 
-4. Configure TUG for ssh connections:
+### 4. Configure TUG for ssh connections
 
 ```bash
 tug configure
 ```
 
-# Commands
+## Commands
 
 ![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/assets/images/tug-help.png)
