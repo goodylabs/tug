@@ -8,6 +8,7 @@ var commandTemplates = map[string]string{
 	"pm2   --  logs     <resource> | less": `source ~/.nvm/nvm.sh; pm2 logs %s | less`,
 	"pm2   --  logs     <resource>":        `source ~/.nvm/nvm.sh; pm2 logs %s`,
 	"pm2   --  logs":                       `source ~/.nvm/nvm.sh; pm2 logs`,
+	"pm2   --  status   <resource> | less": `source ~/.nvm/nvm.sh; pm2 status %s | less`,
 	"pm2   --  show     <resource>":        `source ~/.nvm/nvm.sh; pm2 show %s && read`,
 	"pm2   --  restart  <resource>":        `source ~/.nvm/nvm.sh; pm2 restart %s`,
 	"pm2   --  describe <resource>":        `source ~/.nvm/nvm.sh; pm2 describe %s && read`,
