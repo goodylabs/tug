@@ -39,7 +39,13 @@ source $rc_file
 curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download.sh | bash -s
 ```
 
-### 4. Configure TUG for ssh connections
+### 4. Check TUG version
+
+```bash
+tug --version
+```
+
+### 5. Configure TUG for ssh connections
 
 ```bash
 tug configure
