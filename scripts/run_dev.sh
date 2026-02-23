@@ -1,5 +1,3 @@
 #!/bin/bash
 
-export TUG_ENV="development"
-
-go run main.go $@
+go run -ldflags="-X 'github.com/goodylabs/tug/pkg/config.TugEnv=development'" main.go $@

@@ -5,8 +5,9 @@ import "fmt"
 type StrategyName string
 
 const (
-	DockerStrategy StrategyName = "docker"
-	Pm2Strategy    StrategyName = "pm2"
+	DockerStrategy   StrategyName = "docker"
+	Pm2Strategy      StrategyName = "pm2"
+	PystranoStrategy StrategyName = "pystrano"
 )
 
 type LoadProject struct{}
@@ -23,8 +24,9 @@ func (lp *LoadProject) Execute(strategyName StrategyName) (ProjectConfig, error)
 		strategy = NewDockerLoadStrategy()
 	case Pm2Strategy:
 		strategy = NewPm2LoadStrategy()
+	case PystranoStrategy:
+		strategy = NewPystranoLoadStrategy()
 	default:
-
 		return ProjectConfig{}, fmt.Errorf("unsupported strategy: %s", strategyName)
 	}
 

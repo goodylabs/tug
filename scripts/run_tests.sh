@@ -1,5 +1,3 @@
 #!/bin/bash
 
-export TUG_ENV="testing"
-
-gotestsum $@ ./...
+gotestsum $@ -- -ldflags="-X 'github.com/goodylabs/tug/pkg/config.TugEnv=testing'" ./...

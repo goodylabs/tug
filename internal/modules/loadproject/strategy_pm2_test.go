@@ -28,6 +28,6 @@ func TestPm2LoadStrategy_Execute(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Contains(t, cfg.Config, "staging")
 		assert.Equal(t, "staging-user", cfg.Config["staging"].User)
-		assert.Equal(t, []string{"1.2.3.4"}, cfg.Config["staging"].Hosts)
+		assert.Equal(t, []string{"xxx.xxx.xxx.xxx"}, cfg.Config["staging"].Hosts)
 	})
 }

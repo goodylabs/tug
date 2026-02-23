@@ -12,7 +12,7 @@ const (
 	ModeProd = "production"
 )
 
-var TugEnv string = ModeDev
+var TugEnv string = ModeProd
 
 var (
 	baseDir string
