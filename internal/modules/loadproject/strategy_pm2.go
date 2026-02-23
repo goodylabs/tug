@@ -12,11 +12,36 @@ import (
 )
 
 const (
-	tmpJsonPath = "/tmp/tug_pm2_config.json"
-	// Skrypty wymagają dwóch parametrów: %s (wejście) i %s (wyjście)
+	tmpJsonPath        = "/tmp/tug_pm2_config.json"
 	ecosystemJsScript  = `const fs = require('fs'); const config = require('%s'); fs.writeFileSync('%s', JSON.stringify(config));`
 	ecosystemCjsScript = `const fs = require('fs'); const config = require('%s'); fs.writeFileSync('%s', JSON.stringify(config));`
 )
+
+type FlexHost []string
+
+func (fh *FlexHost) UnmarshalJSON(data []byte) error {
+	if len(data) == 0 {
+		return nil
+	}
+	var single string
+	if err := json.Unmarshal(data, &single); err == nil {
+		*fh = []string{single}
+		return nil
+	}
+	var slice []string
+	if err := json.Unmarshal(data, &slice); err != nil {
+		return err
+	}
+	*fh = slice
+	return nil
+}
+
+type pm2ConfigDTO struct {
+	Deploy map[string]struct {
+		User string   `json:"user"`
+		Host FlexHost `json:"host"`
+	} `json:"deploy"`
+}
 
 type Pm2LoadStrategy struct{}
 
@@ -37,20 +62,18 @@ func (s *Pm2LoadStrategy) Execute() (ProjectConfig, error) {
 	if err := s.convertJsFileToJson(configPath); err != nil {
 		return projectCfg, err
 	}
+	defer os.Remove(tmpJsonPath)
 
-	// Odczyt JSONa wygenerowanego przez Node.js
 	jsonFile, err := os.ReadFile(tmpJsonPath)
 	if err != nil {
 		return projectCfg, fmt.Errorf("failed to read temp PM2 json: %w", err)
 	}
-	defer os.Remove(tmpJsonPath) // Czyścimy /tmp
 
 	var dto pm2ConfigDTO
 	if err := json.Unmarshal(jsonFile, &dto); err != nil {
 		return projectCfg, fmt.Errorf("failed to unmarshal PM2 config: %w", err)
 	}
 
-	// Mapujemy dane z PM2 na nasz wspólny format ProjectConfig
 	for envName, deployCfg := range dto.Deploy {
 		if deployCfg.User == "" || len(deployCfg.Host) == 0 {
 			continue
@@ -93,12 +116,4 @@ func (s *Pm2LoadStrategy) convertJsFileToJson(path string) error {
 		return fmt.Errorf("node conversion failed: %w (output: %s)", err, string(output))
 	}
 	return nil
-}
-
-// Struktura pomocnicza do Unmarshal
-type pm2ConfigDTO struct {
-	Deploy map[string]struct {
-		User string   `json:"user"`
-		Host []string `json:"host"`
-	} `json:"deploy"`
 }
