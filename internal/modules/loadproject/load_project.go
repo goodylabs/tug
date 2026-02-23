@@ -2,23 +2,30 @@ package loadproject
 
 import "fmt"
 
+type StrategyName string
+
+const (
+	DockerStrategy StrategyName = "docker"
+	Pm2Strategy    StrategyName = "pm2"
+)
+
 type LoadProject struct{}
 
 func NewLoadProject() *LoadProject {
 	return &LoadProject{}
 }
 
-func (lp *LoadProject) Execute(name StrategyName) (ProjectConfig, error) {
+func (lp *LoadProject) Execute(strategyName StrategyName) (ProjectConfig, error) {
 	var strategy LoadStrategy
 
-	switch name {
+	switch strategyName {
 	case DockerStrategy:
 		strategy = NewDockerLoadStrategy()
-	// Tutaj w przyszłości dodasz:
-	// case K8sStrategy:
-	//     strategy = NewK8sLoadStrategy()
+	case Pm2Strategy:
+		strategy = NewPm2LoadStrategy()
 	default:
-		return ProjectConfig{}, fmt.Errorf("unsupported strategy: %s", name)
+
+		return ProjectConfig{}, fmt.Errorf("unsupported strategy: %s", strategyName)
 	}
 
 	return strategy.Execute()
