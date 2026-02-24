@@ -15,8 +15,8 @@ func GetStrategy(tech StrategyName) (ActionStrategy, error) {
 	switch tech {
 	case Docker:
 		return NewDockerActionStrategy(), nil
-	// case Pm2:
-	// 	return NewPm2ActionStrategy(), nil
+	case Pm2:
+		return NewPm2ActionStrategy(), nil
 	// case Pystrano:
 	// 	return NewPystranoActionStrategy(), nil
 	// case Swarm:
