@@ -2,28 +2,140 @@ package app
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/goodylabs/tug/internal/modules/action"
 	"github.com/goodylabs/tug/internal/modules/loadproject"
+	"github.com/goodylabs/tug/internal/ports"
 )
 
-type UseModuleV2UseCase struct{}
+// type stepFunc func() (stepFunc, error)
 
-func NewUseModuleV2UseCase() *UseModuleV2UseCase {
-	return &UseModuleV2UseCase{}
+type UseModuleV2UseCase struct {
+	prompter      ports.Prompter
+	sshService    *action.SSHService
+	actionMgr     *action.ActionManager
+	projectConfig loadproject.ProjectConfig
+
+	ctx struct {
+		env      string
+		hostname string
+		template string
+	}
+	stack []stepFunc
 }
 
-func (u *UseModuleV2UseCase) Execute(
-	loadProjectStrategy loadproject.StrategyName,
-	// actionStrategy
-) error {
-	lp := loadproject.NewLoadProject()
+func NewUseModuleV2UseCase(connector ports.SSHConnector, prompter ports.Prompter) *UseModuleV2UseCase {
+	return &UseModuleV2UseCase{
+		sshService: action.NewSSHService(connector),
+		prompter:   prompter,
+	}
+}
 
-	projectCfg, err := lp.Execute(loadProjectStrategy)
+func (u *UseModuleV2UseCase) Execute(loadTech loadproject.StrategyName, actionTech action.StrategyName) error {
+	// 1. Inicjalizacja danych projektu i strategii akcji
+	lp := loadproject.NewLoadProject()
+	pCfg, err := lp.Execute(loadTech)
 	if err != nil {
 		return err
 	}
+	u.projectConfig = pCfg
 
-	fmt.Printf("%+v\n", projectCfg)
+	actStrategy, err := action.GetStrategy(actionTech)
+	if err != nil {
+		return err
+	}
+	u.actionMgr = action.NewActionManager(actStrategy)
 
+	// 2. Start orkiestracji
+	u.stack = []stepFunc{u.stepSelectEnv}
+	return u.runStack()
+}
+
+func (u *UseModuleV2UseCase) runStack() error {
+	for len(u.stack) > 0 {
+		next, err := u.stack[len(u.stack)-1]()
+		if err != nil {
+			return err
+		}
+		if next == nil {
+			u.stack = u.stack[:len(u.stack)-1]
+			continue
+		}
+		u.stack = append(u.stack, next)
+	}
 	return nil
+}
+
+// --- STEPS ---
+
+func (u *UseModuleV2UseCase) stepSelectEnv() (stepFunc, error) {
+	envs := u.projectConfig.GetAvailableEnvs()
+	selected, err := u.prompter.ChooseFromList(envs, "Choose environment:")
+	if err != nil {
+		return nil, nil
+	}
+
+	u.ctx.env = selected
+	return u.stepSelectHost, nil
+}
+
+func (u *UseModuleV2UseCase) stepSelectHost() (stepFunc, error) {
+	hosts, err := u.projectConfig.GetAvailableHosts(u.ctx.env)
+	if err != nil {
+		return nil, err
+	}
+
+	label := fmt.Sprintf("[%s] Select host:", u.ctx.env)
+	host, err := u.prompter.ChooseFromList(hosts, label)
+	if err != nil {
+		return nil, nil
+	}
+
+	envCfg, _ := u.projectConfig.GetEnvConfig(u.ctx.env)
+
+	fmt.Println("Connecting...")
+	hostname, err := u.sshService.Connect(envCfg.User, host)
+	if err != nil {
+		return nil, err
+	}
+
+	u.ctx.hostname = hostname
+	return u.stepSelectAction, nil
+}
+
+func (u *UseModuleV2UseCase) stepSelectAction() (stepFunc, error) {
+	templates := u.actionMgr.GetAvailableActionTemplates()
+
+	label := fmt.Sprintf("[%s] Select action:", u.ctx.hostname)
+	selected, err := u.prompter.ChooseFromMap(templates, label)
+	if err != nil {
+		return nil, nil
+	}
+
+	u.ctx.template = selected
+
+	if strings.Contains(selected, "%s") {
+		return u.stepSelectResource, nil
+	}
+
+	u.sshService.RunAction(u.ctx.template, "")
+	return nil, nil
+}
+
+func (u *UseModuleV2UseCase) stepSelectResource() (stepFunc, error) {
+	// Korzystamy z SSHConnector wystawionego przez serwis, aby pobrać listę zasobów
+	res, err := u.actionMgr.GetAvailableResources(u.sshService.GetConnector())
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch resources: %w", err)
+	}
+
+	label := fmt.Sprintf("[%s] Select resource:", u.ctx.hostname)
+	resource, err := u.prompter.ChooseFromList(res, label)
+	if err != nil {
+		return nil, nil
+	}
+
+	u.sshService.RunAction(u.ctx.template, resource)
+	return nil, nil
 }

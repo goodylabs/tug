@@ -1,0 +1,60 @@
+package action
+
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+
+	"github.com/goodylabs/tug/internal/ports"
+)
+
+type DockerActionStrategy struct{}
+
+func NewDockerActionStrategy() *DockerActionStrategy {
+	return &DockerActionStrategy{}
+}
+
+func (s *DockerActionStrategy) GetTemplates() map[string]string {
+	const continueMsg = "echo 'Done, press Enter to continue...' && read"
+	return map[string]string{
+		"docker   --  logs -f           <resource>":       "docker logs -f %s",
+		"docker   --  exec -u root -ti <resource>   sh":   "docker exec -u root -it %s sh",
+		"docker   --  logs             <resource> | less": "docker logs %s | less",
+		"docker   --  restart          <resource>":        "docker restart %s && " + continueMsg,
+		"docker   --  stats":                              "docker stats",
+		"docker   --  ps":                                 "watch docker ps",
+		"docker   --  ps -a":                              "watch docker ps -a",
+		"docker   --  inspect          <resource>":        "docker inspect %s | jq | less",
+		"bash     --  bash":                               "bash",
+		"bash     --  htop":                               "htop",
+		"django   --  python manage.py shell":             "docker exec -u root -it %s python manage.py shell",
+		"django   --  python manage.py shell_plus":        "docker exec -u root -it %s python manage.py shell_plus",
+		"traefik  --  show config routers":                "docker exec %s sh -c 'apk add --no-cache --no-progress -q curl && curl localhost:8080/api/rawdata' | jq '.routers' | less",
+		"traefik  --  show config services":               "docker exec %s sh -c 'apk add --no-cache --no-progress -q curl && curl localhost:8080/api/rawdata' | jq '.services' | less",
+	}
+}
+
+func (s *DockerActionStrategy) GetResources(ssh ports.SSHConnector) ([]string, error) {
+	output, err := ssh.RunCommand("docker ps --format json")
+	if err != nil {
+		return nil, fmt.Errorf("failed to list docker containers: %w", err)
+	}
+
+	var resourceNames []string
+	lines := strings.SplitSeq(strings.TrimSpace(output), "\n")
+
+	for line := range lines {
+		if line == "" {
+			continue
+		}
+		var container struct {
+			Names string `json:"Names"`
+		}
+		if err := json.Unmarshal([]byte(line), &container); err != nil {
+			continue
+		}
+		resourceNames = append(resourceNames, container.Names)
+	}
+
+	return resourceNames, nil
+}
