@@ -28,7 +28,8 @@ func (s *SSHService) Connect(user, host string) (string, error) {
 	}
 
 	if err := s.connector.ConfigureSSHConnection(cfg); err != nil {
-		return "", s.formatError(cfg, err)
+		errorMsg := fmt.Errorf("failed to connect as %s@%s: %w", cfg.User, cfg.Host, err)
+		return "", errorMsg
 	}
 
 	hostname, err := s.connector.RunCommand("hostname")
@@ -44,15 +45,4 @@ func (s *SSHService) RunAction(template, resource string) {
 		cmd = fmt.Sprintf(template, resource)
 	}
 	s.connector.RunInteractiveCommand(cmd)
-}
-
-func (s *SSHService) formatError(cfg *ports.SSHConfig, err error) error {
-	userAddr := fmt.Sprintf("%s@%s", cfg.User, cfg.Host)
-	if cfg.User == "root" {
-		return fmt.Errorf("failed to connect as %s: %w", userAddr, err)
-	}
-
-	authKeys := fmt.Sprintf("/home/%s/.ssh/authorized_keys", cfg.User)
-	help := fmt.Sprintf("\nTry: ssh root@%s\nRun: grep -vxFf %[2]s /root/.ssh/authorized_keys >> %[2]s", cfg.Host, authKeys)
-	return fmt.Errorf("failed to connect as %s: %v%s", userAddr, err, help)
 }

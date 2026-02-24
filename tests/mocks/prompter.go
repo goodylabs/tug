@@ -30,3 +30,7 @@ func (p *prompterMock) ChooseFromMap(map[string]string, string) (string, error) 
 func (p *prompterMock) ChooseFromListWithDisplayValue([]ports.DisplayValueOpts, string) (string, error) {
 	return "", nil
 }
+
+func (p *prompterMock) AskUserForInput(prompt string) (string, error) {
+	return "", nil
+}

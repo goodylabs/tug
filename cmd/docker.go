@@ -20,6 +20,14 @@ var dockerCmd = &cobra.Command{
 		}
 
 		useModuleUseCase := app.NewUseModuleV2UseCase()
+
+		if input, _ := cmd.Flags().GetBool("input"); input == true {
+			if err := useModuleUseCase.Execute(loadproject.InputStrategy, action.Docker); err != nil {
+				cmd.PrintErrf("%v\n", err)
+			}
+			return
+		}
+
 		if err := useModuleUseCase.Execute(loadproject.DockerStrategy, action.Docker); err != nil {
 			cmd.PrintErrf("%v\n", err)
 		}
@@ -29,4 +37,5 @@ var dockerCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(dockerCmd)
 	dockerCmd.Flags().Bool("check", false, "Check SSH connections before running Docker commands")
+	dockerCmd.Flags().Bool("input", false, "Manually input host configuration")
 }
