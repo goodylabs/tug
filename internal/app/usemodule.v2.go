@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/goodylabs/tug/internal/adapters"
 	"github.com/goodylabs/tug/internal/modules/action"
 	"github.com/goodylabs/tug/internal/modules/loadproject"
 	"github.com/goodylabs/tug/internal/ports"
@@ -25,10 +26,10 @@ type UseModuleV2UseCase struct {
 	stack []stepFunc
 }
 
-func NewUseModuleV2UseCase(connector ports.SSHConnector, prompter ports.Prompter) *UseModuleV2UseCase {
+func NewUseModuleV2UseCase() *UseModuleV2UseCase {
 	return &UseModuleV2UseCase{
-		sshService: action.NewSSHService(connector),
-		prompter:   prompter,
+		sshService: action.NewSSHService(adapters.NewSSHConnector()),
+		prompter:   adapters.NewPrompter(),
 	}
 }
 

@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"github.com/goodylabs/tug/internal/app"
-	"github.com/goodylabs/tug/internal/modules/loadproject"
 	"github.com/spf13/cobra"
 )
 
@@ -28,12 +26,12 @@ var pm2Cmd = &cobra.Command{
 		// 	cmd.PrintErrf("%v\n", err)
 		// }
 
-		useCase := app.NewUseModuleV2UseCase()
-		err := useCase.Execute(loadproject.Pm2Strategy)
+		// useCase := app.NewUseModuleV2UseCase()
+		// err := useCase.Execute(loadproject.Pm2Strategy)
 
-		if err != nil {
-			cmd.PrintErrf("%v\n", err)
-		}
+		// if err != nil {
+		// 	cmd.PrintErrf("%v\n", err)
+		// }
 
 	},
 }

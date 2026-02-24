@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/goodylabs/tug/internal/app"
+	"github.com/goodylabs/tug/internal/modules/action"
 	"github.com/goodylabs/tug/internal/modules/loadproject"
 	"github.com/spf13/cobra"
 )
@@ -29,7 +30,7 @@ var dockerCmd = &cobra.Command{
 		// }
 
 		useCase := app.NewUseModuleV2UseCase()
-		err := useCase.Execute(loadproject.DockerStrategy)
+		err := useCase.Execute(loadproject.DockerStrategy, action.Docker)
 
 		if err != nil {
 			cmd.PrintErrf("%v\n", err)
