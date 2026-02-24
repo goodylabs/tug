@@ -17,10 +17,10 @@ func GetStrategy(tech StrategyName) (ActionStrategy, error) {
 		return NewDockerActionStrategy(), nil
 	case Pm2:
 		return NewPm2ActionStrategy(), nil
-	// case Pystrano:
-	// 	return NewPystranoActionStrategy(), nil
-	// case Swarm:
-	//     return NewSwarmActionStrategy(), nil
+	case Pystrano:
+		return NewPystranoActionStrategy(), nil
+	case Swarm:
+		return NewSwarmActionStrategy(), nil
 	default:
 		return nil, fmt.Errorf("unsupported action strategy: %s", tech)
 	}

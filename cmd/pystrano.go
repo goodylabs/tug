@@ -4,6 +4,9 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"github.com/goodylabs/tug/internal/app"
+	"github.com/goodylabs/tug/internal/modules/action"
+	"github.com/goodylabs/tug/internal/modules/loadproject"
 	"github.com/spf13/cobra"
 )
 
@@ -30,12 +33,12 @@ var pystranoCmd = &cobra.Command{
 		// 	cmd.PrintErrf("%v\n", err)
 		// }
 
-		// useCase := app.NewUseModuleV2UseCase()
-		// err := useCase.Execute(loadproject.PystranoStrategy)
+		useCase := app.NewUseModuleV2UseCase()
+		err := useCase.Execute(loadproject.PystranoStrategy, action.Pystrano)
 
-		// if err != nil {
-		// 	cmd.PrintErrf("%v\n", err)
-		// }
+		if err != nil {
+			cmd.PrintErrf("%v\n", err)
+		}
 	},
 }
 

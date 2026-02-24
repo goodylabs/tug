@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/goodylabs/tug/internal/adapters"
 	"github.com/goodylabs/tug/internal/ports"
 	"github.com/goodylabs/tug/internal/tughelper"
 	"github.com/goodylabs/tug/pkg/config"
@@ -13,9 +14,9 @@ type ConfigureUseCase struct {
 	prompter ports.Prompter
 }
 
-func NewConfigureUseCase(prompter ports.Prompter) *ConfigureUseCase {
+func NewConfigureUseCase() *ConfigureUseCase {
 	return &ConfigureUseCase{
-		prompter: prompter,
+		prompter: adapters.NewPrompter(),
 	}
 }
 
