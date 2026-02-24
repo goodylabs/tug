@@ -11,15 +11,15 @@ var dockerCmd = &cobra.Command{
 	Use:   "docker",
 	Short: "Abstraction layer for docker operations related to project repo",
 	Run: func(cmd *cobra.Command, args []string) {
+		checkConnectionUseCase := app.NewCheckConnectionUseCase()
+		useModuleUseCase := app.NewUseModuleV2UseCase()
+
 		if check, _ := cmd.Flags().GetBool("check"); check == true {
-			checkConnectionUseCase := app.NewCheckConnectionUseCase()
 			if err := checkConnectionUseCase.Execute(loadproject.DockerStrategy); err != nil {
 				cmd.PrintErrf("%v\n", err)
 			}
 			return
 		}
-
-		useModuleUseCase := app.NewUseModuleV2UseCase()
 
 		if input, _ := cmd.Flags().GetBool("input"); input == true {
 			if err := useModuleUseCase.Execute(loadproject.InputStrategy, action.Docker); err != nil {

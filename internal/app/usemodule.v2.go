@@ -11,7 +11,7 @@ import (
 	"github.com/goodylabs/tug/internal/ports"
 )
 
-// type stepFunc func() (stepFunc, error)
+type stepFunc func() (stepFunc, error)
 
 type UseModuleV2UseCase struct {
 	prompter      ports.Prompter
