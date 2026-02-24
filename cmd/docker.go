@@ -37,7 +37,7 @@ var dockerCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(dockerCmd)
-	dockerCmd.Flags().Bool("check", false, "Check SSH connections before running Docker commands")
-	dockerCmd.Flags().String("host", "", "Manually input host - won't use project config")
-	dockerCmd.Flags().String("user", "root", "Manually input user - won't use project config")
+	dockerCmd.Flags().Bool("check", false, checkHint)
+	dockerCmd.Flags().String("host", "", customHostHint)
+	dockerCmd.Flags().String("user", "root", customUserHint)
 }

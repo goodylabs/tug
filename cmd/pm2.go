@@ -38,7 +38,7 @@ var pm2Cmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(pm2Cmd)
-	pm2Cmd.Flags().Bool("check", false, "Check SSH connections before running Docker commands")
-	pm2Cmd.Flags().String("host", "", "Manually input host - won't use project config")
-	pm2Cmd.Flags().String("user", "root", "Manually input user - won't use project config")
+	pm2Cmd.Flags().Bool("check", false, checkHint)
+	pm2Cmd.Flags().String("host", "", customHostHint)
+	pm2Cmd.Flags().String("user", "root", customUserHint)
 }
