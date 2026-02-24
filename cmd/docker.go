@@ -11,23 +11,6 @@ var dockerCmd = &cobra.Command{
 	Use:   "docker",
 	Short: "Abstraction layer for docker operations related to project repo",
 	Run: func(cmd *cobra.Command, args []string) {
-		// check, err := cmd.Flags().GetBool("check")
-
-		// container := dependecies.InitDependencyContainer(
-		// 	dependecies.WithDockerHandler,
-		// )
-		// if check {
-		// 	err = container.Invoke(func(checkConnectionUseCase *app.CheckConnectionUseCase) error {
-		// 		return checkConnectionUseCase.Execute()
-		// 	})
-		// } else {
-		// 	err = container.Invoke(func(useModuleUseCase *app.UseModuleUseCase) error {
-		// 		return useModuleUseCase.Execute()
-		// 	})
-		// }
-		// if err != nil {
-		// 	cmd.PrintErrf("%v\n", err)
-		// }
 		if check, _ := cmd.Flags().GetBool("check"); check == true {
 			checkConnectionUseCase := app.NewCheckConnectionUseCase()
 			if err := checkConnectionUseCase.Execute(loadproject.DockerStrategy); err != nil {
