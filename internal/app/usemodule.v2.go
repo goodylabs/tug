@@ -34,7 +34,6 @@ func NewUseModuleV2UseCase() *UseModuleV2UseCase {
 }
 
 func (u *UseModuleV2UseCase) Execute(loadTech loadproject.StrategyName, actionTech action.StrategyName) error {
-	// 1. Inicjalizacja danych projektu i strategii akcji
 	lp := loadproject.NewLoadProject()
 	pCfg, err := lp.Execute(loadTech)
 	if err != nil {
@@ -48,27 +47,33 @@ func (u *UseModuleV2UseCase) Execute(loadTech loadproject.StrategyName, actionTe
 	}
 	u.actionMgr = action.NewActionManager(actStrategy)
 
-	// 2. Start orkiestracji
 	u.stack = []stepFunc{u.stepSelectEnv}
 	return u.runStack()
 }
 
 func (u *UseModuleV2UseCase) runStack() error {
 	for len(u.stack) > 0 {
-		next, err := u.stack[len(u.stack)-1]()
+		stackLen := len(u.stack)
+		currentStep := u.stack[stackLen-1]
+
+		nextStep, err := currentStep()
 		if err != nil {
 			return err
 		}
-		if next == nil {
-			u.stack = u.stack[:len(u.stack)-1]
+
+		if nextStep == nil {
+			u.stack = u.stack[:stackLen-1]
 			continue
 		}
-		u.stack = append(u.stack, next)
+
+		if fmt.Sprintf("%v", nextStep) == fmt.Sprintf("%v", currentStep) {
+			continue
+		}
+
+		u.stack = append(u.stack, nextStep)
 	}
 	return nil
 }
-
-// --- STEPS ---
 
 func (u *UseModuleV2UseCase) stepSelectEnv() (stepFunc, error) {
 	envs := u.projectConfig.GetAvailableEnvs()
@@ -121,11 +126,10 @@ func (u *UseModuleV2UseCase) stepSelectAction() (stepFunc, error) {
 	}
 
 	u.sshService.RunAction(u.ctx.template, "")
-	return nil, nil
+	return u.stepSelectAction, nil
 }
 
 func (u *UseModuleV2UseCase) stepSelectResource() (stepFunc, error) {
-	// Korzystamy z SSHConnector wystawionego przez serwis, aby pobrać listę zasobów
 	res, err := u.actionMgr.GetAvailableResources(u.sshService.GetConnector())
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch resources: %w", err)
@@ -138,5 +142,5 @@ func (u *UseModuleV2UseCase) stepSelectResource() (stepFunc, error) {
 	}
 
 	u.sshService.RunAction(u.ctx.template, resource)
-	return nil, nil
+	return u.stepSelectResource, nil
 }
