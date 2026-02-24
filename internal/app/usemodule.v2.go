@@ -52,6 +52,26 @@ func (u *UseModuleV2UseCase) Execute(loadTech loadproject.StrategyName, actionTe
 	return u.runStack()
 }
 
+func (u *UseModuleV2UseCase) ExecuteDirect(user, host string, actionTech action.StrategyName) error {
+	actStrategy, err := action.GetStrategy(actionTech)
+	if err != nil {
+		return err
+	}
+	u.actionMgr = action.NewActionManager(actStrategy)
+
+	fmt.Printf("Connecting to %s@%s...\n", user, host)
+	hostname, err := u.sshService.Connect(user, host)
+	if err != nil {
+		return err
+	}
+
+	u.ctx.hostname = hostname
+	u.ctx.env = "direct"
+
+	u.stack = []stepFunc{u.stepSelectAction}
+	return u.runStack()
+}
+
 func (u *UseModuleV2UseCase) runStack() error {
 	for len(u.stack) > 0 {
 		stackLen := len(u.stack)
