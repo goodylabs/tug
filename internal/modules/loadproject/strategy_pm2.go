@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/goodylabs/tug/internal/modules"
 	"github.com/goodylabs/tug/pkg/config"
 )
 
@@ -49,9 +50,9 @@ func NewPm2LoadStrategy() *Pm2LoadStrategy {
 	return &Pm2LoadStrategy{}
 }
 
-func (s *Pm2LoadStrategy) Execute() (ProjectConfig, error) {
-	projectCfg := ProjectConfig{
-		Config: make(map[string]EnvConfig),
+func (s *Pm2LoadStrategy) Execute() (modules.ProjectConfig, error) {
+	projectCfg := modules.ProjectConfig{
+		Config: make(map[string]modules.EnvConfig),
 	}
 
 	configPath, err := s.getPm2ConfigPath(config.GetBaseDir())
@@ -79,7 +80,7 @@ func (s *Pm2LoadStrategy) Execute() (ProjectConfig, error) {
 			continue
 		}
 
-		projectCfg.Config[envName] = EnvConfig{
+		projectCfg.Config[envName] = modules.EnvConfig{
 			Name:  envName,
 			User:  deployCfg.User,
 			Hosts: deployCfg.Host,

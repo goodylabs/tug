@@ -1,4 +1,4 @@
-package loadproject
+package modules
 
 import (
 	"fmt"

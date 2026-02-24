@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/goodylabs/tug/internal/modules"
 	"github.com/goodylabs/tug/pkg/config"
 	"github.com/goodylabs/tug/pkg/utils"
 )
@@ -16,9 +17,9 @@ func NewPystranoLoadStrategy() *PystranoLoadStrategy {
 	return &PystranoLoadStrategy{}
 }
 
-func (s *PystranoLoadStrategy) Execute() (ProjectConfig, error) {
-	projectCfg := ProjectConfig{
-		Config: make(map[string]EnvConfig),
+func (s *PystranoLoadStrategy) Execute() (modules.ProjectConfig, error) {
+	projectCfg := modules.ProjectConfig{
+		Config: make(map[string]modules.EnvConfig),
 	}
 
 	pystranoDir := filepath.Join(config.GetBaseDir(), "deploy")
@@ -45,7 +46,7 @@ func (s *PystranoLoadStrategy) Execute() (ProjectConfig, error) {
 		if len(hosts) > 0 {
 			envName := filepath.Dir(relPath)
 
-			projectCfg.Config[envName] = EnvConfig{
+			projectCfg.Config[envName] = modules.EnvConfig{
 				Name:  envName,
 				User:  "root",
 				Hosts: hosts,

@@ -28,14 +28,18 @@ var dockerCmd = &cobra.Command{
 		// if err != nil {
 		// 	cmd.PrintErrf("%v\n", err)
 		// }
-
-		useCase := app.NewUseModuleV2UseCase()
-		err := useCase.Execute(loadproject.DockerStrategy, action.Docker)
-
-		if err != nil {
-			cmd.PrintErrf("%v\n", err)
+		if check, _ := cmd.Flags().GetBool("check"); check == true {
+			checkConnectionUseCase := app.NewCheckConnectionUseCase()
+			if err := checkConnectionUseCase.Execute(loadproject.DockerStrategy); err != nil {
+				cmd.PrintErrf("%v\n", err)
+			}
+			return
 		}
 
+		useModuleUseCase := app.NewUseModuleV2UseCase()
+		if err := useModuleUseCase.Execute(loadproject.DockerStrategy, action.Docker); err != nil {
+			cmd.PrintErrf("%v\n", err)
+		}
 	},
 }
 

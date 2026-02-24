@@ -1,6 +1,10 @@
 package loadproject
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/goodylabs/tug/internal/modules"
+)
 
 type StrategyName string
 
@@ -16,8 +20,8 @@ func NewLoadProject() *LoadProject {
 	return &LoadProject{}
 }
 
-func (lp *LoadProject) Execute(strategyName StrategyName) (ProjectConfig, error) {
-	var strategy LoadStrategy
+func (lp *LoadProject) Execute(strategyName StrategyName) (modules.ProjectConfig, error) {
+	var strategy modules.LoadStrategy
 
 	switch strategyName {
 	case DockerStrategy:
@@ -27,7 +31,7 @@ func (lp *LoadProject) Execute(strategyName StrategyName) (ProjectConfig, error)
 	case PystranoStrategy:
 		strategy = NewPystranoLoadStrategy()
 	default:
-		return ProjectConfig{}, fmt.Errorf("unsupported strategy: %s", strategyName)
+		return modules.ProjectConfig{}, fmt.Errorf("unsupported strategy: %s", strategyName)
 	}
 
 	return strategy.Execute()

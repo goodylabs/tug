@@ -33,6 +33,14 @@ var pystranoCmd = &cobra.Command{
 		// 	cmd.PrintErrf("%v\n", err)
 		// }
 
+		if check, _ := cmd.Flags().GetBool("check"); check == true {
+			checkConnectionUseCase := app.NewCheckConnectionUseCase()
+			if err := checkConnectionUseCase.Execute(loadproject.DockerStrategy); err != nil {
+				cmd.PrintErrf("%v\n", err)
+			}
+			return
+		}
+
 		useCase := app.NewUseModuleV2UseCase()
 		err := useCase.Execute(loadproject.PystranoStrategy, action.Pystrano)
 
@@ -44,14 +52,5 @@ var pystranoCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(pystranoCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// pystranoCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// pystranoCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	pystranoCmd.Flags().Bool("check", false, "Check SSH connections before running Docker commands")
 }

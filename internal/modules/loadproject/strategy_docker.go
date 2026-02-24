@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/goodylabs/tug/internal/modules"
 	"github.com/goodylabs/tug/pkg/config"
 	"github.com/goodylabs/tug/pkg/utils"
 )
@@ -25,9 +26,9 @@ func NewDockerLoadStrategy() *DockerLoadStrategy {
 	return &DockerLoadStrategy{}
 }
 
-func (s *DockerLoadStrategy) Execute() (ProjectConfig, error) {
-	projectCfg := ProjectConfig{
-		Config: make(map[string]EnvConfig),
+func (s *DockerLoadStrategy) Execute() (modules.ProjectConfig, error) {
+	projectCfg := modules.ProjectConfig{
+		Config: make(map[string]modules.EnvConfig),
 	}
 
 	baseDir := config.GetBaseDir()
@@ -43,7 +44,7 @@ func (s *DockerLoadStrategy) Execute() (ProjectConfig, error) {
 		hosts := s.parseHosts(scriptPath)
 
 		if len(hosts) > 0 {
-			projectCfg.Config[env] = EnvConfig{
+			projectCfg.Config[env] = modules.EnvConfig{
 				Name:  env,
 				User:  "root",
 				Hosts: hosts,

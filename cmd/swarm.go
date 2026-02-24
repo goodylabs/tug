@@ -29,6 +29,14 @@ var swarmCmd = &cobra.Command{
 		// 	cmd.PrintErrf("%v\n", err)
 		// }
 
+		if check, _ := cmd.Flags().GetBool("check"); check == true {
+			checkConnectionUseCase := app.NewCheckConnectionUseCase()
+			if err := checkConnectionUseCase.Execute(loadproject.DockerStrategy); err != nil {
+				cmd.PrintErrf("%v\n", err)
+			}
+			return
+		}
+
 		useCase := app.NewUseModuleV2UseCase()
 		err := useCase.Execute(loadproject.DockerStrategy, action.Swarm)
 

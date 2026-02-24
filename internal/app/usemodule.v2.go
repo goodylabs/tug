@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/goodylabs/tug/internal/adapters"
+	"github.com/goodylabs/tug/internal/modules"
 	"github.com/goodylabs/tug/internal/modules/action"
 	"github.com/goodylabs/tug/internal/modules/loadproject"
 	"github.com/goodylabs/tug/internal/ports"
@@ -16,7 +17,7 @@ type UseModuleV2UseCase struct {
 	prompter      ports.Prompter
 	sshService    *action.SSHService
 	actionMgr     *action.ActionManager
-	projectConfig loadproject.ProjectConfig
+	projectConfig modules.ProjectConfig
 
 	ctx struct {
 		env      string
