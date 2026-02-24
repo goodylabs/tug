@@ -35,7 +35,7 @@ var pystranoCmd = &cobra.Command{
 
 		if check, _ := cmd.Flags().GetBool("check"); check == true {
 			checkConnectionUseCase := app.NewCheckConnectionUseCase()
-			if err := checkConnectionUseCase.Execute(loadproject.DockerStrategy); err != nil {
+			if err := checkConnectionUseCase.Execute(loadproject.PystranoStrategy); err != nil {
 				cmd.PrintErrf("%v\n", err)
 			}
 			return
