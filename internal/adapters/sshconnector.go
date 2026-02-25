@@ -15,7 +15,8 @@ import (
 )
 
 type sshConnector struct {
-	client *ssh.Client
+	client     *ssh.Client
+	passphrase []byte
 }
 
 func NewSSHConnector() ports.SSHConnector {
@@ -69,16 +70,22 @@ func (s *sshConnector) loadSSHKeysFromDir() ([]ssh.AuthMethod, error) {
 	if err != nil {
 		if _, ok := err.(*ssh.PassphraseMissingError); ok {
 			fmt.Print("Enter passphrase for SSH key: ")
-			passphrase, perr := term.ReadPassword(int(os.Stdin.Fd()))
-			fmt.Println()
-			if perr != nil {
-				return nil, perr
+
+			if "" == string(s.passphrase) {
+				passphraseInput, perr := term.ReadPassword(int(os.Stdin.Fd()))
+				fmt.Println()
+				if perr != nil {
+					return nil, perr
+				}
+
+				s.passphrase = passphraseInput
 			}
 
-			signer, err = ssh.ParsePrivateKeyWithPassphrase(keyData, passphrase)
+			signer, err = ssh.ParsePrivateKeyWithPassphrase(keyData, s.passphrase)
 			if err != nil {
 				return nil, err
 			}
+
 		} else {
 			return nil, err
 		}
