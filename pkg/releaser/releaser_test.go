@@ -1,27 +1,57 @@
 package releaser_test
 
-// func TestPm2LoadStrategy_Execute(t *testing.T) {
-// 	testFileName := "ecosystem.config.js"
-// 	content := []byte(`module.exports = { deploy: { staging: { user: 'staging-user', host: ['1.2.3.4'] } } };`)
+import (
+	"path/filepath"
+	"testing"
 
-// 	lp := loadproject.NewLoadProject()
+	"github.com/goodylabs/tug/pkg/config"
+	"github.com/goodylabs/tug/pkg/releaser"
 
-// 	_ = os.WriteFile(testFileName, content, 0644)
-// 	defer os.Remove(testFileName)
+	"github.com/stretchr/testify/assert"
+)
 
-// 	t.Run("successful load via LoadProject factory", func(t *testing.T) {
-// 		cfg, err := lp.Execute(loadproject.Pm2Strategy)
+func TestReleaser_CheckNeedUpdate(t *testing.T) {
+	tests := []struct {
+		name               string
+		filePath           string
+		expectedNeedUpdate bool
+	}{
+		{
+			name:               "Valid file with correct Release and LastCheck",
+			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "1.json"),
+			expectedNeedUpdate: true,
+		},
+		{
+			name:               "File with incorrect Release",
+			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "2.json"),
+			expectedNeedUpdate: false,
+		},
+		{
+			name:               "File with incorrect LastCheck",
+			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "3.json"),
+			expectedNeedUpdate: false,
+		},
+		{
+			name:               "Malformed JSON file",
+			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "4.json"),
+			expectedNeedUpdate: false,
+		},
+		{
+			name:               "Empty JSON file",
+			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "5.json"),
+			expectedNeedUpdate: false,
+		},
+		{
+			name:               "Non-existent file",
+			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "non_existent.json"),
+			expectedNeedUpdate: false,
+		},
+	}
 
-// 		if err != nil && strings.Contains(err.Error(), "not found") {
-// 			t.Errorf("Error: %s", err.Error())
-// 		}
-
-// 		assert.NoError(t, err)
-// 		assert.Contains(t, cfg.Con
-
-// func TestReleser_NeedUpdate(t *testing.T) {
-
-// 	file1 := filepath.Join(config.GetBaseDir(), "releaser", "1.json")
-
-// 	assert.Equal(t, "2026-02-26", file1)
-// }
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := releaser.NewReleaser(tt.filePath)
+			assert.Equal(t, tt.expectedNeedUpdate, r.CheckNeedUpdate())
+		})
+	}
+}

@@ -6,6 +6,8 @@ import (
 )
 
 type Releaser struct {
+	version          string
+	todaysDate       string
 	releaserFilePath string
 }
 
