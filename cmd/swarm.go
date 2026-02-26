@@ -11,19 +11,25 @@ var swarmCmd = &cobra.Command{
 	Use:   "swarm",
 	Short: "Abstraction layer for docker swarm operations related to project repo",
 	Run: func(cmd *cobra.Command, args []string) {
+		checkConnectionUseCase := app.NewCheckConnectionUseCase()
+		useModuleUseCase := app.NewUseModuleV2UseCase()
 
 		if check, _ := cmd.Flags().GetBool("check"); check == true {
-			checkConnectionUseCase := app.NewCheckConnectionUseCase()
 			if err := checkConnectionUseCase.Execute(loadproject.DockerStrategy); err != nil {
 				cmd.PrintErrf("%v\n", err)
 			}
 			return
 		}
 
-		useCase := app.NewUseModuleV2UseCase()
-		err := useCase.Execute(loadproject.DockerStrategy, action.Swarm)
+		if host, _ := cmd.Flags().GetString("host"); host != "" {
+			user, _ := cmd.Flags().GetString("user")
+			if err := useModuleUseCase.ExecuteDirect(user, host, action.Swarm); err != nil {
+				cmd.PrintErrf("%v\n", err)
+			}
+			return
+		}
 
-		if err != nil {
+		if err := useModuleUseCase.Execute(loadproject.DockerStrategy, action.Swarm); err != nil {
 			cmd.PrintErrf("%v\n", err)
 		}
 
