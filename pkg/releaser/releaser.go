@@ -20,7 +20,7 @@ func NewReleaser(releaserFilePath, version, todaysDate string) *Releaser {
 }
 
 type releaserFile struct {
-	Release   string `json:"release"`
+	Version   string `json:"version"`
 	LastCheck string `json:"lastCheck"`
 }
 
@@ -39,7 +39,7 @@ func (r *Releaser) CheckIsUpToDate() bool {
 		return false
 	}
 
-	if rf.Release != r.version {
+	if rf.Version != r.version {
 		return false
 	}
 

@@ -1,4 +1,4 @@
 {
-  "release": "testing_v1",
-  "lastCheck": "some_date_for_testing"
+  "version": "testing_release",
+  "lastCheck": "___"
 }
