@@ -12,21 +12,30 @@ const (
 	ModeProd = "production"
 )
 
-var TugEnv string = ModeProd
+var TugEnv string
 
 var (
 	baseDir string
 	homeDir string
 )
 
-func GetMode() string {
-	switch TugEnv {
-	case ModeDev, ModeTest, ModeProd:
-		return TugEnv
-	default:
-		log.Fatalf("\n[FATAL] Invalid TugEnv value: '%s'. Allowed: development, testing, production.", TugEnv)
-		return ""
+func init() {
+	env := os.Getenv("TUG_ENV")
+	if env == "" {
+		TugEnv = ModeProd
+		return
 	}
+	switch env {
+	case ModeDev, ModeTest, ModeProd:
+		TugEnv = env
+	default:
+		log.Fatalf("\n[FATAL] Invalid TUG_ENV value: '%s'. Allowed: %s, %s, %s.",
+			env, ModeDev, ModeTest, ModeProd)
+	}
+}
+
+func GetMode() string {
+	return TugEnv
 }
 
 func GetBaseDir() string {
