@@ -39,4 +39,6 @@ var swarmCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(swarmCmd)
 	swarmCmd.Flags().Bool("check", false, "Check SSH connections before running Docker commands")
+	swarmCmd.Flags().String("host", "", customHostHint)
+	swarmCmd.Flags().String("user", "root", customUserHint)
 }
