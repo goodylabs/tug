@@ -50,7 +50,7 @@ func (r *Releaser) checkIsUpToDate() bool {
 	return true
 }
 
-func (r *Releaser) UpdateFile() error {
+func (r *Releaser) updateFile() error {
 	fileContent := releaserFile{
 		Version:   r.version,
 		LastCheck: r.todaysDate,
