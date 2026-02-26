@@ -6,7 +6,6 @@ TAG="${GITHUB_REF##*/}"
 
 x_flags=(
     "-X github.com/goodylabs/tug/cmd.version=$TAG"
-    "-X github.com/goodylabs/tug/cmd.useDockerCmd=false"
 )
 
 ldflags=$(IFS=" "; echo "${x_flags[*]}")
