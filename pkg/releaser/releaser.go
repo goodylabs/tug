@@ -11,9 +11,11 @@ type Releaser struct {
 	releaserFilePath string
 }
 
-func NewReleaser(releaserFilePath string) *Releaser {
+func NewReleaser(releaserFilePath, version, todaysDate string) *Releaser {
 	return &Releaser{
 		releaserFilePath: releaserFilePath,
+		version:          version,
+		todaysDate:       todaysDate,
 	}
 }
 
@@ -22,7 +24,7 @@ type releaserFile struct {
 	LastCheck string `json:"lastCheck"`
 }
 
-func (r *Releaser) CheckNeedUpdate() bool {
+func (r *Releaser) CheckIsUpToDate() bool {
 	if _, err := os.Stat(r.releaserFilePath); os.IsNotExist(err) {
 		return false
 	}
@@ -37,11 +39,11 @@ func (r *Releaser) CheckNeedUpdate() bool {
 		return false
 	}
 
-	if rf.Release != "v1.31" {
+	if rf.Release != r.version {
 		return false
 	}
 
-	if rf.LastCheck != "1-1-1" {
+	if rf.LastCheck != r.todaysDate {
 		return false
 	}
 

@@ -10,48 +10,44 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestReleaser_CheckNeedUpdate(t *testing.T) {
-	tests := []struct {
-		name               string
-		filePath           string
-		expectedNeedUpdate bool
-	}{
-		{
-			name:               "Valid file with correct Release and LastCheck",
-			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "1.json"),
-			expectedNeedUpdate: true,
-		},
-		{
-			name:               "File with incorrect Release",
-			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "2.json"),
-			expectedNeedUpdate: false,
-		},
-		{
-			name:               "File with incorrect LastCheck",
-			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "3.json"),
-			expectedNeedUpdate: false,
-		},
-		{
-			name:               "Malformed JSON file",
-			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "4.json"),
-			expectedNeedUpdate: false,
-		},
-		{
-			name:               "Empty JSON file",
-			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "5.json"),
-			expectedNeedUpdate: false,
-		},
-		{
-			name:               "Non-existent file",
-			filePath:           filepath.Join(config.GetBaseDir(), "releaser", "non_existent.json"),
-			expectedNeedUpdate: false,
-		},
-	}
+func TestReleaser_CheckIsUpToDate(t *testing.T) {
+	baseDir := config.GetBaseDir()
+	version := "testing_v1"
+	date := "some_date_for_testing"
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			r := releaser.NewReleaser(tt.filePath)
-			assert.Equal(t, tt.expectedNeedUpdate, r.CheckNeedUpdate())
-		})
-	}
+	t.Run("Valid file with correct Release and LastCheck", func(t *testing.T) {
+		path := filepath.Join(baseDir, "releaser", "1.json")
+		r := releaser.NewReleaser(path, version, date)
+		assert.True(t, r.CheckIsUpToDate())
+	})
+
+	t.Run("File with incorrect Release", func(t *testing.T) {
+		path := filepath.Join(baseDir, "releaser", "2.json")
+		r := releaser.NewReleaser(path, version, date)
+		assert.False(t, r.CheckIsUpToDate())
+	})
+
+	t.Run("File with incorrect LastCheck", func(t *testing.T) {
+		path := filepath.Join(baseDir, "releaser", "3.json")
+		r := releaser.NewReleaser(path, version, date)
+		assert.False(t, r.CheckIsUpToDate())
+	})
+
+	t.Run("Malformed JSON file", func(t *testing.T) {
+		path := filepath.Join(baseDir, "releaser", "4.json")
+		r := releaser.NewReleaser(path, version, date)
+		assert.False(t, r.CheckIsUpToDate())
+	})
+
+	t.Run("Empty JSON file", func(t *testing.T) {
+		path := filepath.Join(baseDir, "releaser", "5.json")
+		r := releaser.NewReleaser(path, version, date)
+		assert.False(t, r.CheckIsUpToDate())
+	})
+
+	t.Run("Non-existent file", func(t *testing.T) {
+		path := filepath.Join(baseDir, "releaser", "non_existent.json")
+		r := releaser.NewReleaser(path, version, date)
+		assert.False(t, r.CheckIsUpToDate())
+	})
 }
