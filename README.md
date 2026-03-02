@@ -1,8 +1,29 @@
 # TUG
 
-![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/assets/images/tug-cli-logo-256x256.png)
+![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/docs/assets/images/tug-cli-logo-256x256.png)
 
-TUG is a CLI tool that helps you monitor and manage remote environments for a given repo, when you don’t want to bother with manually typing in commands.
+## The main idea
+
+TUG makes common server operations more easy
+
+each TUG server cmd (docker, swarm, pm2, pystrano) consists of 2 steps:
+  1. loading server connection config 
+  2. making actions on server you selected
+
+Example flow:
+1. `tug docker`
+2. select environment (example: stg)
+3. select host 
+4. select select action
+5. if action requires resource, select resource
+6. step back using `ctrl + c`
+7. step back using `ctrl + c`
+
+Demo video:
+[![docs/assets/videos/tug-docker.mov](./docs/assets/videos/tug-docker.mov)]
+
+## Navigation
+
 
 ## Installation
 
@@ -58,8 +79,8 @@ tug docker
 ```
 
 ### Docker
+*Config source: variable in script `./devops/*/deploy.sh`()
 ```bash
-# Config source: variable in script `./devops/*/deploy.sh`
 TARGET_IP    (string)
 IP_ADDRESS   (string)
 IP_ADDRESSES ([]string)
@@ -70,4 +91,4 @@ IP_ADDRESS=192.168.1.100
 IP_ADDRESSES=(192.168.1.100 192.168.1.101)
 ```
 
-```bash
+*Available commands:
