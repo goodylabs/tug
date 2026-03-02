@@ -120,7 +120,7 @@ IP_ADDRESSES=(192.168.1.100 192.168.1.101)
 
 ### Flag `--host`
 
-Instead of reading config directly from pm2 / docker project you can manually specify host(s) using `--host` flag and then optionally `--user` flag.
+Instead of reading config directly from pm2 / docker project you can manually specify host using `--host` flag and then optionally `--user` flag.
 
 ```bash
 tug docker --host 123.23.7.254 # (default user: root) 
