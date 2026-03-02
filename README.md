@@ -21,10 +21,20 @@ Example flow:
 
 Demo video:
 
+v1
 <video src="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4" controls width="600"></video>
+v2
 <video src="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4" width="100%" controls>
   Twoja przeglądarka nie wspiera odtwarzania plików wideo.
 </video>
+v3
+<video width="600" controls>
+  <source src="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4" type="video/mp4">
+</video>
+
+v4
+
+[![https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4)](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4)
 
 ## Navigation
 
