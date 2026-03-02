@@ -1,5 +1,5 @@
 #!/bin/bash
 
-export TUG_ENV="testing"
+export TUG_ENV=testing
 
-gotestsum $@ ./...
+gotestsum $@

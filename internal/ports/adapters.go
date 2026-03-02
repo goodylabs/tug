@@ -9,6 +9,7 @@ type Prompter interface {
 	ChooseFromList([]string, string) (string, error)
 	ChooseFromMap(map[string]string, string) (string, error)
 	ChooseFromListWithDisplayValue([]DisplayValueOpts, string) (string, error)
+	AskUserForInput(string) (string, error)
 }
 
 type SSHConnector interface {

@@ -6,17 +6,44 @@ import (
 	"path/filepath"
 )
 
+const (
+	ModeDev  = "development"
+	ModeTest = "testing"
+	ModeProd = "production"
+)
+
+var TugEnv string
+
 var (
 	baseDir string
 	homeDir string
 )
 
+func init() {
+	env := os.Getenv("TUG_ENV")
+	if env == "" {
+		TugEnv = ModeProd
+		return
+	}
+	switch env {
+	case ModeDev, ModeTest, ModeProd:
+		TugEnv = env
+	default:
+		log.Fatalf("\n[FATAL] Invalid TUG_ENV value: '%s'. Allowed: %s, %s, %s.",
+			env, ModeDev, ModeTest, ModeProd)
+	}
+}
+
+func GetMode() string {
+	return TugEnv
+}
+
 func GetBaseDir() string {
 	if baseDir == "" {
-		tugEnv := os.Getenv("TUG_ENV")
-		if tugEnv == "development" || tugEnv == "testing" {
+		mode := GetMode()
+		if mode == ModeDev || mode == ModeTest {
 			projectRoot := findProjectRoot()
-			baseDir = filepath.Join(projectRoot, "."+tugEnv)
+			baseDir = filepath.Join(projectRoot, "."+mode)
 		} else {
 			baseDir = getEnvOrError("PWD")
 		}
@@ -26,10 +53,10 @@ func GetBaseDir() string {
 
 func GetHomeDir() string {
 	if homeDir == "" {
-		tugEnv := os.Getenv("TUG_ENV")
-		if tugEnv == "testing" {
+		mode := GetMode()
+		if mode == ModeTest {
 			projectRoot := findProjectRoot()
-			homeDir = filepath.Join(projectRoot, "."+tugEnv)
+			homeDir = filepath.Join(projectRoot, "."+mode)
 		} else {
 			homeDir = getEnvOrError("HOME")
 		}
@@ -40,7 +67,11 @@ func GetHomeDir() string {
 func getEnvOrError(envName string) string {
 	value := os.Getenv(envName)
 	if value == "" {
-		log.Fatalf("Environment variable %s is not set - tug does not support your shell configuration...", envName)
+		if envName == "PWD" {
+			dir, _ := os.Getwd()
+			return dir
+		}
+		log.Fatalf("[FATAL] Environment variable %s is not set.", envName)
 	}
 	return value
 }
@@ -53,7 +84,7 @@ func findProjectRoot() string {
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			log.Fatal("Could not find project root with go.mod file")
+			log.Fatal("[FATAL] Could not find project root (go.mod).")
 		}
 		dir = parent
 	}

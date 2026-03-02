@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"github.com/goodylabs/tug/internal/app"
-	"github.com/goodylabs/tug/pkg/dependecies"
 	"github.com/spf13/cobra"
 )
 
@@ -14,10 +13,8 @@ var configureCmd = &cobra.Command{
 	Use:   "configure",
 	Short: "Configure tug",
 	Run: func(cmd *cobra.Command, args []string) {
-		container := dependecies.InitDependencyContainer()
-		err := container.Invoke(func(configureUseCase *app.ConfigureUseCase) error {
-			return configureUseCase.Execute()
-		})
+		configureUseCase := app.NewConfigureUseCase()
+		err := configureUseCase.Execute()
 		if err != nil {
 			cmd.PrintErrf("%v\n", err)
 		}

@@ -127,3 +127,17 @@ func (p *prompter) runPrompter(options []ports.DisplayValueOpts, label string) (
 func (p *prompter) ChooseFromListWithDisplayValue(options []ports.DisplayValueOpts, label string) (string, error) {
 	return p.runPrompter(options, label)
 }
+
+func (p *prompter) AskUserForInput(prompt string) (string, error) {
+	input := promptui.Prompt{
+		Label:  prompt,
+		Stdout: noBellWriter{os.Stdout},
+	}
+
+	value, err := input.Run()
+	if err != nil {
+		return "", err
+	}
+
+	return value, nil
+}

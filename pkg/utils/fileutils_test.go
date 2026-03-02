@@ -4,7 +4,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/goodylabs/tug/internal/constants"
 	"github.com/goodylabs/tug/pkg/config"
 	"github.com/goodylabs/tug/pkg/utils"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +19,7 @@ func TestGetFileLinesOk(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		scriptAbsPath := filepath.Join(config.GetBaseDir(), constants.DEVOPS_DIR, tt.envDir, "deploy.sh")
+		scriptAbsPath := filepath.Join(config.GetBaseDir(), "devops", tt.envDir, "deploy.sh")
 		lines, err := utils.GetFileLines(scriptAbsPath)
 		assert.Equal(t, tt.linesNumber, len(lines))
 		assert.NoError(t, err)
