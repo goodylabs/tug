@@ -26,6 +26,9 @@ https://github.com/user-attachments/assets/547564e2-e6df-455f-9520-5adf7152d559
 
 ## Navigation
 
+- chose option: arrow keys + Enter
+- search: "/" + type phrase
+- go back: `ctrl + c`
 
 ## Installation
 
@@ -81,7 +84,9 @@ tug docker
 ```
 
 ### Docker
-*Config source: variable in script `./devops/*/deploy.sh`()
+
+**Config source: variable in script `./devops/*/deploy.sh`**
+
 ```bash
 TARGET_IP    (string)
 IP_ADDRESS   (string)
@@ -93,4 +98,22 @@ IP_ADDRESS=192.168.1.100
 IP_ADDRESSES=(192.168.1.100 192.168.1.101)
 ```
 
-*Available commands:
+**Available actions**
+
+![](docs/assets/images/tug-docker-actions.example.png)
+
+### Swarm (Docker)
+
+**Config source: same as Docker**
+
+**Available actions**
+
+![](docs/assets/images/tug-swarm-actions.example.png)
+
+### PM2
+
+**Config source: `./ecosystem.config.js` or `./ecosystem.config.cjs`**
+
+**Available actions**
+
+![](docs/assets/images/tug-pm2-actions.example.png)

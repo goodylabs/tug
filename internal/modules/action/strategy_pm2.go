@@ -19,17 +19,18 @@ func (s *Pm2ActionStrategy) GetTemplates() map[string]string {
 	const continueMsg = " && echo 'Done, press Enter to continue...' && read"
 
 	return map[string]string{
-		".host - bash (nvm)":        nvmPrefix + "bash",
-		".host - htop (nvm)":        nvmPrefix + "htop",
-		"pm2 - logs <xyz>":          nvmPrefix + "pm2 logs %s",
-		"pm2 - logs <xyz> | less":   nvmPrefix + "pm2 logs %s | less",
-		"pm2 - logs (all)":          nvmPrefix + "pm2 logs",
-		"pm2 - status <xyz> | less": nvmPrefix + "pm2 status %s | less",
-		"pm2 - show <xyz>":          nvmPrefix + "pm2 show %s" + continueMsg,
-		"pm2 - describe <xyz>":      nvmPrefix + "pm2 describe %s" + continueMsg,
-		"pm2 - restart <xyz>":       nvmPrefix + "pm2 restart %s",
-		"pm2 - monit":               nvmPrefix + "pm2 monit",
-		"pm2 - update":              nvmPrefix + "pm2 update",
+		".host - bash":                nvmPrefix + "bash",
+		".host - htop":                nvmPrefix + "htop",
+		"pm2   - logs <xyz>":          nvmPrefix + "pm2 logs %s",
+		"pm2   - logs <xyz> | less":   nvmPrefix + "pm2 logs %s | less",
+		"pm2   - logs":                nvmPrefix + "pm2 logs",
+		"pm2   - status <xyz> | less": nvmPrefix + "pm2 status %s | less",
+		"pm2   - show <xyz>":          nvmPrefix + "pm2 show %s" + continueMsg,
+		"pm2   - describe <xyz>":      nvmPrefix + "pm2 describe %s" + continueMsg,
+		"pm2   - restart <xyz>":       nvmPrefix + "pm2 restart %s" + continueMsg,
+		"pm2   - reload <xyz>":        nvmPrefix + "pm2 reload %s" + continueMsg,
+		"pm2   - monit":               nvmPrefix + "pm2 monit",
+		"pm2   - update":              nvmPrefix + "pm2 update",
 	}
 }
 
