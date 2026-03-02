@@ -1,6 +1,6 @@
 # TUG
 
-![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/docs/assets/images/tug-cli-logo-256x256.png)
+![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/images/tug-cli-logo-256x256.png)
 
 ## The main idea
 
@@ -21,7 +21,7 @@ Example flow:
 
 Demo video:
 
-![tug-docker-demo](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/docs/assets/videos/tug-docker.mp4)
+![tug-docker-demo](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4)
 
 ## Navigation
 
@@ -58,7 +58,7 @@ source $rc_file
 ### 3. Install TUG
 
 ```bash
-curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download.sh | bash -s
+curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/scripts/download.sh | bash -s
 ```
 
 ### 4. Check TUG version
