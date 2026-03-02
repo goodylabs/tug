@@ -1,6 +1,6 @@
 # TUG
 
-![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/images/tug-cli-logo-256x256.png)
+![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/docs/assets/images/tug-cli-logo-256x256.png)
 
 ## The main idea
 
@@ -62,7 +62,7 @@ source $rc_file
 ### 3. Install TUG
 
 ```bash
-curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/scripts/download.sh | bash -s
+curl -s https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/scripts/download.sh | bash -s
 ```
 
 ### 4. Check TUG version
