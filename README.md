@@ -21,7 +21,7 @@ Example flow:
 
 Demo video:
 
-![tug-docker-demo](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/docs/assets/videos/tug-docker.mov)
+![tug-docker-demo](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/docs/assets/videos/tug-docker.mp4)
 
 ## Navigation
 
