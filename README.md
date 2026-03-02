@@ -53,4 +53,21 @@ tug configure
 
 ## Commands
 
-![tug](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/assets/images/tug-help.png)
+```bash
+tug docker
+```
+
+### Docker
+```bash
+# Config source: variable in script `./devops/*/deploy.sh`
+TARGET_IP    (string)
+IP_ADDRESS   (string)
+IP_ADDRESSES ([]string)
+
+# Examples
+TARGET_IP=192.168.1.100
+IP_ADDRESS=192.168.1.100
+IP_ADDRESSES=(192.168.1.100 192.168.1.101)
+```
+
+```bash

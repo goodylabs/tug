@@ -18,14 +18,11 @@ func (s *PystranoActionStrategy) GetTemplates() map[string]string {
 	const continueMsg = "echo 'Done, press Enter to continue...' && read"
 
 	return map[string]string{
-		"pystrano --  logs -f <resource>": "pystrano logs -f %s",
-		"pystrano --  restart <resource>": "pystrano restart %s && " + continueMsg,
-		"pystrano --  status":             "pystrano ps",
-		"bash     --  bash":               "bash",
-		"bash     --  htop":               "htop",
-		"bash     --  btop":               "btop",
-		"bash     --  df -h":              "df -h && " + continueMsg,
-		"bash     --  free -h":            "free -h && " + continueMsg,
+		".host     - bash":         "bash",
+		".host     - htop":         "htop",
+		"pystrano - logs -f <xyz>": "pystrano logs -f %s",
+		"pystrano - restart <xyz>": "pystrano restart %s && " + continueMsg,
+		"pystrano - status":        "pystrano ps",
 	}
 }
 
