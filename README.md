@@ -21,7 +21,7 @@ Example flow:
 
 Demo video:
 
-![tug-docker-demo](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4)
+[tug-docker-demo](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4)
 
 ## Navigation
 
