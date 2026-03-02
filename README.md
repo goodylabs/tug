@@ -20,7 +20,8 @@ Example flow:
 7. step back using `ctrl + c`
 
 Demo video:
-[![docs/assets/videos/tug-docker.mov](./docs/assets/videos/tug-docker.mov)]
+
+![tug-docker-demo](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/main/docs/assets/videos/tug-docker.mov)
 
 ## Navigation
 
