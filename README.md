@@ -10,7 +10,8 @@ each TUG server cmd (docker, swarm, pm2, pystrano) consists of 2 steps:
   1. loading server connection config 
   2. making actions on server you selected
 
-Example flow:
+## Example flow:
+
 1. `tug docker`
 2. select environment (example: stg)
 3. select host 
@@ -19,22 +20,9 @@ Example flow:
 6. step back using `ctrl + c`
 7. step back using `ctrl + c`
 
-Demo video:
+## Demo video:
 
-v1
-<video src="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4" controls width="600"></video>
-v2
-<video src="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4" width="100%" controls>
-  Twoja przeglądarka nie wspiera odtwarzania plików wideo.
-</video>
-v3
-<video width="600" controls>
-  <source src="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4" type="video/mp4">
-</video>
-
-v4
-
-[![https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4)](https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4)
+https://github.com/user-attachments/assets/547564e2-e6df-455f-9520-5adf7152d559
 
 ## Navigation
 
