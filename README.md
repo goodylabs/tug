@@ -22,6 +22,9 @@ Example flow:
 Demo video:
 
 <video src="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4" controls width="600"></video>
+<video src="https://raw.githubusercontent.com/goodylabs/tug/refs/heads/modules-refactor/docs/assets/videos/tug-docker.mp4" width="100%" controls>
+  Twoja przeglądarka nie wspiera odtwarzania plików wideo.
+</video>
 
 ## Navigation
 
