@@ -9,7 +9,7 @@ import (
 
 var dockerCmd = &cobra.Command{
 	Use:   "docker",
-	Short: "Abstraction layer for docker operations related to project repo",
+	Short: "Abstraction layer for docker operations related to project repository",
 	Run: func(cmd *cobra.Command, args []string) {
 		checkConnectionUseCase := app.NewCheckConnectionUseCase()
 		useModuleUseCase := app.NewUseModuleV2UseCase()
