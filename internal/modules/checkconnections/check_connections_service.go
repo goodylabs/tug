@@ -2,6 +2,7 @@ package checkconnections
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/goodylabs/tug/internal/adapters"
@@ -42,8 +43,12 @@ func (c *CheckConnectionsService) Execute(projectConfig modules.ProjectConfig) {
 		go func(sshTarget string, relatedEnvs []string) {
 			defer wg.Done()
 
-			var user, host string
-			fmt.Sscanf(sshTarget, "%s@%s", &user, &host) // Uproszczone, lepiej użyć strings.Split
+			parts := strings.SplitN(sshTarget, "@", 2)
+			if len(parts) != 2 {
+				return
+			}
+			user := parts[0]
+			host := parts[1]
 
 			sshCfg := &ports.SSHConfig{
 				Host: host,
@@ -52,12 +57,11 @@ func (c *CheckConnectionsService) Execute(projectConfig modules.ProjectConfig) {
 			}
 
 			err := c.sshConnector.ConfigureSSHConnection(sshCfg)
-
+			status := "✅ OK"
+			if err != nil {
+				status = "🚫 Connection failed"
+			}
 			for _, envName := range relatedEnvs {
-				status := "✅ OK"
-				if err != nil {
-					status = "🚫 Connection failed"
-				}
 				fmt.Printf(statusTemplate, envName, sshTarget, status)
 			}
 		}(target, envList)
