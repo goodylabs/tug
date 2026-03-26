@@ -9,7 +9,7 @@ import (
 
 var swarmCmd = &cobra.Command{
 	Use:   "swarm",
-	Short: "Abstraction layer for docker swarm operations related to project repo",
+	Short: "Abstraction layer for docker swarm operations related to project repository",
 	Run: func(cmd *cobra.Command, args []string) {
 		checkConnectionUseCase := app.NewCheckConnectionUseCase()
 		useModuleUseCase := app.NewUseModuleV2UseCase()

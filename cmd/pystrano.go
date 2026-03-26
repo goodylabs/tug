@@ -13,7 +13,7 @@ import (
 // pystranoCmd represents the pystrano command
 var pystranoCmd = &cobra.Command{
 	Use:   "pystrano",
-	Short: "Abstraction layer for pm2 operations related to project repo",
+	Short: "Abstraction layer for pystrano operations related to project repository",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if check, _ := cmd.Flags().GetBool("check"); check == true {

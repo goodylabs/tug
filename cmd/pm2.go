@@ -9,7 +9,7 @@ import (
 
 var pm2Cmd = &cobra.Command{
 	Use:   "pm2",
-	Short: "Abstraction layer for pm2 operations related to project repo",
+	Short: "Abstraction layer for pm2 operations related to project repository",
 	Run: func(cmd *cobra.Command, args []string) {
 		checkConnectionUseCase := app.NewCheckConnectionUseCase()
 		useModuleUseCase := app.NewUseModuleV2UseCase()
