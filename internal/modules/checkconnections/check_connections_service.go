@@ -22,36 +22,45 @@ func NewCheckConnectionsService() *CheckConnectionsService {
 func (c *CheckConnectionsService) Execute(projectConfig modules.ProjectConfig) {
 	fmt.Printf("🔍 Verification for project config\n\n")
 
-	var wg sync.WaitGroup
-	envs := projectConfig.GetAvailableEnvs()
+	hostToEnvs := make(map[string][]string)
 
+	envs := projectConfig.GetAvailableEnvs()
 	for _, envName := range envs {
 		envCfg, _ := projectConfig.GetEnvConfig(envName)
-
 		for _, host := range envCfg.Hosts {
-			wg.Add(1)
-
-			go func(envName, host, user string) {
-				defer wg.Done()
-
-				statusTemplate := "  %-15s %-30s %s\n"
-				sshTarget := fmt.Sprintf("%s@%s", user, host)
-
-				sshCfg := &ports.SSHConfig{
-					Host: host,
-					Port: 22,
-					User: user,
-				}
-
-				if err := c.sshConnector.ConfigureSSHConnection(sshCfg); err != nil {
-					fmt.Printf(statusTemplate, envName, sshTarget, "🚫 Connection failed")
-					return
-				}
-
-				fmt.Printf(statusTemplate, envName, sshTarget, "✅ OK")
-
-			}(envName, host, envCfg.User)
+			sshTarget := fmt.Sprintf("%s@%s", envCfg.User, host)
+			hostToEnvs[sshTarget] = append(hostToEnvs[sshTarget], envName)
 		}
+	}
+
+	var wg sync.WaitGroup
+	statusTemplate := "  %-15s %-30s %s\n"
+
+	for target, envList := range hostToEnvs {
+		wg.Add(1)
+
+		go func(sshTarget string, relatedEnvs []string) {
+			defer wg.Done()
+
+			var user, host string
+			fmt.Sscanf(sshTarget, "%s@%s", &user, &host) // Uproszczone, lepiej użyć strings.Split
+
+			sshCfg := &ports.SSHConfig{
+				Host: host,
+				Port: 22,
+				User: user,
+			}
+
+			err := c.sshConnector.ConfigureSSHConnection(sshCfg)
+
+			for _, envName := range relatedEnvs {
+				status := "✅ OK"
+				if err != nil {
+					status = "🚫 Connection failed"
+				}
+				fmt.Printf(statusTemplate, envName, sshTarget, status)
+			}
+		}(target, envList)
 	}
 
 	wg.Wait()
